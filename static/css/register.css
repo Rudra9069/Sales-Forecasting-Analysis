@@ -1,0 +1,283 @@
+body {
+    background-color: #F8F7F4;
+    font-family: 'Poppins', sans-serif;
+    color: #2C2C2C;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.register-container {
+    width: 100%;
+    max-width: 1100px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.register-card.horizontal-layout {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    display: flex;
+    overflow: hidden; /* So the left side background respects border radius */
+    min-height: 480px;
+}
+
+/* Left Side Styling */
+.register-left {
+    flex: 1;
+    background: linear-gradient(135deg, #1E3A5F 0%, #152a45 100%);
+    color: #ffffff;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.branding-content {
+    max-width: 320px;
+}
+
+.branding-content .logo-placeholder {
+    width: 70px;
+    height: 70px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    margin: 0 auto 24px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4DA3FF;
+    font-size: 32px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.branding-content h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #ffffff;
+    line-height: 1.3;
+}
+
+.branding-content p.branding-subtitle {
+    font-size: 15px;
+    color: #A9C2D9; /* Light blue-grey */
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Right Side Styling */
+.register-right {
+    flex: 1.3;
+    padding: 40px 30px;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-header {
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1E3A5F;
+    margin: 0 0 8px 0;
+}
+
+.form-header p.subtitle {
+    font-size: 14px;
+    color: #4F6D8C;
+    margin: 0;
+}
+
+/* Form Styles */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #2C2C2C;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 14px;
+    color: #4F6D8C;
+    font-size: 16px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 14px 12px 40px;
+    border: 1px solid #D9D9D9;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #2C2C2C;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-wrapper input:focus {
+    outline: none;
+    border-color: #4DA3FF;
+    box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.2);
+}
+
+/* Error state styling */
+.form-group.has-error .input-wrapper input {
+    border-color: #e74c3c;
+}
+
+.form-group.has-error .input-wrapper i {
+    color: #e74c3c;
+}
+
+.error-message {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 6px;
+    display: none;
+}
+
+.form-group.has-error .error-message {
+    display: block;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    left: auto !important;
+    cursor: pointer;
+    color: #4F6D8C !important;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #1E3A5F !important;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    margin-top: 8px;
+    display: flex;
+    gap: 4px;
+    height: 4px;
+}
+
+.strength-bar {
+    flex: 1;
+    height: 100%;
+    background-color: #D9D9D9;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.password-strength-text {
+    font-size: 12px;
+    margin-top: 6px;
+    color: #4F6D8C;
+    text-align: right;
+    display: block;
+}
+
+/* Password Match Indicator */
+.match-indicator {
+    font-size: 12px;
+    margin-top: 6px;
+    display: none;
+}
+.match-indicator.success {
+    color: #2ecc71;
+    display: block;
+}
+.match-indicator.error {
+    color: #e74c3c;
+    display: block;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #1E3A5F;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.register-btn:hover {
+    background-color: #152a45;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.2);
+}
+
+.register-btn:active {
+    transform: translateY(0);
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+}
+
+.auth-links a {
+    color: #4DA3FF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.auth-links a:hover {
+    color: #1E3A5F;
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .register-card.horizontal-layout {
+        flex-direction: column;
+    }
+    .register-left {
+        padding: 40px 30px;
+    }
+    .register-right {
+        padding: 40px 30px;
+    }
+}
