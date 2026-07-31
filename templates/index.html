@@ -4,304 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Forecasting & Analysis Dashboard</title>
-    <!-- We will use Poppins for a modern SaaS look -->
+    <meta name="description" content="Empower your business with AI-driven sales forecasting, advanced analytics, and real-time predictions for enterprise success.">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* CSS Reset & Variables */
-        :root {
-            --primary-navy: #1E3A5F;
-            --primary-navy-dark: #152a45;
-            --accent-blue: #4DA3FF;
-            --accent-blue-hover: #3b8ce8;
-            --text-dark: #2C2C2C;
-            --text-gray: #6B7280;
-            --bg-light: #F8F7F4;
-            --white: #ffffff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            overflow-x: hidden;
-            display: block; /* Overrides any flex from external styles */
-        }
-
-        /* Navbar Styling */
-        .navbar {
-            background-color: var(--primary-navy);
-            color: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 60px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-brand {
-            font-size: 24px;
-            font-weight: 700;
-            text-decoration: none;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .navbar-brand i {
-            color: var(--accent-blue);
-            font-size: 28px;
-        }
-
-        .navbar-nav {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .navbar-nav li a {
-            color: var(--white);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-nav li a:hover {
-            color: var(--accent-blue);
-        }
-
-        .register-link {
-            background-color: var(--accent-blue);
-            padding: 10px 24px;
-            border-radius: 8px;
-            color: var(--white) !important;
-            font-weight: 600 !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 10px rgba(77, 163, 255, 0.3);
-        }
-
-        .register-link:hover {
-            background-color: var(--accent-blue-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(77, 163, 255, 0.4);
-        }
-
-        /* Hero Section */
-        .hero {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 80px 60px;
-            max-width: 1400px;
-            margin: 0 auto;
-            min-height: calc(100vh - 80px);
-            gap: 50px;
-        }
-
-        .hero-content {
-            flex: 1;
-            max-width: 600px;
-        }
-
-        .hero-content h1 {
-            font-size: 52px;
-            color: var(--primary-navy);
-            line-height: 1.2;
-            margin-bottom: 24px;
-            font-weight: 700;
-        }
-
-        .hero-content p {
-            font-size: 18px;
-            color: var(--text-gray);
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 20px;
-        }
-
-        .primary-btn {
-            background-color: var(--primary-navy);
-            color: var(--white);
-            border: none;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .primary-btn:hover {
-            background-color: var(--primary-navy-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(30, 58, 95, 0.2);
-        }
-
-        .secondary-btn {
-            background-color: transparent;
-            color: var(--primary-navy);
-            border: 2px solid var(--primary-navy);
-            padding: 14px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .secondary-btn:hover {
-            background-color: var(--primary-navy);
-            color: var(--white);
-        }
-
-        /* Hero Graphic (Right Side) */
-        .hero-graphic {
-            flex: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .dashboard-mockup {
-            background-color: var(--white);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            height: 400px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mockup-header {
-            height: 40px;
-            background-color: var(--primary-navy);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            gap: 8px;
-        }
-
-        .mockup-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.3);
-        }
-
-        .mockup-body {
-            flex: 1;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-template-rows: auto 1fr;
-            gap: 20px;
-        }
-
-        /* Mockup internal elements */
-        .mockup-card {
-            background: #F3F4F6;
-            border-radius: 8px;
-        }
-        .mockup-card.chart {
-            grid-column: 1 / 2;
-            grid-row: 1 / 3;
-            background: linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%);
-            position: relative;
-        }
-        .mockup-card.stat-1 {
-            grid-column: 2 / 3;
-            grid-row: 1 / 2;
-        }
-        .mockup-card.stat-2 {
-            grid-column: 2 / 3;
-            grid-row: 2 / 3;
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 60px 30px;
-            }
-            .hero-content {
-                max-width: 100%;
-            }
-            .btn-group {
-                justify-content: center;
-            }
-            .hero-graphic {
-                width: 100%;
-                margin-top: 40px;
-            }
-            .navbar {
-                padding: 20px 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar-nav {
-                display: none; /* In a real app, you'd add a hamburger menu */
-            }
-            .hero-content h1 {
-                font-size: 40px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
 <body>
-    <!-- Navbar -->
+
+    <!-- ====== Navbar ====== -->
     <nav class="navbar">
         <a href="{{ url_for('home') }}" class="navbar-brand">
             <i class="fas fa-chart-pie"></i>
             SFAD
         </a>
         <ul class="navbar-nav">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="{{ url_for('register') }}" class="register-link">Register Now</a></li>
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
         </ul>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Predict Sales.<br>Maximize Revenue.</h1>
+    <!-- ====== Flash Messages ====== -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-banner">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- ====== Hero Section ====== -->
+    <section class="hero" id="hero">
+        <div class="hero-content fade-in-up">
+            <span class="section-label">AI-Powered Sales Intelligence</span>
+            <h1>Predict Sales.<br><span>Maximize Revenue.</span></h1>
             <p>Empower your business with AI-driven insights, advanced analytics, and real-time sales predictions tailored for enterprise success. Make data-driven decisions with confidence.</p>
             <div class="btn-group">
-                <a href="{{ url_for('register') }}" class="primary-btn">Get Started</a>
-                <a href="#" class="secondary-btn">View Demo</a>
+                <a href="{{ url_for('register') }}" class="primary-btn">Get Started Free</a>
+                <a href="#features" class="secondary-btn">Explore Features</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <h3>94.2%</h3>
+                    <p>Forecast Accuracy</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>10K+</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="hero-stat">
+                    <h3>+24.8%</h3>
+                    <p>Avg. Revenue Growth</p>
+                </div>
             </div>
         </div>
 
         <!-- Dashboard Graphic Mockup -->
-        <div class="hero-graphic">
+        <div class="hero-graphic fade-in-up fade-in-up-delay-2">
             <div class="dashboard-mockup">
                 <div class="mockup-header">
                     <div class="mockup-dot"></div>
@@ -309,28 +77,253 @@
                     <div class="mockup-dot"></div>
                 </div>
                 <div class="mockup-body">
-                    <div class="mockup-card chart">
-                        <!-- Abstract Chart Representation -->
-                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%; height:100%; padding:20px; box-sizing:border-box;">
-                            <path d="M0,80 L20,60 L40,70 L60,30 L80,40 L100,10" fill="none" stroke="var(--accent-blue)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="20" cy="60" r="3" fill="var(--primary-navy)"/>
-                            <circle cx="40" cy="70" r="3" fill="var(--primary-navy)"/>
-                            <circle cx="60" cy="30" r="3" fill="var(--primary-navy)"/>
-                            <circle cx="80" cy="40" r="3" fill="var(--primary-navy)"/>
-                            <circle cx="100" cy="10" r="3" fill="var(--primary-navy)"/>
+                    <div class="mockup-stats-row">
+                        <div class="mockup-stat-card">
+                            <div class="stat-icon" style="background-color: rgba(77, 163, 255, 0.12); color: #4DA3FF;">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <span class="stat-value">$2.4M</span>
+                            <span class="stat-label">Revenue</span>
+                        </div>
+                        <div class="mockup-stat-card">
+                            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
+                                <i class="fas fa-arrow-trend-up"></i>
+                            </div>
+                            <span class="stat-value">+24.8%</span>
+                            <span class="stat-label">Q3 Forecast</span>
+                        </div>
+                        <div class="mockup-stat-card">
+                            <div class="stat-icon" style="background-color: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <span class="stat-value">94.2%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                    </div>
+                    <div class="mockup-chart-area">
+                        <div class="chart-title">Sales Forecast — Last 12 Months</div>
+                        <svg viewBox="0 0 500 140" preserveAspectRatio="none" style="width:100%; height:calc(100% - 24px);">
+                            <!-- Grid lines -->
+                            <line x1="0" y1="35" x2="500" y2="35" stroke="#E5E7EB" stroke-width="0.5"/>
+                            <line x1="0" y1="70" x2="500" y2="70" stroke="#E5E7EB" stroke-width="0.5"/>
+                            <line x1="0" y1="105" x2="500" y2="105" stroke="#E5E7EB" stroke-width="0.5"/>
+                            <!-- Area fill -->
+                            <path d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10 L500,140 L0,140 Z" fill="url(#areaGrad)" opacity="0.3"/>
+                            <!-- Line -->
+                            <path d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <!-- Data points -->
+                            <circle cx="135" cy="80" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
+                            <circle cx="270" cy="55" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
+                            <circle cx="405" cy="25" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
+                            <circle cx="500" cy="10" r="4" fill="#10B981" stroke="#fff" stroke-width="2"/>
+                            <defs>
+                                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#4DA3FF" stop-opacity="0.4"/>
+                                    <stop offset="100%" stop-color="#4DA3FF" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
                         </svg>
-                    </div>
-                    <div class="mockup-card stat-1" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                        <span style="font-size:12px; color:var(--text-gray); font-weight:600; text-transform:uppercase;">Q3 Forecast</span>
-                        <span style="font-size:24px; color:var(--primary-navy); font-weight:700;">+24.8%</span>
-                    </div>
-                    <div class="mockup-card stat-2" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                        <span style="font-size:12px; color:var(--text-gray); font-weight:600; text-transform:uppercase;">Accuracy</span>
-                        <span style="font-size:24px; color:#10B981; font-weight:700;">94.2%</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- ====== Features Section ====== -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <span class="section-label">Features</span>
+            <h2 class="section-title">Everything you need to forecast smarter</h2>
+            <p class="section-subtitle">From real-time dashboards to deep learning models, our platform gives you the tools to drive revenue and outperform the competition.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card fade-in-up">
+                <div class="feature-icon blue">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Forecasting</h3>
+                <p>Leverage deep learning models trained on your historical data to produce highly accurate sales predictions, quarter after quarter.</p>
+            </div>
+            <div class="feature-card fade-in-up fade-in-up-delay-1">
+                <div class="feature-icon navy">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Interactive Dashboards</h3>
+                <p>Visualize your sales pipeline, revenue trends, and key metrics with beautifully crafted, real-time dashboards.</p>
+            </div>
+            <div class="feature-card fade-in-up fade-in-up-delay-2">
+                <div class="feature-icon green">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Data Integration</h3>
+                <p>Seamlessly connect your CRM, ERP, and other data sources. Import data from CSV, Excel, or APIs in seconds.</p>
+            </div>
+            <div class="feature-card fade-in-up">
+                <div class="feature-icon purple">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Enterprise Security</h3>
+                <p>Your data is protected with end-to-end encryption, role-based access controls, and SOC 2 compliance.</p>
+            </div>
+            <div class="feature-card fade-in-up fade-in-up-delay-1">
+                <div class="feature-icon orange">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3>Team Collaboration</h3>
+                <p>Share reports, annotate forecasts, and collaborate with your team in real time across departments.</p>
+            </div>
+            <div class="feature-card fade-in-up fade-in-up-delay-2">
+                <div class="feature-icon rose">
+                    <i class="fas fa-file-export"></i>
+                </div>
+                <h3>Custom Reports & Export</h3>
+                <p>Generate detailed PDF and Excel reports on demand. Schedule automated email reports for stakeholders.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== How It Works Section ====== -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="how-it-works-inner">
+            <div class="section-header">
+                <span class="section-label">How It Works</span>
+                <h2 class="section-title">Get started in 4 simple steps</h2>
+                <p class="section-subtitle">No complex setup. No steep learning curve. Just actionable sales intelligence from day one.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card fade-in-up">
+                    <div class="step-number">1</div>
+                    <h3>Create Your Account</h3>
+                    <p>Sign up for free and set up your company profile in under two minutes.</p>
+                </div>
+                <div class="step-card fade-in-up fade-in-up-delay-1">
+                    <div class="step-number">2</div>
+                    <h3>Connect Your Data</h3>
+                    <p>Import historical sales data via CSV, Excel, or connect directly to your CRM.</p>
+                </div>
+                <div class="step-card fade-in-up fade-in-up-delay-2">
+                    <div class="step-number">3</div>
+                    <h3>Train & Forecast</h3>
+                    <p>Our AI models automatically train on your data and generate accurate predictions.</p>
+                </div>
+                <div class="step-card fade-in-up fade-in-up-delay-3">
+                    <div class="step-number">4</div>
+                    <h3>Analyze & Grow</h3>
+                    <p>Explore interactive dashboards and make data-driven decisions to grow revenue.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== Testimonials Section ====== -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-header">
+            <span class="section-label">Testimonials</span>
+            <h2 class="section-title">Trusted by industry leaders</h2>
+            <p class="section-subtitle">See how businesses are transforming their sales strategy with our platform.</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card fade-in-up">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <blockquote>"SFAD transformed how we approach quarterly planning. The forecasting accuracy is phenomenal — we saw a 30% reduction in unsold inventory within the first quarter."</blockquote>
+                <div class="testimonial-author">
+                    <div class="author-avatar">RK</div>
+                    <div class="author-info">
+                        <h4>Rajesh Kumar</h4>
+                        <p>VP of Sales, TechCorp India</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in-up fade-in-up-delay-1">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <blockquote>"The interactive dashboards are a game-changer for our leadership reviews. We went from spreadsheet chaos to clear, actionable insights overnight."</blockquote>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SP</div>
+                    <div class="author-info">
+                        <h4>Sarah Patel</h4>
+                        <p>Director of Analytics, RetailMax</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in-up fade-in-up-delay-2">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <blockquote>"Connecting our CRM data was effortless, and the AI models started delivering useful predictions within hours. Our revenue grew 18% in 6 months."</blockquote>
+                <div class="testimonial-author">
+                    <div class="author-avatar">AM</div>
+                    <div class="author-info">
+                        <h4>Ankit Mehta</h4>
+                        <p>CEO, GrowthBridge Solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== CTA Section ====== -->
+    <section class="cta-section">
+        <div class="cta-inner">
+            <h2>Ready to transform your sales strategy?</h2>
+            <p>Join thousands of businesses already using SFAD to forecast smarter, sell better, and grow faster. Start your free trial today — no credit card required.</p>
+            <a href="{{ url_for('register') }}" class="accent-btn">Get Started — It's Free</a>
+        </div>
+    </section>
+
+    <!-- ====== Footer ====== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-chart-pie"></i> SFAD</h3>
+                    <p>Sales Forecasting & Analysis Dashboard. Empowering businesses with AI-driven insights and real-time sales predictions for enterprise success.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 SFAD. All rights reserved.</span>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
