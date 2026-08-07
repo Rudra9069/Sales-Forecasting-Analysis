@@ -9,7 +9,6 @@ app.secret_key = 'your_super_secret_key'  # Needed for flash messages and sessio
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': 'Rudra$2004',
     # 'password': '[YOUR PASSWORD]',
     'database': 'sales_forecasting_db'
 }
