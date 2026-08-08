@@ -153,12 +153,37 @@ INSERT INTO users (name, email, password, phone, address, city, state, pincode, 
 ('Bob Davis', 'bob@example.com', 'hashed_pwd_4', '9876543213', '101 Pine St', 'Chennai', 'TN', '600001', 'user'),
 ('Charlie Evans', 'charlie@example.com', 'hashed_pwd_5', '9876543214', '202 Maple St', 'Pune', 'MH', '411001', 'user');
 
-INSERT INTO products (name, description, category, brand, price, stock_quantity, rating) VALUES
-('Smartphone X', 'Latest 5G smartphone', 'Electronics', 'BrandA', 699.99, 100, 4.5),
-('Laptop Pro', 'High performance laptop for pros', 'Electronics', 'BrandB', 1299.99, 50, 4.8),
-('Wireless Earbuds', 'Noise cancelling earbuds', 'Accessories', 'BrandA', 149.99, 200, 4.2),
-('Running Shoes', 'Lightweight comfortable shoes', 'Footwear', 'BrandC', 89.99, 150, 4.0),
-('Coffee Maker', 'Automatic espresso machine', 'Home Appliances', 'BrandD', 199.99, 30, 4.6);
+INSERT INTO products (name, description, category, brand, price, stock_quantity, image_url, rating) VALUES
+('Samsung Galaxy S24 Ultra', 'Latest 5G smartphone with 6.8 inch Dynamic AMOLED 2X display, 200MP camera, 12GB RAM, and 256GB storage. Features advanced AI processing and all-day 5000mAh battery.', 'Smartphones', 'Samsung', 74999.00, 100, '/static/images/products/samsung_galaxy_s24_ultra.png', 4.50),
+('Apple MacBook Air M3', 'Ultra-thin 15 inch Liquid Retina display laptop with Apple M3 chip, 16GB unified memory, 512GB SSD, and 18-hour battery life. Perfect for professionals and creators.', 'Laptops', 'Apple', 134900.00, 50, '/static/images/products/apple_macbook_air_m3.png', 4.80),
+('Sony WF-1000XM5', 'Premium wireless earbuds with industry-leading noise cancellation, LDAC Hi-Res Audio, 24-hour battery life with case, and IPX4 water resistance. Crystal clear call quality.', 'Audio', 'Sony', 19990.00, 200, '/static/images/products/sony_wf_1000xm5.png', 4.20),
+('Apple Watch Series 9', 'Advanced smartwatch with Always-On Retina LTPO OLED display, blood oxygen monitoring, ECG, crash detection, 18-hour battery life, and 100+ workout modes.', 'Wearables', 'Apple', 41900.00, 150, '/static/images/products/apple_watch_series_9.png', 4.30),
+('Apple iPad Air M2', '11 inch premium tablet with Apple M2 chip, 8GB RAM, 128GB storage, quad speakers, Apple Pencil Pro support, and 60Hz Liquid Retina display.', 'Tablets', 'Apple', 59900.00, 80, '/static/images/products/apple_ipad_air_m2.png', 4.60),
+('Apple iPhone 15 Pro Max', 'Titanium design, A17 Pro chip, 48MP main camera, 5x optical zoom, 6.7-inch Super Retina XDR display.', 'Smartphones', 'Apple', 159900.00, 120, '/static/images/products/apple_iphone_15_pro_max.png', 4.80),
+('Google Pixel 8 Pro', 'Google Tensor G3, advanced AI features, 50MP main camera, 6.7-inch Super Actua display, 7 years of updates.', 'Smartphones', 'Google', 106999.00, 90, '/static/images/products/google_pixel_8_pro.png', 4.60),
+('OnePlus 12', 'Snapdragon 8 Gen 3, Hasselblad Camera for Mobile, 5400mAh battery, 100W fast charging, 6.82-inch AMOLED.', 'Smartphones', 'OnePlus', 64999.00, 150, '/static/images/products/oneplus_12.png', 4.50),
+('Xiaomi 14 Ultra', 'Leica Summilux optical lenses, 1-inch sensor, Snapdragon 8 Gen 3, 6.73-inch AMOLED, 90W fast charging.', 'Smartphones', 'Xiaomi', 99999.00, 60, '/static/images/products/xiaomi_14_ultra.png', 4.70),
+('Vivo X100 Pro', 'Zeiss optics, MediaTek Dimensity 9300, 50MP main camera with 1-inch sensor, 5400mAh battery, 100W charging.', 'Smartphones', 'Vivo', 89999.00, 80, '/static/images/products/vivo_x100_pro.png', 4.60),
+('Dell XPS 15', '15.6-inch OLED touch display, Intel Core i7-13700H, NVIDIA RTX 4050, 16GB RAM, 1TB SSD, premium build.', 'Laptops', 'Dell', 185000.00, 45, '/static/images/products/dell_xps_15.png', 4.70),
+('Lenovo ThinkPad X1 Carbon', 'Ultralight business laptop, Intel Core i7, 16GB RAM, 512GB SSD, legendary keyboard, robust security.', 'Laptops', 'Lenovo', 165000.00, 70, '/static/images/products/lenovo_thinkpad_x1_carbon.png', 4.90),
+('HP Spectre x360', '2-in-1 convertible, 13.5-inch OLED, Intel Core i7, 16GB RAM, 1TB SSD, includes active pen.', 'Laptops', 'HP', 145000.00, 55, '/static/images/products/hp_spectre_x360.png', 4.60),
+('ASUS ROG Zephyrus G14', 'Powerful gaming laptop, AMD Ryzen 9, NVIDIA RTX 4060, 14-inch 165Hz display, AniMe Matrix.', 'Laptops', 'ASUS', 155000.00, 65, '/static/images/products/asus_rog_zephyrus_g14.png', 4.80),
+('Microsoft Surface Laptop 5', 'Sleek and light, 15-inch PixelSense display, Intel Core i7, 16GB RAM, 512GB SSD, great battery life.', 'Laptops', 'Microsoft', 125000.00, 85, '/static/images/products/microsoft_surface_laptop_5.png', 4.50),
+('Apple AirPods Pro 2', 'Active Noise Cancellation, Adaptive Audio, Personalized Spatial Audio, MagSafe charging case.', 'Audio', 'Apple', 24900.00, 250, '/static/images/products/apple_airpods_pro_2.png', 4.80),
+('Bose QuietComfort Ultra', 'World-class noise cancellation, spatial audio, up to 24 hours battery life, premium comfort.', 'Audio', 'Bose', 25900.00, 180, '/static/images/products/bose_quietcomfort_ultra.png', 4.70),
+('Sennheiser Momentum 4', 'Exceptional sound quality, adaptive noise cancellation, up to 60 hours battery life, comfortable fit.', 'Audio', 'Sennheiser', 22990.00, 120, '/static/images/products/sennheiser_momentum_4.png', 4.60),
+('Jabra Elite 10', 'Comfortable fit, advanced active noise cancellation, spatial sound with Dolby Head Tracking, multipoint.', 'Audio', 'Jabra', 18999.00, 140, '/static/images/products/jabra_elite_10.png', 4.40),
+('Samsung Galaxy Buds2 Pro', 'Intelligent Active Noise Cancellation, 24-bit Hi-Fi audio, 360 audio, seamless Samsung integration.', 'Audio', 'Samsung', 15999.00, 210, '/static/images/products/samsung_galaxy_buds2_pro.png', 4.50),
+('Garmin Fenix 7X Pro', 'Multisport GPS watch, built-in flashlight, solar charging, advanced training metrics, rugged design.', 'Wearables', 'Garmin', 85990.00, 40, '/static/images/products/garmin_fenix_7x_pro.png', 4.90),
+('Samsung Galaxy Watch 6 Classic', 'Rotating bezel, sapphire crystal display, comprehensive health monitoring, sleep coaching.', 'Wearables', 'Samsung', 36999.00, 160, '/static/images/products/samsung_galaxy_watch_6_classic.jpg', 4.60),
+('Fitbit Sense 2', 'Advanced health and fitness smartwatch, ECG, stress tracking, built-in GPS, 6+ days battery.', 'Wearables', 'Fitbit', 24999.00, 130, '/static/images/products/fitbit_sense_2.jpg', 4.30),
+('Amazfit GTR 4', '14-day battery life, dual-band GPS, 150+ sports modes, BioTracker 4.0 health data sensor.', 'Wearables', 'Amazfit', 16999.00, 180, '/static/images/products/amazfit_gtr_4.jpg', 4.20),
+('Google Pixel Watch 2', 'Advanced Fitbit health and fitness tracking, safety features, fast performance, 24-hour battery with AOD.', 'Wearables', 'Google', 39900.00, 90, '/static/images/products/google_pixel_watch_2.jpg', 4.40),
+('Samsung Galaxy Tab S9 Ultra', 'Massive 14.6-inch Dynamic AMOLED 2X, Snapdragon 8 Gen 2, S Pen included, IP68 water resistant.', 'Tablets', 'Samsung', 108999.00, 60, '/static/images/products/samsung_galaxy_tab_s9_ultra.jpg', 4.80),
+('Microsoft Surface Pro 9', 'Tablet to laptop versatility, Intel Core i5, 8GB RAM, 256GB SSD, 13-inch PixelSense touchscreen.', 'Tablets', 'Microsoft', 98900.00, 75, '/static/images/products/microsoft_surface_pro_9.jpg', 4.60),
+('Lenovo Tab P12 Pro', '12.6-inch AMOLED display, Snapdragon 870, Precision Pen 3 included, great for media and light work.', 'Tablets', 'Lenovo', 55000.00, 110, '/static/images/products/lenovo_tab_p12_pro.jpg', 4.50),
+('OnePlus Pad', '11.61-inch 144Hz ReadFit display, Dimensity 9000, 9510mAh battery, 67W fast charging, sleek design.', 'Tablets', 'OnePlus', 37999.00, 140, '/static/images/products/oneplus_pad.jpg', 4.40),
+('Xiaomi Pad 6', '11-inch 144Hz display, Snapdragon 870, 8840mAh battery, quad speakers with Dolby Atmos.', 'Tablets', 'Xiaomi', 26999.00, 200, '/static/images/products/xiaomi_pad_6.jpg', 4.60);
 
 INSERT INTO transactions (user_id, total_amount, status, shipping_address, order_date) VALUES
 (1, 699.99, 'delivered', '123 Main St, Mumbai, MH 400001', '2023-10-01 10:00:00'),
