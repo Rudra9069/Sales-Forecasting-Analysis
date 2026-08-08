@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Forecastify</title>
+    <meta name="description" content="Explore our premium collection of cutting-edge electronic products. Smartphones, laptops, earbuds, smartwatches, and tablets from top brands.">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+</head>
+<body>
+
+    <!-- ====== Navbar ====== -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('products') }}" class="active">Products</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            {% if session.get('user_id') %}
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a href="#" class="nav-btn">Profile</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
+            {% endif %}
+        </ul>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- ====== Flash Messages ====== -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-banner">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ====== Products Hero ====== -->
+    <section class="products-hero">
+        <div class="products-hero-inner">
+            <span class="section-label"><i class="fas fa-bolt"></i> Our Collection</span>
+            <h1>Premium Electronics</h1>
+            <p>Discover cutting-edge technology. Handpicked products designed to elevate your digital lifestyle.</p>
+            <div class="hero-stats-bar">
+                <div class="hero-stat-pill">
+                    <i class="fas fa-box"></i>
+                    <span>{{ products|length }}+ Products</span>
+                </div>
+                <div class="hero-stat-pill">
+                    <i class="fas fa-tags"></i>
+                    <span>5 Categories</span>
+                </div>
+                <div class="hero-stat-pill">
+                    <i class="fas fa-truck"></i>
+                    <span>Free Shipping</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-glow"></div>
+        <div class="hero-glow-2"></div>
+        <!-- Floating particles -->
+        <div class="hero-particles">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+    </section>
+
+    <!-- ====== Toolbar: Search + Category + Sort ====== -->
+    <section class="toolbar" id="toolbar">
+        <div class="toolbar-inner">
+            <!-- Search -->
+            <div class="toolbar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search products, brands..." autocomplete="off">
+                <button class="search-clear" id="searchClear" aria-label="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Category Dropdown -->
+            <div class="toolbar-select-wrapper">
+                <i class="fas fa-layer-group toolbar-select-icon"></i>
+                <select id="categorySelect" class="toolbar-select">
+                    <option value="all">All Categories</option>
+                    {% set categories = [] %}
+                    {% for product in products %}
+                        {% if product.category not in categories %}
+                            {% if categories.append(product.category) %}{% endif %}
+                            <option value="{{ product.category }}">{{ product.category }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="toolbar-select-wrapper">
+                <i class="fas fa-sort toolbar-select-icon"></i>
+                <select id="sortSelect" class="toolbar-select">
+                    <option value="default">Sort By</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="rating-high">Rating: High to Low</option>
+                    <option value="rating-low">Rating: Low to High</option>
+                </select>
+            </div>
+        </div>
+        <!-- Results Count -->
+        <div class="toolbar-results">
+            <span id="resultsCount">Showing all {{ products|length }} products</span>
+        </div>
+    </section>
+
+    <!-- ====== Products Grid ====== -->
+    <section class="products-section" id="products">
+        <div class="products-inner">
+            <div class="products-grid" id="productsGrid">
+                {% for product in products %}
+                <div class="product-card fade-in-up"
+                     data-category="{{ product.category }}"
+                     data-price="{{ product.price }}"
+                     data-rating="{{ product.rating }}"
+                     data-name="{{ product.name|lower }}"
+                     data-brand="{{ product.brand|lower }}">
+                    
+                    <!-- Top Accent Bar -->
+                    <div class="card-accent"></div>
+
+                    <!-- Badge -->
+                    {% if product.rating >= 4.7 %}
+                    <span class="product-badge">⭐ Top Rated</span>
+                    {% endif %}
+
+                    <!-- Wishlist Button -->
+                    <button class="wishlist-btn" aria-label="Add to wishlist">
+                        <i class="far fa-heart"></i>
+                    </button>
+
+                    <!-- Product Image -->
+                    <div class="product-image-wrapper">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                        {% else %}
+                        <div class="product-image-placeholder">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="product-info">
+                        <div class="product-meta">
+                            <span class="product-brand">{{ product.brand }}</span>
+                            <span class="product-category-tag">{{ product.category }}</span>
+                        </div>
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <p class="product-description">{{ product.description }}</p>
+
+                        <!-- Rating -->
+                        <div class="product-rating">
+                            {% set full_stars = product.rating|int %}
+                            {% set half_star = (product.rating - full_stars) >= 0.25 %}
+                            {% for i in range(full_stars) %}
+                            <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if half_star %}
+                            <i class="fas fa-star-half-alt"></i>
+                            {% endif %}
+                            {% for i in range(5 - full_stars - (1 if half_star else 0)) %}
+                            <i class="far fa-star"></i>
+                            {% endfor %}
+                            <span class="rating-value">{{ "%.1f"|format(product.rating) }}</span>
+                        </div>
+
+                        <!-- Price & Actions -->
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span class="price-currency">₹</span>
+                                <span class="price-amount">{{ "%.2f"|format(product.price) }}</span>
+                            </div>
+                            <div class="product-stock {% if product.stock_quantity > 50 %}in-stock{% elif product.stock_quantity > 0 %}low-stock{% else %}out-of-stock{% endif %}">
+                                <i class="fas fa-circle"></i>
+                                {% if product.stock_quantity > 50 %}
+                                    In Stock
+                                {% elif product.stock_quantity > 0 %}
+                                    Only {{ product.stock_quantity }} left
+                                {% else %}
+                                    Out of Stock
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <button class="add-to-cart-btn" {% if product.stock_quantity == 0 %}disabled{% endif %}>
+                            <i class="fas fa-shopping-cart"></i>
+                            {% if product.stock_quantity > 0 %}Add to Cart{% else %}Sold Out{% endif %}
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- No Results State -->
+            <div class="empty-state" id="noResults" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No Products Found</h3>
+                <p>Try adjusting your search or filters to find what you're looking for.</p>
+                <button class="reset-filters-btn" id="resetFilters">
+                    <i class="fas fa-redo"></i> Reset All Filters
+                </button>
+            </div>
+
+            {% if not products %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h3>No Products Found</h3>
+                <p>We're currently updating our inventory. Please check back soon!</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ====== Footer ====== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo"></h3>
+                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for enterprise success.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="{{ url_for('products') }}">Products</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Forecastify. All rights reserved.</span>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ====== DOM References ======
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        const categorySelect = document.getElementById('categorySelect');
+        const sortSelect = document.getElementById('sortSelect');
+        const productsGrid = document.getElementById('productsGrid');
+        const resultsCount = document.getElementById('resultsCount');
+        const noResults = document.getElementById('noResults');
+        const resetFilters = document.getElementById('resetFilters');
+        const allCards = Array.from(document.querySelectorAll('.product-card'));
+
+        // ====== Master Filter + Sort ======
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase().trim();
+            const category = categorySelect.value;
+            const sort = sortSelect.value;
+
+            // Toggle clear button visibility
+            searchClear.style.display = query.length > 0 ? 'flex' : 'none';
+
+            // 1. Filter
+            let visible = allCards.filter(card => {
+                const matchCategory = category === 'all' || card.dataset.category === category;
+                const matchSearch = query === '' ||
+                    card.dataset.name.includes(query) ||
+                    card.dataset.brand.includes(query) ||
+                    card.dataset.category.toLowerCase().includes(query);
+                return matchCategory && matchSearch;
+            });
+
+            // 2. Sort
+            if (sort === 'price-low') {
+                visible.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+            } else if (sort === 'price-high') {
+                visible.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+            } else if (sort === 'rating-high') {
+                visible.sort((a, b) => parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating));
+            } else if (sort === 'rating-low') {
+                visible.sort((a, b) => parseFloat(a.dataset.rating) - parseFloat(b.dataset.rating));
+            }
+
+            // 3. Re-render
+            allCards.forEach(card => {
+                card.style.display = 'none';
+                card.classList.remove('revealed');
+            });
+
+            visible.forEach((card, index) => {
+                card.style.display = 'flex';
+                card.style.animation = 'none';
+                card.offsetHeight;
+                card.style.animation = `fadeInUp 0.4s ease ${index * 0.05}s forwards`;
+                productsGrid.appendChild(card);
+            });
+
+            // 4. Update count with animation
+            const total = allCards.length;
+            const countEl = resultsCount;
+            if (visible.length === total) {
+                countEl.textContent = `Showing all ${total} products`;
+            } else {
+                countEl.textContent = `Showing ${visible.length} of ${total} products`;
+            }
+            countEl.style.animation = 'none';
+            countEl.offsetHeight;
+            countEl.style.animation = 'fadeInUp 0.3s ease forwards';
+
+            // 5. Show/hide empty state
+            noResults.style.display = visible.length === 0 ? 'block' : 'none';
+        }
+
+        // ====== Event Listeners ======
+        searchInput.addEventListener('input', applyFilters);
+        categorySelect.addEventListener('change', applyFilters);
+        sortSelect.addEventListener('change', applyFilters);
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            applyFilters();
+            searchInput.focus();
+        });
+
+        resetFilters.addEventListener('click', () => {
+            searchInput.value = '';
+            categorySelect.value = 'all';
+            sortSelect.value = 'default';
+            applyFilters();
+        });
+
+        // Initialize clear button state
+        searchClear.style.display = 'none';
+
+        // ====== Scroll Reveal for Cards ======
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        allCards.forEach(card => revealObserver.observe(card));
+
+        // ====== Wishlist Toggle ======
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const icon = btn.querySelector('i');
+                icon.classList.toggle('far');
+                icon.classList.toggle('fas');
+                btn.classList.toggle('active');
+                // Pulse animation
+                btn.style.animation = 'none';
+                btn.offsetHeight;
+                btn.style.animation = 'heartBeat 0.4s ease';
+            });
+        });
+
+        // ====== Add to Cart with Ripple ======
+        document.querySelectorAll('.add-to-cart-btn:not([disabled])').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('btn-ripple');
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+
+                // State change
+                btn.classList.add('added');
+                btn.innerHTML = '<i class="fas fa-check"></i> Added!';
+                setTimeout(() => {
+                    btn.classList.remove('added');
+                    btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
+                }, 2000);
+            });
+        });
+
+        // ====== Parallax on Hero ======
+        const hero = document.querySelector('.products-hero');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            if (scrolled < 600) {
+                hero.style.backgroundPositionY = scrolled * 0.3 + 'px';
+            }
+        });
+
+        // ====== Keyboard shortcut: "/" to focus search ======
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                searchInput.blur();
+                applyFilters();
+            }
+        });
+
+        // Initialize animations and counts on first load
+        document.addEventListener('DOMContentLoaded', () => {
+            applyFilters();
+        });
+    </script>
+
+</body>
+</html>

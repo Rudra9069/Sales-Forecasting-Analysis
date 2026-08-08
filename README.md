@@ -1,6 +1,6 @@
-# Sales Forecasting Web Application
+# Forecastify
 
-This repository contains the code for the Sales Forecasting Web Application.
+This repository contains the code for Forecastify.
 
 ## Project Structure
 
@@ -12,3 +12,8 @@ This repository contains the code for the Sales Forecasting Web Application.
 1. Create a virtual environment: `python -m venv venv`
 2. Activate the virtual environment.
 3. Install dependencies: `pip install -r requirements.txt`
+
+## Usage
+
+1. Run the app: `python app.py`
+2. Open [http://localhost:5000](http://localhost:5000) in your browser.
