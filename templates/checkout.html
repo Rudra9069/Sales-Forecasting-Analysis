@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Forecastify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+</head>
+
+<body>
+
+    <!-- ====== Navbar ====== -->
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('products') }}">Products</a></li>
+            {% if session.get('user_id') %}
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- ====== Checkout Section ====== -->
+    <section class="checkout-section">
+        <!-- Progress Indicator -->
+        <div class="checkout-progress">
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <span>Cart</span>
+            </div>
+            <div class="progress-step active">
+                <div class="step-icon">2</div>
+                <span>Address</span>
+            </div>
+            <div class="progress-step active">
+                <div class="step-icon">3</div>
+                <span>Payment</span>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon">4</div>
+                <span>Confirmation</span>
+            </div>
+        </div>
+
+        <div class="checkout-container">
+            <!-- Forms Area -->
+            <div class="checkout-forms">
+                <form id="checkout-form" action="{{ url_for('place_order') }}" method="POST">
+
+                    <!-- Customer Information -->
+                    <div class="checkout-form-section" id="customer-info">
+                        <h3><i class="far fa-user"></i> Customer Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="full-name">Full Name *</label>
+                                <input type="text" id="full-name" name="full_name" required placeholder="John Doe">
+                                <span class="error-message">Please enter your full name</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input type="email" id="email" name="email" required placeholder="john@example.com">
+                                <span class="error-message">Please enter a valid email</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="+91 00000-00000">
+                                <span class="error-message">Please enter a valid phone number</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div class="checkout-form-section" id="delivery-address">
+                        <h3><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
+                        <div class="form-grid full">
+                            <div class="form-group">
+                                <label for="address">Street Address *</label>
+                                <input type="text" id="address" name="address" required
+                                    placeholder="123 Main Street, Apt 4B">
+                                <span class="error-message">Address is required</span>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" name="city" required placeholder="New York">
+                                <span class="error-message">City is required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State / Province *</label>
+                                <input type="text" id="state" name="state" required placeholder="NY">
+                                <span class="error-message">State is required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="pincode">PIN / Zip Code *</label>
+                                <input type="text" id="pincode" name="pincode" required placeholder="10001">
+                                <span class="error-message">Zip Code is required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country *</label>
+                                <select id="country" required>
+                                    <option value="" disabled selected>Select a country...</option>
+                                    <option value="US">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="IN">India</option>
+                                    <option value="AU">Australia</option>
+                                </select>
+                                <span class="error-message">Country is required</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-form-section">
+                        <h3><i class="far fa-credit-card"></i> Payment Method</h3>
+
+                        <div class="payment-methods">
+                            <label class="payment-method-card active">
+                                <input type="radio" name="payment_method" value="card" checked>
+                                <i class="fas fa-credit-card payment-icon"></i>
+                                <span>Credit / Debit Card</span>
+                            </label>
+
+                            <label class="payment-method-card">
+                                <input type="radio" name="payment_method" value="upi">
+                                <i class="fas fa-mobile-alt payment-icon"></i>
+                                <span>UPI</span>
+                            </label>
+
+                            <label class="payment-method-card">
+                                <input type="radio" name="payment_method" value="netbanking">
+                                <i class="fas fa-university payment-icon"></i>
+                                <span>Net Banking</span>
+                            </label>
+
+                            <label class="payment-method-card">
+                                <input type="radio" name="payment_method" value="cod">
+                                <i class="fas fa-money-bill-wave payment-icon"></i>
+                                <span>Cash on Delivery</span>
+                            </label>
+                        </div>
+
+                        <!-- Card Details -->
+                        <div class="payment-details active" id="card-details">
+                            <div class="form-grid full" style="margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label for="card-number">Card Number *</label>
+                                    <input type="text" id="card-number" required placeholder="0000 0000 0000 0000">
+                                    <span class="error-message">Valid 16-digit card number is required</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-name">Card Holder Name *</label>
+                                    <input type="text" id="card-name" required placeholder="John Doe">
+                                    <span class="error-message">Name on card is required</span>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="card-expiry">Expiry Date *</label>
+                                    <input type="text" id="card-expiry" required placeholder="MM/YY">
+                                    <span class="error-message">Enter valid expiry (MM/YY)</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvv">CVV *</label>
+                                    <input type="password" id="card-cvv" required placeholder="123" maxlength="4">
+                                    <span class="error-message">3 or 4 digit CVV required</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- UPI Details -->
+                        <div class="payment-details" id="upi-details">
+                            <div class="form-group">
+                                <label for="upi-id">UPI ID *</label>
+                                <input type="text" id="upi-id" placeholder="username@bank">
+                                <span class="error-message">Valid UPI ID is required</span>
+                            </div>
+                        </div>
+
+                        <!-- Net Banking Details -->
+                        <div class="payment-details" id="netbanking-details">
+                            <div class="form-group">
+                                <label for="bank-select">Select Bank *</label>
+                                <select id="bank-select">
+                                    <option value="" disabled selected>Choose your bank...</option>
+                                    <option value="chase">JPMorgan Chase</option>
+                                    <option value="boa">Bank of America</option>
+                                    <option value="hdfc">HDFC Bank</option>
+                                    <option value="icici">ICICI Bank</option>
+                                    <option value="sbi">State Bank of India</option>
+                                </select>
+                                <span class="error-message">Please select a bank</span>
+                            </div>
+                        </div>
+
+                        <!-- COD Details -->
+                        <div class="payment-details" id="cod-details">
+                            <p style="color: var(--text-gray); font-size: 14px;">
+                                <i class="fas fa-info-circle" style="color: var(--accent-blue);"></i>
+                                You can pay via Cash or UPI when the product is delivered to your address.
+                            </p>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+
+                <div class="summary-items">
+                    {% for item in cart_items %}
+                    <div class="summary-item">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" class="summary-item-img">
+                        <div class="summary-item-info">
+                            <h4>{{ item.name }}</h4>
+                            <p>Qty: {{ item.quantity }}</p>
+                            <p style="font-weight: 600; color: var(--text-dark); margin-top: 5px;">₹{{
+                                "%.2f"|format(item.price) }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="promo-code">
+                    <div style="flex: 1;">
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="promo-code" placeholder="Enter coupon code">
+                            <button type="button" id="apply-promo">Apply</button>
+                        </div>
+                        <span id="promo-message" class="promo-message"></span>
+                    </div>
+                </div>
+
+                <div class="summary-totals">
+                    <div class="row">
+                        <span>Subtotal</span>
+                        <span>₹{{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                    <div class="row discount">
+                        <span>Discount</span>
+                        <span id="summary-discount">-₹{{ "%.2f"|format(total_discount) }}</span>
+                    </div>
+                    <div class="row">
+                        <span>Tax (8%)</span>
+                        <span>₹{{ "%.2f"|format(tax) }}</span>
+                    </div>
+                    <div class="row">
+                        <span>Shipping</span>
+                        <span>₹{{ "%.2f"|format(shipping) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Total</span>
+                        <span id="summary-total" data-original-total="{{ total }}">₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+
+                <button type="submit" id="place-order-btn" class="place-order-btn" disabled>
+                    <i class="fas fa-lock" style="font-size: 14px; margin-right: 5px;"></i> Place Order & Pay
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+</body>
+
+</html>

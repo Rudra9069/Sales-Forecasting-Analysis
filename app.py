@@ -18,7 +18,7 @@ app.secret_key = os.environ.get('SECRET_KEY', 'your_super_secret_key')  # Needed
 db_config = {
     'host': os.environ.get('DB_HOST', 'localhost'),
     'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASSWORD', 'Rudra@1001'),
+    'password': os.environ.get('DB_PASSWORD', 'harshit0312'),
     'database': os.environ.get('DB_NAME', 'sales_forecasting_db')
 }
 
@@ -311,6 +311,358 @@ def products():
             cursor.close()
             conn.close()
 
+def get_cart_details():
+    cart = session.get('cart', {})
+    cart_items = []
+    subtotal = 0
+    total_discount = 0
+    
+    if not cart:
+        return cart_items, subtotal, total_discount
+        
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        product_ids = list(cart.keys())
+        if product_ids:
+            format_strings = ','.join(['%s'] * len(product_ids))
+            cursor.execute(f"SELECT * FROM products WHERE product_id IN ({format_strings})", tuple(product_ids))
+            products = cursor.fetchall()
+            
+            for p in products:
+                pid = str(p['product_id'])
+                qty = cart.get(pid, 1)
+                
+                price = float(p['price'])
+                # Simulate a discount if original price was higher, for now original = price
+                original_price = price
+                discount = 0
+                
+                item_total = price * qty
+                subtotal += item_total
+                
+                cart_items.append({
+                    'product_id': pid,
+                    'name': p['name'],
+                    'category': p['category'],
+                    'image_url': p['image_url'],
+                    'price': price,
+                    'original_price': original_price,
+                    'quantity': qty,
+                    'discount': discount
+                })
+    except Exception as e:
+        print(f"Error fetching cart details: {e}")
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            cursor.close()
+            conn.close()
+            
+    return cart_items, subtotal, total_discount
+
+@app.route('/add_to_cart/<product_id>', methods=['POST'])
+def add_to_cart(product_id):
+    product_id = str(product_id)
+    if 'cart' not in session:
+        session['cart'] = {}
+    
+    qty = 1
+    if request.is_json:
+        qty = request.json.get('quantity', 1)
+        
+    cart = session['cart']
+    cart[product_id] = cart.get(product_id, 0) + int(qty)
+    session['cart'] = cart
+    session.modified = True
+    
+    return jsonify({'status': 'success', 'message': 'Added to cart', 'cart_count': sum(cart.values())})
+
+@app.route('/update_cart/<product_id>', methods=['POST'])
+def update_cart(product_id):
+    product_id = str(product_id)
+    if 'cart' in session and product_id in session['cart']:
+        if request.is_json:
+            qty = request.json.get('quantity', 1)
+            if int(qty) > 0:
+                session['cart'][product_id] = int(qty)
+            else:
+                del session['cart'][product_id]
+            session.modified = True
+    return jsonify({'status': 'success'})
+
+@app.route('/remove_from_cart/<product_id>', methods=['POST'])
+def remove_from_cart(product_id):
+    product_id = str(product_id)
+    if 'cart' in session and product_id in session['cart']:
+        del session['cart'][product_id]
+        session.modified = True
+    return jsonify({'status': 'success'})
+
+@app.route('/cart')
+def cart():
+    cart_items, subtotal, total_discount = get_cart_details()
+    tax = (subtotal - total_discount) * 0.08
+    shipping = 15.00 if subtotal > 0 else 0
+    total = subtotal - total_discount + tax + shipping
+    
+    return render_template('cart.html', 
+                           cart_items=cart_items, 
+                           subtotal=subtotal, 
+                           total_discount=total_discount,
+                           tax=tax,
+                           shipping=shipping,
+                           total=total)
+
+@app.route('/checkout')
+def checkout():
+    cart_items, subtotal, total_discount = get_cart_details()
+    tax = (subtotal - total_discount) * 0.08
+    shipping = 15.00 if subtotal > 0 else 0
+    total = subtotal - total_discount + tax + shipping
+    
+    if not cart_items:
+        return redirect(url_for('cart'))
+        
+    return render_template('checkout.html', 
+                           cart_items=cart_items, 
+                           subtotal=subtotal, 
+                           total_discount=total_discount,
+                           tax=tax,
+                           shipping=shipping,
+                           total=total)
+
+@app.route('/place_order', methods=['POST'])
+def place_order():
+    if 'user_id' not in session:
+        flash('Please login to place an order.', 'error')
+        return redirect(url_for('login'))
+    
+    cart_items, subtotal, total_discount = get_cart_details()
+    if not cart_items:
+        flash('Your cart is empty.', 'error')
+        return redirect(url_for('cart'))
+    
+    tax = (subtotal - total_discount) * 0.08
+    shipping = 15.00 if subtotal > 0 else 0
+    total = subtotal - total_discount + tax + shipping
+    
+    # Get form data
+    full_name = request.form.get('full_name', '')
+    email = request.form.get('email', '')
+    phone = request.form.get('phone', '')
+    address = request.form.get('address', '')
+    city = request.form.get('city', '')
+    state = request.form.get('state', '')
+    pincode = request.form.get('pincode', '')
+    payment_method = request.form.get('payment_method', 'card')
+    
+    shipping_address = f"{full_name}, {address}, {city}, {state} {pincode}"
+    
+    # Map payment methods to DB enum values
+    payment_map = {
+        'card': 'card',
+        'upi': 'UPI',
+        'netbanking': 'card',  # Treat netbanking as card in DB
+        'cod': 'COD'
+    }
+    db_payment_method = payment_map.get(payment_method, 'card')
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # 1. Insert into transactions table
+        cursor.execute(
+            "INSERT INTO transactions (user_id, total_amount, status, shipping_address) VALUES (%s, %s, %s, %s)",
+            (session['user_id'], total, 'pending', shipping_address)
+        )
+        transaction_id = cursor.lastrowid
+        
+        # 2. Insert each cart item into transaction_items table
+        for item in cart_items:
+            cursor.execute(
+                "INSERT INTO transaction_items (transaction_id, product_id, quantity, price) VALUES (%s, %s, %s, %s)",
+                (transaction_id, item['product_id'], item['quantity'], item['price'])
+            )
+        
+        # 3. Insert into payments table
+        payment_status = 'pending' if db_payment_method == 'COD' else 'success'
+        cursor.execute(
+            "INSERT INTO payments (transaction_id, payment_method, payment_status, amount) VALUES (%s, %s, %s, %s)",
+            (transaction_id, db_payment_method, payment_status, total)
+        )
+        
+        conn.commit()
+        
+        # Clear the cart
+        session.pop('cart', None)
+        session.modified = True
+        
+        # Generate order reference
+        order_ref = f"ORD-{transaction_id}-{random.randint(1000, 9999)}"
+        
+        return redirect(url_for('order_success', ref=order_ref))
+        
+    except mysql.connector.Error as err:
+        if conn:
+            conn.rollback()
+        print(f"Database error placing order: {err}")
+        flash('Something went wrong while placing your order. Please try again.', 'error')
+        return redirect(url_for('checkout'))
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/order_success')
+def order_success():
+    order_ref = request.args.get('ref', 'N/A')
+    return render_template('order_success.html', order_ref=order_ref)
+
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        flash('Please login to view your profile.', 'error')
+        return redirect(url_for('login'))
+        
+    user_id = session['user_id']
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get user details
+        cursor.execute("SELECT name, email, phone FROM users WHERE user_id = %s", (user_id,))
+        user = cursor.fetchone()
+        
+        # Get order history (with items)
+        cursor.execute("""
+            SELECT t.transaction_id, t.total_amount, t.status, t.order_date, t.shipping_address
+            FROM transactions t
+            WHERE t.user_id = %s
+            ORDER BY t.order_date DESC
+        """, (user_id,))
+        orders = cursor.fetchall()
+        
+        # For each order, fetch items
+        for order in orders:
+            cursor.execute("""
+                SELECT ti.quantity, ti.price, p.name, p.image_url
+                FROM transaction_items ti
+                JOIN products p ON ti.product_id = p.product_id
+                WHERE ti.transaction_id = %s
+            """, (order['transaction_id'],))
+            order['order_items'] = cursor.fetchall()
+            
+        # Get payment history
+        cursor.execute("""
+            SELECT p.payment_id, p.payment_method, p.payment_status, p.amount, p.payment_date, t.transaction_id
+            FROM payments p
+            JOIN transactions t ON p.transaction_id = t.transaction_id
+            WHERE t.user_id = %s
+            ORDER BY p.payment_date DESC
+        """, (user_id,))
+        payments = cursor.fetchall()
+        
+        return render_template('profile.html', user=user, orders=orders, payments=payments)
+        
+    except mysql.connector.Error as err:
+        print(f"Error fetching profile: {err}")
+        flash('Could not load profile data.', 'error')
+        return redirect(url_for('home'))
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/update_profile', methods=['POST'])
+def update_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    user_id = session['user_id']
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET email = %s, phone = %s WHERE user_id = %s", (email, phone, user_id))
+        conn.commit()
+        flash('Profile updated successfully!', 'success')
+    except mysql.connector.Error as err:
+        print(f"Error updating profile: {err}")
+        flash('Failed to update profile. Email might be in use.', 'error')
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+            
+    return redirect(url_for('profile'))
+
+@app.route('/submit_help', methods=['POST'])
+def submit_help():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    subject = request.form.get('subject')
+    description = request.form.get('description')
+    transaction_id = request.form.get('transaction_id')
+    user_id = session['user_id']
+    
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        if not transaction_id:
+            cursor.execute("SELECT transaction_id FROM transactions WHERE user_id = %s ORDER BY order_date DESC LIMIT 1", (user_id,))
+            res = cursor.fetchone()
+            if res:
+                transaction_id = res['transaction_id']
+            else:
+                flash('You must have at least one order to submit a complaint.', 'error')
+                return redirect(url_for('profile'))
+                
+        cursor.execute("INSERT INTO complaints (user_id, transaction_id, subject, description) VALUES (%s, %s, %s, %s)",
+                       (user_id, transaction_id, subject, description))
+        conn.commit()
+        
+        # Send Email to forecasting0001@gmail.com
+        cursor.execute("SELECT name, email FROM users WHERE user_id = %s", (user_id,))
+        user = cursor.fetchone()
+        
+        sender_email = os.environ.get('MAIL_USERNAME')
+        sender_password = os.environ.get('MAIL_PASSWORD')
+        admin_email = "forecasting0001@gmail.com"
+        
+        if sender_email and sender_password:
+            msg = MIMEMultipart()
+            msg['From'] = f"Forecastify <{sender_email}>"
+            msg['To'] = admin_email
+            msg['Subject'] = f"Help Request: {subject}"
+            
+            body = f"New help request from {user['name']} ({user['email']})\n\nTransaction ID: {transaction_id}\n\nDescription:\n{description}"
+            msg.attach(MIMEText(body, 'plain'))
+            
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, admin_email, msg.as_string())
+            server.quit()
+        
+        flash('Your complaint has been submitted.', 'success')
+    except Exception as err:
+        print(f"Error submitting help: {err}")
+        flash('Failed to submit complaint.', 'error')
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+            
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     app.run(debug=True)

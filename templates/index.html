@@ -23,7 +23,8 @@
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            <li><a href="#" class="nav-btn">Profile</a></li>
+            <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>

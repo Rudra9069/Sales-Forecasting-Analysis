@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success - Forecastify</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <style>
+        .success-section {
+            padding: 80px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+        }
+        .success-card {
+            background: var(--white);
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        .success-icon {
+            font-size: 70px;
+            color: #10B981;
+            margin-bottom: 25px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .success-card h1 {
+            color: var(--primary-navy);
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .success-card p {
+            color: var(--text-gray);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .order-number {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed var(--border-light);
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+        .success-btn {
+            display: inline-block;
+            padding: 14px 30px;
+            background: var(--accent-blue);
+            color: var(--white);
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .success-btn:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('products') }}">Products</a></li>
+            {% if session.get('user_id') %}
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <section class="success-section">
+        <div class="success-card">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1>Payment Successful!</h1>
+            <p>Thank you for your purchase. We have received your order and will begin processing it right away.</p>
+            <div>
+                <span style="font-size: 14px; color: var(--text-gray); display: block; margin-bottom: 5px;">Order Reference Number</span>
+                <div class="order-number">{{ order_ref }}</div>
+            </div>
+            <a href="{{ url_for('products') }}" class="success-btn">Continue Shopping</a>
+        </div>
+    </section>
+
+</body>
+</html>
