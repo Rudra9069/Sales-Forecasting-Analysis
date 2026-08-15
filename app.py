@@ -422,6 +422,25 @@ def checkout():
     
     if not cart_items:
         return redirect(url_for('cart'))
+    
+    # Fetch user data for auto-filling the form
+    user_data = {}
+    if 'user_id' in session:
+        conn = None
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT name, email, phone, address, city, state, pincode FROM users WHERE user_id = %s",
+                (session['user_id'],)
+            )
+            user_data = cursor.fetchone() or {}
+            cursor.close()
+        except Exception as e:
+            print(f"Error fetching user data: {e}")
+        finally:
+            if conn:
+                conn.close()
         
     return render_template('checkout.html', 
                            cart_items=cart_items, 
@@ -429,7 +448,8 @@ def checkout():
                            total_discount=total_discount,
                            tax=tax,
                            shipping=shipping,
-                           total=total)
+                           total=total,
+                           user=user_data)
 
 @app.route('/place_order', methods=['POST'])
 def place_order():

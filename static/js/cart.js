@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners for Quantity Buttons
     document.querySelectorAll('.quantity-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const isPlus = btn.textContent === '+';
+            const icon = btn.querySelector('i');
+            const isPlus = icon && icon.classList.contains('fa-plus');
             const input = btn.parentElement.querySelector('.quantity-input');
             const cartItem = btn.closest('.cart-item');
             const productId = cartItem.getAttribute('data-product-id');

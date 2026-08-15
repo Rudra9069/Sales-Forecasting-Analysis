@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart - Forecastify</title>
+    <meta name="description" content="Review your cart and proceed to checkout on Forecastify.">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
@@ -37,74 +38,133 @@
 
     <!-- ====== Cart Section ====== -->
     <section class="cart-section">
+        <!-- Breadcrumb -->
+        <div class="cart-breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{{ url_for('products') }}">Products</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Shopping Cart</span>
+        </div>
+
         <div class="cart-header">
-            <h1>Shopping Cart</h1>
+            <h1><i class="fas fa-shopping-bag cart-header-icon"></i> Shopping Cart</h1>
             <p>Review your selected products before checkout.</p>
         </div>
 
         <div class="cart-container">
             <!-- Cart Items -->
-            <div class="cart-items">
-                {% for item in cart_items %}
-                <div class="cart-item" data-product-id="{{ item.product_id }}">
-                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="cart-item-img">
-                    <div class="cart-item-details">
-                        <div class="cart-item-category">{{ item.category }}</div>
-                        <h3 class="cart-item-title">{{ item.name }}</h3>
-                        <div class="cart-item-price-row">
-                            <span class="cart-item-price">₹{{ "%.2f"|format(item.price) }}</span>
+            <div class="cart-items-wrapper">
+                <div class="cart-items-top-bar">
+                    <span class="cart-items-count"><i class="fas fa-box"></i> {{ cart_items|length }} item{{ 's' if cart_items|length != 1 else '' }} in your cart</span>
+                </div>
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                    <div class="cart-item" data-product-id="{{ item.product_id }}">
+                        <div class="cart-item-img-wrapper">
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="cart-item-img">
                             {% if item.discount > 0 %}
-                            <span class="cart-item-original-price">₹{{ "%.2f"|format(item.original_price) }}</span>
-                            <span class="cart-item-discount">Save ₹{{ "%.2f"|format(item.discount) }}</span>
+                            <span class="cart-item-badge">SALE</span>
                             {% endif %}
                         </div>
-                        <div class="cart-item-actions">
-                            <div class="quantity-selector">
-                                <button class="quantity-btn">-</button>
-                                <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
-                                <button class="quantity-btn">+</button>
+                        <div class="cart-item-details">
+                            <div class="cart-item-meta-top">
+                                <span class="cart-item-category"><i class="fas fa-tag"></i> {{ item.category }}</span>
                             </div>
-                            <button class="remove-btn" data-product-id="{{ item.product_id }}"><i class="fas fa-trash-alt"></i> Remove</button>
+                            <h3 class="cart-item-title">{{ item.name }}</h3>
+                            <div class="cart-item-price-row">
+                                <span class="cart-item-price">₹{{ "%.2f"|format(item.price) }}</span>
+                                {% if item.discount > 0 %}
+                                <span class="cart-item-original-price">₹{{ "%.2f"|format(item.original_price) }}</span>
+                                <span class="cart-item-discount"><i class="fas fa-arrow-down"></i> Save ₹{{ "%.2f"|format(item.discount) }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="cart-item-actions">
+                                <div class="quantity-selector">
+                                    <button class="quantity-btn" aria-label="Decrease quantity">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="text" class="quantity-input" value="{{ item.quantity }}" readonly>
+                                    <button class="quantity-btn" aria-label="Increase quantity">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="cart-item-line-total">
+                                    Subtotal: <strong>₹{{ "%.2f"|format(item.price * item.quantity) }}</strong>
+                                </div>
+                                <button class="remove-btn" data-product-id="{{ item.product_id }}"><i class="fas fa-trash-alt"></i> Remove</button>
+                            </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
 
             <!-- Cart Summary -->
-            <div class="cart-summary">
-                <h3>Order Summary <span id="cart-count" style="font-size:14px; font-weight: normal; color:var(--text-gray);">({{ cart_items|length }} items)</span></h3>
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span id="summary-subtotal">₹{{ "%.2f"|format(subtotal) }}</span>
+            <div class="cart-summary-wrapper">
+                <div class="cart-summary">
+                    <div class="cart-summary-header">
+                        <h3><i class="fas fa-receipt"></i> Order Summary</h3>
+                        <span class="cart-summary-count" id="cart-count">{{ cart_items|length }} item{{ 's' if cart_items|length != 1 else '' }}</span>
+                    </div>
+                    <div class="summary-body">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">₹{{ "%.2f"|format(subtotal) }}</span>
+                        </div>
+                        <div class="summary-row discount-row">
+                            <span><i class="fas fa-percentage"></i> Discount</span>
+                            <span id="summary-discount">-₹{{ "%.2f"|format(total_discount) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (8%)</span>
+                            <span id="summary-tax">₹{{ "%.2f"|format(tax) }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span><i class="fas fa-truck"></i> Shipping</span>
+                            <span id="summary-shipping">₹{{ "%.2f"|format(shipping) }}</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="summary-total">₹{{ "%.2f"|format(total) }}</span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('checkout') }}" class="checkout-btn" id="checkout-btn">
+                        <i class="fas fa-lock"></i> Proceed to Checkout
+                    </a>
+                    <a href="{{ url_for('products') }}" class="continue-shopping">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-undo"></i>
+                            <span>Easy Returns</span>
+                        </div>
+                        <div class="trust-badge">
+                            <i class="fas fa-headset"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="summary-row discount-row">
-                    <span>Discount</span>
-                    <span id="summary-discount">-₹{{ "%.2f"|format(total_discount) }}</span>
-                </div>
-                <div class="summary-row">
-                    <span>Tax (8%)</span>
-                    <span id="summary-tax">₹{{ "%.2f"|format(tax) }}</span>
-                </div>
-                <div class="summary-row">
-                    <span>Shipping</span>
-                    <span id="summary-shipping">₹{{ "%.2f"|format(shipping) }}</span>
-                </div>
-                <div class="summary-total">
-                    <span>Total</span>
-                    <span id="summary-total">₹{{ "%.2f"|format(total) }}</span>
-                </div>
-                <a href="{{ url_for('checkout') }}" class="checkout-btn">Proceed to Checkout</a>
-                <a href="{{ url_for('products') }}" class="continue-shopping"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
             </div>
         </div>
 
         <!-- Empty Cart State -->
         <div class="empty-cart" id="empty-cart-state">
-            <i class="fas fa-shopping-cart empty-cart-icon"></i>
+            <div class="empty-cart-visual">
+                <div class="empty-cart-circle">
+                    <i class="fas fa-shopping-cart empty-cart-icon"></i>
+                </div>
+            </div>
             <h2>Your cart is empty</h2>
-            <p>Looks like you haven't added any products to your cart yet.</p>
-            <a href="{{ url_for('products') }}" class="primary-btn">Start Shopping</a>
+            <p>Looks like you haven't added any products to your cart yet. Start exploring our collection!</p>
+            <a href="{{ url_for('products') }}" class="primary-btn"><i class="fas fa-store"></i> Start Shopping</a>
         </div>
     </section>
 
@@ -156,11 +216,14 @@
     <!-- Confirmation Modal -->
     <div class="modal-overlay" id="remove-modal">
         <div class="modal">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
             <h3>Remove Item</h3>
             <p>Are you sure you want to remove this item from your cart?</p>
             <div class="modal-actions">
                 <button class="modal-btn btn-cancel" id="cancel-remove">Cancel</button>
-                <button class="modal-btn btn-confirm" id="confirm-remove">Yes, Remove</button>
+                <button class="modal-btn btn-confirm" id="confirm-remove"><i class="fas fa-trash-alt"></i> Yes, Remove</button>
             </div>
         </div>
     </div>

@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAlert(element, text, type) {
         element.textContent = text;
         element.className = `modal-alert ${type}`;
+        element.style.display = 'block';
     }
 
     function hideAlert(element) {

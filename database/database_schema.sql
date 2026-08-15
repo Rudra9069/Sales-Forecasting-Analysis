@@ -143,16 +143,6 @@ CREATE INDEX idx_transactions_order_date ON transactions(order_date);
 CREATE INDEX idx_payments_status ON payments(payment_status);
 
 
--- ==============================================================================
--- 8. SAMPLE DATA INSERTS (5 records per table)
--- ==============================================================================
-INSERT INTO users (name, email, password, phone, address, city, state, pincode, role) VALUES
-('John Doe', 'john@example.com', 'hashed_pwd_1', '9876543210', '123 Main St', 'Mumbai', 'MH', '400001', 'user'),
-('Jane Smith', 'jane@example.com', 'hashed_pwd_2', '9876543211', '456 Elm St', 'Delhi', 'DL', '110001', 'user'),
-('Alice Brown', 'alice@example.com', 'hashed_pwd_3', '9876543212', '789 Oak St', 'Bangalore', 'KA', '560001', 'admin'),
-('Bob Davis', 'bob@example.com', 'hashed_pwd_4', '9876543213', '101 Pine St', 'Chennai', 'TN', '600001', 'user'),
-('Charlie Evans', 'charlie@example.com', 'hashed_pwd_5', '9876543214', '202 Maple St', 'Pune', 'MH', '411001', 'user');
-
 INSERT INTO products (name, description, category, brand, price, stock_quantity, image_url, rating) VALUES
 ('Samsung Galaxy S24 Ultra', 'Latest 5G smartphone with 6.8 inch Dynamic AMOLED 2X display, 200MP camera, 12GB RAM, and 256GB storage. Features advanced AI processing and all-day 5000mAh battery.', 'Smartphones', 'Samsung', 74999.00, 100, '/static/images/products/samsung_galaxy_s24_ultra.png', 4.50),
 ('Apple MacBook Air M3', 'Ultra-thin 15 inch Liquid Retina display laptop with Apple M3 chip, 16GB unified memory, 512GB SSD, and 18-hour battery life. Perfect for professionals and creators.', 'Laptops', 'Apple', 134900.00, 50, '/static/images/products/apple_macbook_air_m3.png', 4.80),
@@ -184,49 +174,6 @@ INSERT INTO products (name, description, category, brand, price, stock_quantity,
 ('Lenovo Tab P12 Pro', '12.6-inch AMOLED display, Snapdragon 870, Precision Pen 3 included, great for media and light work.', 'Tablets', 'Lenovo', 55000.00, 110, '/static/images/products/lenovo_tab_p12_pro.jpg', 4.50),
 ('OnePlus Pad', '11.61-inch 144Hz ReadFit display, Dimensity 9000, 9510mAh battery, 67W fast charging, sleek design.', 'Tablets', 'OnePlus', 37999.00, 140, '/static/images/products/oneplus_pad.jpg', 4.40),
 ('Xiaomi Pad 6', '11-inch 144Hz display, Snapdragon 870, 8840mAh battery, quad speakers with Dolby Atmos.', 'Tablets', 'Xiaomi', 26999.00, 200, '/static/images/products/xiaomi_pad_6.jpg', 4.60);
-
-INSERT INTO transactions (user_id, total_amount, status, shipping_address, order_date) VALUES
-(1, 699.99, 'delivered', '123 Main St, Mumbai, MH 400001', '2023-10-01 10:00:00'),
-(2, 1449.98, 'shipped', '456 Elm St, Delhi, DL 110001', '2023-10-02 11:30:00'),
-(4, 149.99, 'pending', '101 Pine St, Chennai, TN 600001', '2023-10-05 14:15:00'),
-(5, 89.99, 'delivered', '202 Maple St, Pune, MH 411001', '2023-10-08 09:45:00'),
-(1, 199.99, 'cancelled', '123 Main St, Mumbai, MH 400001', '2023-10-10 16:20:00');
-
-INSERT INTO transaction_items (transaction_id, product_id, quantity, price) VALUES
-(1, 1, 1, 699.99),
-(2, 2, 1, 1299.99),
-(2, 3, 1, 149.99),
-(3, 3, 1, 149.99),
-(4, 4, 1, 89.99),
-(5, 5, 1, 199.99);
-
-INSERT INTO payments (transaction_id, payment_method, payment_status, amount) VALUES
-(1, 'UPI', 'success', 699.99),
-(2, 'card', 'success', 1449.98),
-(3, 'COD', 'pending', 149.99),
-(4, 'UPI', 'success', 89.99),
-(5, 'card', 'failed', 199.99);
-
-INSERT INTO complaints (user_id, transaction_id, subject, description, status) VALUES
-(1, 1, 'Delivery Delay', 'Package arrived two days later than expected.', 'resolved'),
-(4, 3, 'Order Stuck', 'Order has been pending for three days.', 'open'),
-(5, 4, 'Wrong Size', 'The shoes received are size 9, requested size 10.', 'open'),
-(1, 5, 'Payment Deducted', 'Order cancelled but amount deducted from card.', 'open'),
-(2, 2, 'Packaging Damaged', 'Outer box was slightly torn, product inside is fine.', 'resolved');
-
-INSERT INTO feedback (user_id, product_id, rating, comment) VALUES
-(1, 1, 5, 'Excellent phone, completely satisfied!'),
-(2, 2, 5, 'Best laptop I have ever used.'),
-(2, 3, 4, 'Good sound quality but battery could be better.'),
-(5, 4, 3, 'Comfortable but wrong size delivered initially.'),
-(1, 1, 4, 'Good phone, slightly overpriced.');
-
-INSERT INTO returns (transaction_id, product_id, reason, status, refund_amount) VALUES
-(4, 4, 'Wrong size delivered', 'approved', 89.99),
-(1, 1, 'Defective screen', 'requested', 699.99),
-(2, 3, 'Changed my mind', 'rejected', 0.00),
-(5, 5, 'Order was cancelled before shipment', 'approved', 199.99),
-(2, 2, 'Keyboard not working', 'requested', 1299.99);
 
 
 -- ==============================================================================

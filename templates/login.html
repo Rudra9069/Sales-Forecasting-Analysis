@@ -27,7 +27,8 @@
                 </div>
                 <div class="branding-content">
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="auth-logo">
-                    <p class="branding-subtitle">Empowering your business with AI-driven insights and real-time sales predictions.</p>
+                    <p class="branding-subtitle">Empowering your business with AI-driven insights and real-time sales
+                        predictions.</p>
                     <div class="feature-highlights">
                         <div class="feature-item">
                             <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
@@ -42,10 +43,6 @@
                             <span>Enterprise Security</span>
                         </div>
                     </div>
-                    <div class="trust-badge">
-                        <i class="fas fa-users"></i>
-                        <span>Trusted by <strong>10,000+</strong> businesses worldwide</span>
-                    </div>
                 </div>
             </div>
 
@@ -57,37 +54,37 @@
                 </div>
 
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                      {% if message.startswith('email_success:') %}
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                Swal.fire({
-                                    title: 'Registration Successful!',
-                                    text: '{{ message.split(":", 1)[1] }}',
-                                    icon: 'success',
-                                    confirmButtonColor: '#1E3A5F',
-                                    confirmButtonText: 'Continue to Login'
-                                });
-                            });
-                        </script>
-                      {% elif message.startswith('email_error:') %}
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                Swal.fire({
-                                    title: 'Registration Complete',
-                                    text: '{{ message.split(":", 1)[1] }}',
-                                    icon: 'warning',
-                                    confirmButtonColor: '#1E3A5F',
-                                    confirmButtonText: 'Okay'
-                                });
-                            });
-                        </script>
-                      {% else %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
+                {% if messages %}
+                {% for category, message in messages %}
+                {% if message.startswith('email_success:') %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            title: 'Registration Successful!',
+                            text: '{{ message.split(":", 1)[1] }}',
+                            icon: 'success',
+                            confirmButtonColor: '#1E3A5F',
+                            confirmButtonText: 'Continue to Login'
+                        });
+                    });
+                </script>
+                {% elif message.startswith('email_error:') %}
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        Swal.fire({
+                            title: 'Registration Complete',
+                            text: '{{ message.split(":", 1)[1] }}',
+                            icon: 'warning',
+                            confirmButtonColor: '#1E3A5F',
+                            confirmButtonText: 'Okay'
+                        });
+                    });
+                </script>
+                {% else %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
                 {% endwith %}
 
                 <form id="loginForm" action="" method="POST">
@@ -105,7 +102,8 @@
                         <label for="password">Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required>
                             <i class="far fa-eye toggle-password" data-target="password"></i>
                         </div>
                     </div>
@@ -123,7 +121,8 @@
 
                 <div class="auth-links">
                     <p>Don't have an account? <a href="{{ url_for('register') }}">Create an account</a></p>
-                    <p style="margin-top: 15px;"><a href="{{ url_for('home') }}" class="back-home"><i class="fas fa-arrow-left"></i> Back to Home</a></p>
+                    <p style="margin-top: 15px;"><a href="{{ url_for('home') }}" class="back-home"><i
+                                class="fas fa-arrow-left"></i> Back to Home</a></p>
                 </div>
             </div>
 
@@ -134,7 +133,7 @@
     <div id="forgotPasswordModal" class="modal-overlay">
         <div class="modal-card">
             <button class="close-modal" id="closeForgotModal">&times;</button>
-            
+
             <!-- Step 1: Send Email -->
             <div id="forgotStep1" class="modal-step">
                 <div class="form-header">
@@ -185,7 +184,8 @@
                         <label for="newPassword">New Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="newPassword" name="password" placeholder="Enter new password" required>
+                            <input type="password" id="newPassword" name="password" placeholder="Enter new password"
+                                required>
                             <i class="far fa-eye toggle-password" data-target="newPassword"></i>
                         </div>
                     </div>
@@ -193,7 +193,8 @@
                         <label for="confirmNewPassword">Confirm Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
-                            <input type="password" id="confirmNewPassword" name="confirm_password" placeholder="Confirm new password" required>
+                            <input type="password" id="confirmNewPassword" name="confirm_password"
+                                placeholder="Confirm new password" required>
                             <i class="far fa-eye toggle-password" data-target="confirmNewPassword"></i>
                         </div>
                     </div>
