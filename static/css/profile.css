@@ -233,21 +233,31 @@
     border-top: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 20px;
 }
 
 .shipping-info {
     color: var(--text-gray);
     font-size: 0.9rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.shipping-info i {
+    margin-top: 3px;
+    flex-shrink: 0;
 }
 
 .total-amount {
     font-weight: 700;
     color: var(--nav-bg);
     font-size: 1.1rem;
+    white-space: nowrap;
+    text-align: right;
 }
 
 /* Payments Table */

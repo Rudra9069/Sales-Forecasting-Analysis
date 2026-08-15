@@ -1,0 +1,149 @@
+/* 
+  Splash Screen Styles
+  Premium, minimal, and professional 
+*/
+body.splash-active {
+    overflow: hidden;
+}
+
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #06142E;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+/* When animate-out is added: background fades, but splash stays in DOM for the logo flight */
+#splash-screen.animate-out {
+    background-color: transparent;
+    transition: background-color 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+/* Text fades out immediately when animate-out starts */
+#splash-screen.animate-out .splash-title-container {
+    opacity: 0 !important;
+    transition: opacity 0.4s ease-out !important;
+}
+
+/* Fallback fade-out */
+#splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+/* Container for logo and sheen */
+.splash-logo-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: scale(0.92);
+    animation: scaleFadeInLogo 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* When flying, remove the margin so position calc is accurate */
+#splash-screen.animate-out .splash-logo-wrapper {
+    margin-bottom: 0;
+}
+
+.splash-logo {
+    width: 250px;
+    max-width: 80vw;
+    display: block;
+}
+
+/* Subtle sweeping sheen restricted to the logo shape */
+.splash-sheen {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.5) 50%,
+        transparent 80%
+    );
+    background-size: 200% auto;
+    background-position: 200% center;
+    mask-image: url('../images/logo.png');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-image: url('../images/logo.png');
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    z-index: 3;
+    animation: sweepSheen 1.8s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards;
+}
+
+/* Hide sheen during flight */
+#splash-screen.animate-out .splash-sheen {
+    display: none;
+}
+
+/* Typography */
+.splash-title-container {
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeUpText 0.5s ease-in-out 0.4s forwards; /* Appears quickly after logo */
+}
+
+.splash-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #F8FAFC;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.splash-subtitle {
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #94A3B8;
+    margin: 0.5rem 0 0 0;
+    letter-spacing: 0.3px;
+}
+
+/* Keyframes */
+@keyframes scaleFadeInLogo {
+    0% {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes sweepSheen {
+    0% {
+        background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
+}
+
+@keyframes fadeUpText {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

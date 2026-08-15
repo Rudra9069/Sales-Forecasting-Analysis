@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Forecastify</title>
-    <meta name="description" content="Explore our premium collection of cutting-edge electronic products. Smartphones, laptops, earbuds, smartwatches, and tablets from top brands.">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description"
+        content="Explore our premium collection of cutting-edge electronic products. Smartphones, laptops, earbuds, smartwatches, and tablets from top brands.">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 </head>
+
 <body>
 
     <!-- ====== Navbar ====== -->
@@ -22,9 +27,9 @@
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
+                        class="fas fa-shopping-cart"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -94,10 +99,10 @@
                     <option value="all">All Categories</option>
                     {% set categories = [] %}
                     {% for product in products %}
-                        {% if product.category not in categories %}
-                            {% if categories.append(product.category) %}{% endif %}
-                            <option value="{{ product.category }}">{{ product.category }}</option>
-                        {% endif %}
+                    {% if product.category not in categories %}
+                    {% if categories.append(product.category) %}{% endif %}
+                    <option value="{{ product.category }}">{{ product.category }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -125,13 +130,10 @@
         <div class="products-inner">
             <div class="products-grid" id="productsGrid">
                 {% for product in products %}
-                <div class="product-card fade-in-up"
-                     data-category="{{ product.category }}"
-                     data-price="{{ product.price }}"
-                     data-rating="{{ product.rating }}"
-                     data-name="{{ product.name|lower }}"
-                     data-brand="{{ product.brand|lower }}">
-                    
+                <div class="product-card fade-in-up" data-category="{{ product.category }}"
+                    data-price="{{ product.price }}" data-rating="{{ product.rating }}"
+                    data-name="{{ product.name|lower }}" data-brand="{{ product.brand|lower }}">
+
                     <!-- Top Accent Bar -->
                     <div class="card-accent"></div>
 
@@ -148,7 +150,8 @@
                     <!-- Product Image -->
                     <div class="product-image-wrapper">
                         {% if product.image_url %}
-                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image" loading="lazy">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image"
+                            loading="lazy">
                         {% else %}
                         <div class="product-image-placeholder">
                             <i class="fas fa-box-open"></i>
@@ -187,19 +190,21 @@
                                 <span class="price-currency">₹</span>
                                 <span class="price-amount">{{ "%.2f"|format(product.price) }}</span>
                             </div>
-                            <div class="product-stock {% if product.stock_quantity > 50 %}in-stock{% elif product.stock_quantity > 0 %}low-stock{% else %}out-of-stock{% endif %}">
+                            <div
+                                class="product-stock {% if product.stock_quantity > 50 %}in-stock{% elif product.stock_quantity > 0 %}low-stock{% else %}out-of-stock{% endif %}">
                                 <i class="fas fa-circle"></i>
                                 {% if product.stock_quantity > 50 %}
-                                    In Stock
+                                In Stock
                                 {% elif product.stock_quantity > 0 %}
-                                    Only {{ product.stock_quantity }} left
+                                Only {{ product.stock_quantity }} left
                                 {% else %}
-                                    Out of Stock
+                                Out of Stock
                                 {% endif %}
                             </div>
                         </div>
 
-                        <button class="add-to-cart-btn" data-product-id="{{ product.product_id }}" {% if product.stock_quantity == 0 %}disabled{% endif %}>
+                        <button class="add-to-cart-btn" data-product-id="{{ product.product_id }}" {% if
+                            product.stock_quantity==0 %}disabled{% endif %}>
                             <i class="fas fa-shopping-cart"></i>
                             {% if product.stock_quantity > 0 %}Add to Cart{% else %}Sold Out{% endif %}
                         </button>
@@ -233,8 +238,10 @@
         <div class="footer-inner">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo"></h3>
-                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for enterprise success.</p>
+                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
+                            class="footer-logo"></h3>
+                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for
+                        enterprise success.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Product</h4>
@@ -443,30 +450,30 @@
         });
         // Add to Cart Functionality
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 const productId = this.getAttribute('data-product-id');
                 if (!productId) return;
-                
+
                 // Add simple loading state
                 const originalText = this.innerHTML;
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-                
+
                 fetch(`/add_to_cart/${productId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quantity: 1 })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    this.innerHTML = originalText;
-                    if (data.status === 'success') {
-                        showProductToast('Added to Cart Successfully!');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    this.innerHTML = originalText;
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        this.innerHTML = originalText;
+                        if (data.status === 'success') {
+                            showProductToast('Added to Cart Successfully!');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.innerHTML = originalText;
+                    });
             });
         });
 
@@ -478,12 +485,12 @@
                 container.style.cssText = 'position:fixed;bottom:30px;right:30px;z-index:9999;';
                 document.body.appendChild(container);
             }
-            
+
             const toast = document.createElement('div');
             toast.style.cssText = 'background:#10B981;color:#fff;padding:12px 20px;border-radius:6px;margin-top:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);opacity:0;transform:translateY(20px);transition:all 0.3s ease;display:flex;align-items:center;gap:10px;';
             toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${msg}</span>`;
             container.appendChild(toast);
-            
+
             setTimeout(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; }, 10);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -493,4 +500,5 @@
     </script>
 
 </body>
+
 </html>

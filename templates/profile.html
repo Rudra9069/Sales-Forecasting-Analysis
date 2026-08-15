@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - Forecastify</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
 </head>
+
 <body>
 
     <!-- ====== Navbar ====== -->
@@ -19,10 +22,12 @@
         <ul class="navbar-nav">
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('products') }}">Products</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('profile') }}" class="nav-btn active">Profile</a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
+                        class="fas fa-shopping-cart"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -36,7 +41,7 @@
     <!-- ====== Profile Section ====== -->
     <section class="profile-section">
         <div class="profile-container">
-            
+
             <!-- Sidebar -->
             <div class="profile-sidebar">
                 <div class="user-info">
@@ -49,66 +54,67 @@
                     <li data-target="payments-tab"><i class="fas fa-credit-card"></i> Payment History</li>
                     <li data-target="edit-tab"><i class="fas fa-user-edit"></i> Edit Details</li>
                     <li data-target="help-tab"><i class="fas fa-question-circle"></i> Help & Support</li>
-                    <li><a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="{{ url_for('logout') }}" style="color: inherit; text-decoration: none;"><i
+                                class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </div>
 
             <!-- Content Area -->
             <div class="profile-content">
-                
+
                 <!-- Flash Messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    <div class="flash-messages">
-                      {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                      {% endfor %}
-                    </div>
-                  {% endif %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% endwith %}
 
                 <!-- Orders Tab -->
                 <div class="tab-pane active" id="orders-tab">
                     <h2>Order History</h2>
                     {% if orders %}
-                        <div class="history-list">
-                            {% for order in orders %}
-                            <div class="history-card">
-                                <div class="history-header">
-                                    <div>
-                                        <span class="order-id">Order #{{ order.transaction_id }}</span>
-                                        <span class="order-date">{{ order.order_date.strftime('%b %d, %Y') }}</span>
-                                    </div>
-                                    <span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span>
+                    <div class="history-list">
+                        {% for order in orders %}
+                        <div class="history-card">
+                            <div class="history-header">
+                                <div>
+                                    <span class="order-id">Order #{{ order.transaction_id }}</span>
+                                    <span class="order-date">{{ order.order_date.strftime('%b %d, %Y') }}</span>
                                 </div>
-                                <div class="order-items">
-                                    {% for item in order.order_items %}
-                                    <div class="order-item">
-                                        <img src="{{ item.image_url }}" alt="{{ item.name }}">
-                                        <div class="item-details">
-                                            <h4>{{ item.name }}</h4>
-                                            <p>Qty: {{ item.quantity }} | ₹{{ "%.2f"|format(item.price) }}</p>
-                                        </div>
+                                <span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span>
+                            </div>
+                            <div class="order-items">
+                                {% for item in order.order_items %}
+                                <div class="order-item">
+                                    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                                    <div class="item-details">
+                                        <h4>{{ item.name }}</h4>
+                                        <p>Qty: {{ item.quantity }} | ₹{{ "%.2f"|format(item.price) }}</p>
                                     </div>
-                                    {% endfor %}
                                 </div>
-                                <div class="history-footer">
-                                    <div class="shipping-info">
-                                        <i class="fas fa-map-marker-alt"></i> {{ order.shipping_address }}
-                                    </div>
-                                    <div class="total-amount">
-                                        Total: ₹{{ "%.2f"|format(order.total_amount) }}
-                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="history-footer">
+                                <div class="shipping-info">
+                                    <i class="fas fa-map-marker-alt"></i> {{ order.shipping_address }}
+                                </div>
+                                <div class="total-amount">
+                                    Total: ₹{{ "%.2f"|format(order.total_amount) }}
                                 </div>
                             </div>
-                            {% endfor %}
                         </div>
+                        {% endfor %}
+                    </div>
                     {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-box-open"></i>
-                            <p>You haven't placed any orders yet.</p>
-                            <a href="{{ url_for('products') }}" class="btn">Start Shopping</a>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <p>You haven't placed any orders yet.</p>
+                        <a href="{{ url_for('products') }}" class="btn">Start Shopping</a>
+                    </div>
                     {% endif %}
                 </div>
 
@@ -116,35 +122,36 @@
                 <div class="tab-pane" id="payments-tab">
                     <h2>Payment History</h2>
                     {% if payments %}
-                        <div class="table-responsive">
-                            <table class="history-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Transaction ID</th>
-                                        <th>Method</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for payment in payments %}
-                                    <tr>
-                                        <td>{{ payment.payment_date.strftime('%b %d, %Y') }}</td>
-                                        <td>#{{ payment.transaction_id }}</td>
-                                        <td>{{ payment.payment_method|upper }}</td>
-                                        <td>₹{{ "%.2f"|format(payment.amount) }}</td>
-                                        <td><span class="status-badge status-{{ payment.payment_status }}">{{ payment.payment_status|title }}</span></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Transaction ID</th>
+                                    <th>Method</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>{{ payment.payment_date.strftime('%b %d, %Y') }}</td>
+                                    <td>#{{ payment.transaction_id }}</td>
+                                    <td>{{ payment.payment_method|upper }}</td>
+                                    <td>₹{{ "%.2f"|format(payment.amount) }}</td>
+                                    <td><span class="status-badge status-{{ payment.payment_status }}">{{
+                                            payment.payment_status|title }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     {% else %}
-                        <div class="empty-state">
-                            <i class="fas fa-receipt"></i>
-                            <p>No payment history found.</p>
-                        </div>
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <p>No payment history found.</p>
+                    </div>
                     {% endif %}
                 </div>
 
@@ -178,7 +185,8 @@
                             <select id="transaction_id" name="transaction_id" required>
                                 <option value="" disabled selected>Choose an order...</option>
                                 {% for order in orders %}
-                                <option value="{{ order.transaction_id }}">Order #{{ order.transaction_id }} - {{ order.order_date.strftime('%b %d, %Y') }}</option>
+                                <option value="{{ order.transaction_id }}">Order #{{ order.transaction_id }} - {{
+                                    order.order_date.strftime('%b %d, %Y') }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -188,9 +196,11 @@
                         </div>
                         <div class="form-group">
                             <label for="description">Description *</label>
-                            <textarea id="description" name="description" rows="5" required placeholder="Describe your issue..."></textarea>
+                            <textarea id="description" name="description" rows="5" required
+                                placeholder="Describe your issue..."></textarea>
                         </div>
-                        <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit Complaint</button>
+                        <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Submit
+                            Complaint</button>
                     </form>
                 </div>
 
@@ -246,4 +256,5 @@
         });
     </script>
 </body>
+
 </html>

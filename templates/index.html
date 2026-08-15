@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forecastify</title>
-    <meta name="description" content="Empower your business with AI-driven sales forecasting, advanced analytics, and real-time predictions for enterprise success.">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description"
+        content="Empower your business with AI-driven sales forecasting, advanced analytics, and real-time predictions for enterprise success.">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/splash.css') }}">
 </head>
+
 <body>
+
+    <!-- ====== Splash Screen ====== -->
+    <div id="splash-screen">
+        <div class="splash-logo-wrapper">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify Logo" class="splash-logo">
+            <div class="splash-sheen"></div>
+        </div>
+        <div class="splash-title-container">
+            <h2 class="splash-subtitle">Sales Forecasting & Analysis Dashboard</h2>
+        </div>
+    </div>
 
     <!-- ====== Navbar ====== -->
     <nav class="navbar">
@@ -22,9 +38,9 @@
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
+                        class="fas fa-shopping-cart"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -37,13 +53,13 @@
 
     <!-- ====== Flash Messages ====== -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-banner">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <div class="flash-banner">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endwith %}
 
     <!-- ====== Hero Section ====== -->
@@ -51,7 +67,8 @@
         <div class="hero-content fade-in-up">
             <span class="section-label">AI-Powered Sales Intelligence</span>
             <h1>Predict Sales.<br><span>Maximize Revenue.</span></h1>
-            <p>Empower your business with AI-driven insights, advanced analytics, and real-time sales predictions tailored for enterprise success. Make data-driven decisions with confidence.</p>
+            <p>Empower your business with AI-driven insights, advanced analytics, and real-time sales predictions
+                tailored for enterprise success. Make data-driven decisions with confidence.</p>
             <div class="btn-group">
                 <a href="{{ url_for('register') }}" class="primary-btn">Get Started Free</a>
                 <a href="#features" class="secondary-btn">Explore Features</a>
@@ -107,24 +124,30 @@
                     </div>
                     <div class="mockup-chart-area">
                         <div class="chart-title">Sales Forecast — Last 12 Months</div>
-                        <svg viewBox="0 0 500 140" preserveAspectRatio="none" style="width:100%; height:calc(100% - 24px);">
+                        <svg viewBox="0 0 500 140" preserveAspectRatio="none"
+                            style="width:100%; height:calc(100% - 24px);">
                             <!-- Grid lines -->
-                            <line x1="0" y1="35" x2="500" y2="35" stroke="#E5E7EB" stroke-width="0.5"/>
-                            <line x1="0" y1="70" x2="500" y2="70" stroke="#E5E7EB" stroke-width="0.5"/>
-                            <line x1="0" y1="105" x2="500" y2="105" stroke="#E5E7EB" stroke-width="0.5"/>
+                            <line x1="0" y1="35" x2="500" y2="35" stroke="#E5E7EB" stroke-width="0.5" />
+                            <line x1="0" y1="70" x2="500" y2="70" stroke="#E5E7EB" stroke-width="0.5" />
+                            <line x1="0" y1="105" x2="500" y2="105" stroke="#E5E7EB" stroke-width="0.5" />
                             <!-- Area fill -->
-                            <path d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10 L500,140 L0,140 Z" fill="url(#areaGrad)" opacity="0.3"/>
+                            <path
+                                d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10 L500,140 L0,140 Z"
+                                fill="url(#areaGrad)" opacity="0.3" />
                             <!-- Line -->
-                            <path d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path
+                                d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10"
+                                fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round" />
                             <!-- Data points -->
-                            <circle cx="135" cy="80" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
-                            <circle cx="270" cy="55" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
-                            <circle cx="405" cy="25" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2"/>
-                            <circle cx="500" cy="10" r="4" fill="#10B981" stroke="#fff" stroke-width="2"/>
+                            <circle cx="135" cy="80" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
+                            <circle cx="270" cy="55" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
+                            <circle cx="405" cy="25" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
+                            <circle cx="500" cy="10" r="4" fill="#10B981" stroke="#fff" stroke-width="2" />
                             <defs>
                                 <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#4DA3FF" stop-opacity="0.4"/>
-                                    <stop offset="100%" stop-color="#4DA3FF" stop-opacity="0"/>
+                                    <stop offset="0%" stop-color="#4DA3FF" stop-opacity="0.4" />
+                                    <stop offset="100%" stop-color="#4DA3FF" stop-opacity="0" />
                                 </linearGradient>
                             </defs>
                         </svg>
@@ -139,7 +162,8 @@
         <div class="section-header">
             <span class="section-label">Features</span>
             <h2 class="section-title">Everything you need to forecast smarter</h2>
-            <p class="section-subtitle">From real-time dashboards to deep learning models, our platform gives you the tools to drive revenue and outperform the competition.</p>
+            <p class="section-subtitle">From real-time dashboards to deep learning models, our platform gives you the
+                tools to drive revenue and outperform the competition.</p>
         </div>
 
         <div class="features-grid">
@@ -148,42 +172,48 @@
                     <i class="fas fa-brain"></i>
                 </div>
                 <h3>AI-Powered Forecasting</h3>
-                <p>Leverage deep learning models trained on your historical data to produce highly accurate sales predictions, quarter after quarter.</p>
+                <p>Leverage deep learning models trained on your historical data to produce highly accurate sales
+                    predictions, quarter after quarter.</p>
             </div>
             <div class="feature-card fade-in-up fade-in-up-delay-1">
                 <div class="feature-icon navy">
                     <i class="fas fa-chart-bar"></i>
                 </div>
                 <h3>Interactive Dashboards</h3>
-                <p>Visualize your sales pipeline, revenue trends, and key metrics with beautifully crafted, real-time dashboards.</p>
+                <p>Visualize your sales pipeline, revenue trends, and key metrics with beautifully crafted, real-time
+                    dashboards.</p>
             </div>
             <div class="feature-card fade-in-up fade-in-up-delay-2">
                 <div class="feature-icon green">
                     <i class="fas fa-database"></i>
                 </div>
                 <h3>Data Integration</h3>
-                <p>Seamlessly connect your CRM, ERP, and other data sources. Import data from CSV, Excel, or APIs in seconds.</p>
+                <p>Seamlessly connect your CRM, ERP, and other data sources. Import data from CSV, Excel, or APIs in
+                    seconds.</p>
             </div>
             <div class="feature-card fade-in-up">
                 <div class="feature-icon purple">
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <h3>Enterprise Security</h3>
-                <p>Your data is protected with end-to-end encryption, role-based access controls, and SOC 2 compliance.</p>
+                <p>Your data is protected with end-to-end encryption, role-based access controls, and SOC 2 compliance.
+                </p>
             </div>
             <div class="feature-card fade-in-up fade-in-up-delay-1">
                 <div class="feature-icon orange">
                     <i class="fas fa-users-cog"></i>
                 </div>
                 <h3>Team Collaboration</h3>
-                <p>Share reports, annotate forecasts, and collaborate with your team in real time across departments.</p>
+                <p>Share reports, annotate forecasts, and collaborate with your team in real time across departments.
+                </p>
             </div>
             <div class="feature-card fade-in-up fade-in-up-delay-2">
                 <div class="feature-icon rose">
                     <i class="fas fa-file-export"></i>
                 </div>
                 <h3>Custom Reports & Export</h3>
-                <p>Generate detailed PDF and Excel reports on demand. Schedule automated email reports for stakeholders.</p>
+                <p>Generate detailed PDF and Excel reports on demand. Schedule automated email reports for stakeholders.
+                </p>
             </div>
         </div>
     </section>
@@ -194,7 +224,8 @@
             <div class="section-header">
                 <span class="section-label">How It Works</span>
                 <h2 class="section-title">Get started in 4 simple steps</h2>
-                <p class="section-subtitle">No complex setup. No steep learning curve. Just actionable sales intelligence from day one.</p>
+                <p class="section-subtitle">No complex setup. No steep learning curve. Just actionable sales
+                    intelligence from day one.</p>
             </div>
 
             <div class="steps-grid">
@@ -233,9 +264,11 @@
         <div class="testimonials-grid">
             <div class="testimonial-card fade-in-up">
                 <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i>
                 </div>
-                <blockquote>"SFAD transformed how we approach quarterly planning. The forecasting accuracy is phenomenal — we saw a 30% reduction in unsold inventory within the first quarter."</blockquote>
+                <blockquote>"SFAD transformed how we approach quarterly planning. The forecasting accuracy is phenomenal
+                    — we saw a 30% reduction in unsold inventory within the first quarter."</blockquote>
                 <div class="testimonial-author">
                     <div class="author-avatar">RK</div>
                     <div class="author-info">
@@ -246,9 +279,11 @@
             </div>
             <div class="testimonial-card fade-in-up fade-in-up-delay-1">
                 <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i>
                 </div>
-                <blockquote>"The interactive dashboards are a game-changer for our leadership reviews. We went from spreadsheet chaos to clear, actionable insights overnight."</blockquote>
+                <blockquote>"The interactive dashboards are a game-changer for our leadership reviews. We went from
+                    spreadsheet chaos to clear, actionable insights overnight."</blockquote>
                 <div class="testimonial-author">
                     <div class="author-avatar">SP</div>
                     <div class="author-info">
@@ -259,9 +294,11 @@
             </div>
             <div class="testimonial-card fade-in-up fade-in-up-delay-2">
                 <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                 </div>
-                <blockquote>"Connecting our CRM data was effortless, and the AI models started delivering useful predictions within hours. Our revenue grew 18% in 6 months."</blockquote>
+                <blockquote>"Connecting our CRM data was effortless, and the AI models started delivering useful
+                    predictions within hours. Our revenue grew 18% in 6 months."</blockquote>
                 <div class="testimonial-author">
                     <div class="author-avatar">AM</div>
                     <div class="author-info">
@@ -277,7 +314,8 @@
     <section class="cta-section">
         <div class="cta-inner">
             <h2>Ready to transform your sales strategy?</h2>
-            <p>Join thousands of businesses already using SFAD to forecast smarter, sell better, and grow faster. Start your free trial today — no credit card required.</p>
+            <p>Join thousands of businesses already using SFAD to forecast smarter, sell better, and grow faster. Start
+                your free trial today — no credit card required.</p>
             <a href="{{ url_for('register') }}" class="accent-btn">Get Started — It's Free</a>
         </div>
     </section>
@@ -287,8 +325,10 @@
         <div class="footer-inner">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo"></h3>
-                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for enterprise success.</p>
+                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
+                            class="footer-logo"></h3>
+                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for
+                        enterprise success.</p>
                 </div>
                 <div class="footer-col">
                     <h4>Product</h4>
@@ -330,5 +370,7 @@
         </div>
     </footer>
 
+    <script src="{{ url_for('static', filename='js/splash.js') }}"></script>
 </body>
+
 </html>
