@@ -6,15 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forecastify</title>
     <meta name="description"
-        content="Empower your business with AI-driven sales forecasting, advanced analytics, and real-time predictions for enterprise success.">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        content="Discover curated flagship smartphones, pro laptops, studio earbuds, and smart devices with nationwide express shipping and official brand warranty.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/splash.css') }}">
 </head>
 
-<body>
+<body class="home-body">
 
     <!-- ====== Splash Screen ====== -->
     <div id="splash-screen">
@@ -27,20 +36,20 @@
         </div>
     </div>
 
-    <!-- ====== Navbar ====== -->
+    <!-- ====== Navbar (Dynamic Island) ====== -->
     <nav class="navbar">
         <a href="{{ url_for('home') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
         </a>
-        <ul class="navbar-nav">
-            <li><a href="#hero">Home</a></li>
+        <ul class="navbar-nav" id="navbarLinks">
+            <li><a href="#hero" class="active">Home</a></li>
             <li><a href="{{ url_for('products') }}">Products</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
-                        class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i
+                        class="fas fa-shopping-bag"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -56,7 +65,10 @@
     {% if messages %}
     <div class="flash-banner">
         {% for category, message in messages %}
-        <div class="flash-message {{ category }}">{{ message }}</div>
+        <div class="flash-message {{ category }}">
+            <i class="fas fa-info-circle"></i>
+            <span>{{ message }}</span>
+        </div>
         {% endfor %}
     </div>
     {% endif %}
@@ -64,313 +76,507 @@
 
     <!-- ====== Hero Section ====== -->
     <section class="hero" id="hero">
-        <div class="hero-content fade-in-up">
-            <span class="section-label">AI-Powered Sales Intelligence</span>
-            <h1>Predict Sales.<br><span>Maximize Revenue.</span></h1>
-            <p>Empower your business with AI-driven insights, advanced analytics, and real-time sales predictions
-                tailored for enterprise success. Make data-driven decisions with confidence.</p>
+        <div class="hero-glow-bg"></div>
+
+        <div class="hero-content reveal-init">
+            <h1>The Ultimate Destination for <span class="text-gradient">Flagship Tech.</span></h1>
+            <p>Elevate your digital lifestyle. Discover curated smartphones, high-performance laptops, studio earbuds,
+                and wearables from top global brands with express free delivery.</p>
+
             <div class="btn-group">
-                <a href="{{ url_for('register') }}" class="primary-btn">Get Started Free</a>
-                <a href="#features" class="secondary-btn">Explore Features</a>
+                <a href="{{ url_for('products') }}" class="btn-gradient">
+                    <span>Explore Products</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#showcase" class="btn-glass">
+                    <i class="fas fa-play-circle" style="color: var(--accent-cyan);"></i>
+                    <span>Watch Showcase</span>
+                </a>
             </div>
 
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <h3>94.2%</h3>
-                    <p>Forecast Accuracy</p>
+            <div class="hero-stats-strip">
+                <div class="stat-box">
+                    <span class="stat-num">30+</span>
+                    <span class="stat-lbl">Flagship Devices</span>
                 </div>
-                <div class="hero-stat">
-                    <h3>10K+</h3>
-                    <p>Active Users</p>
+                <div class="stat-box">
+                    <span class="stat-num">4.9★</span>
+                    <span class="stat-lbl">Customer Rating</span>
                 </div>
-                <div class="hero-stat">
-                    <h3>+24.8%</h3>
-                    <p>Avg. Revenue Growth</p>
+                <div class="stat-box">
+                    <span class="stat-num">FREE</span>
+                    <span class="stat-lbl">Express Delivery</span>
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Graphic Mockup -->
-        <div class="hero-graphic fade-in-up fade-in-up-delay-2">
-            <div class="dashboard-mockup">
-                <div class="mockup-header">
-                    <div class="mockup-dot"></div>
-                    <div class="mockup-dot"></div>
-                    <div class="mockup-dot"></div>
+        <!-- 3D Interactive Hero Showcase -->
+        <div class="hero-visual reveal-init delay-1">
+            <div class="showcase-card">
+
+                <div class="showcase-img-container">
+                    <img src="{{ url_for('static', filename='images/products/apple_iphone_15_pro_max.png') }}"
+                        alt="iPhone 15 Pro Max">
                 </div>
-                <div class="mockup-body">
-                    <div class="mockup-stats-row">
-                        <div class="mockup-stat-card">
-                            <div class="stat-icon" style="background-color: rgba(77, 163, 255, 0.12); color: #4DA3FF;">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <span class="stat-value">$2.4M</span>
-                            <span class="stat-label">Revenue</span>
+
+                <div class="showcase-details">
+                    <h3 class="showcase-title">iPhone 15 Pro Max</h3>
+                    <p class="showcase-specs">Titanium Design • A17 Pro Chip • 48MP Camera</p>
+                    <div class="showcase-price-row">
+                        <div class="showcase-price">
+                            ₹1,59,900 <span>₹1,69,900</span>
                         </div>
-                        <div class="mockup-stat-card">
-                            <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
-                                <i class="fas fa-arrow-trend-up"></i>
-                            </div>
-                            <span class="stat-value">+24.8%</span>
-                            <span class="stat-label">Q3 Forecast</span>
-                        </div>
-                        <div class="mockup-stat-card">
-                            <div class="stat-icon" style="background-color: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
-                            <span class="stat-value">94.2%</span>
-                            <span class="stat-label">Accuracy</span>
-                        </div>
-                    </div>
-                    <div class="mockup-chart-area">
-                        <div class="chart-title">Sales Forecast — Last 12 Months</div>
-                        <svg viewBox="0 0 500 140" preserveAspectRatio="none"
-                            style="width:100%; height:calc(100% - 24px);">
-                            <!-- Grid lines -->
-                            <line x1="0" y1="35" x2="500" y2="35" stroke="#E5E7EB" stroke-width="0.5" />
-                            <line x1="0" y1="70" x2="500" y2="70" stroke="#E5E7EB" stroke-width="0.5" />
-                            <line x1="0" y1="105" x2="500" y2="105" stroke="#E5E7EB" stroke-width="0.5" />
-                            <!-- Area fill -->
-                            <path
-                                d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10 L500,140 L0,140 Z"
-                                fill="url(#areaGrad)" opacity="0.3" />
-                            <!-- Line -->
-                            <path
-                                d="M0,120 L45,100 L90,105 L135,80 L180,85 L225,60 L270,55 L315,40 L360,45 L405,25 L450,20 L500,10"
-                                fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <!-- Data points -->
-                            <circle cx="135" cy="80" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
-                            <circle cx="270" cy="55" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
-                            <circle cx="405" cy="25" r="4" fill="#1E3A5F" stroke="#fff" stroke-width="2" />
-                            <circle cx="500" cy="10" r="4" fill="#10B981" stroke="#fff" stroke-width="2" />
-                            <defs>
-                                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#4DA3FF" stop-opacity="0.4" />
-                                    <stop offset="100%" stop-color="#4DA3FF" stop-opacity="0" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
+                        <a href="{{ url_for('products') }}" class="product-action-btn" title="View Product">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ====== Features Section ====== -->
-    <section class="features" id="features">
-        <div class="section-header">
-            <span class="section-label">Features</span>
-            <h2 class="section-title">Everything you need to forecast smarter</h2>
-            <p class="section-subtitle">From real-time dashboards to deep learning models, our platform gives you the
-                tools to drive revenue and outperform the competition.</p>
+    <!-- ====== Brand Trust Marquee ====== -->
+    <div class="brand-marquee-section">
+        <div class="marquee-track">
+            <div class="marquee-group">
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/apple.svg') }}"
+                        alt="Apple" class="brand-logo"> <span>Apple</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/samsung.svg') }}"
+                        alt="Samsung Galaxy" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/sony.svg') }}"
+                        alt="Sony Audio" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/bose.svg') }}"
+                        alt="Bose" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/asus.svg') }}"
+                        alt="ASUS" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/google.svg') }}"
+                        alt="Google Pixel" class="brand-logo"> <span>Google</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/oneplus.svg') }}"
+                        alt="OnePlus" class="brand-logo"> <span>OnePlus</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/lenovo.svg') }}"
+                        alt="Lenovo Legion" class="brand-logo"></div>
+            </div>
+            <div class="marquee-group" aria-hidden="true">
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/apple.svg') }}"
+                        alt="Apple" class="brand-logo"> <span>Apple</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/samsung.svg') }}"
+                        alt="Samsung Galaxy" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/sony.svg') }}"
+                        alt="Sony Audio" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/bose.svg') }}"
+                        alt="Bose" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/asus.svg') }}"
+                        alt="ASUS" class="brand-logo"></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/google.svg') }}"
+                        alt="Google Pixel" class="brand-logo"> <span>Google</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/oneplus.svg') }}"
+                        alt="OnePlus" class="brand-logo"> <span>OnePlus</span></div>
+                <div class="marquee-item"><img src="{{ url_for('static', filename='images/brands/lenovo.svg') }}"
+                        alt="Lenovo Legion" class="brand-logo"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- ====== Cinematic 4K Video Showcase ====== -->
+    <section class="video-showcase-section" id="showcase">
+        <div class="section-header reveal-init">
+            <!-- <div class="section-badge">
+                <i class="fas fa-play"></i> Product Showcase
+            </div> -->
+            <h2 class="section-title">Engineered for <span class="text-gradient">Excellence</span></h2>
+            <p class="section-subtitle">Immerse yourself in precision craftsmanship and bleeding-edge consumer
+                technology.</p>
+        </div>
+
+        <div class="video-container reveal-init">
+            <div class="video-glow"></div>
+            <div class="video-frame">
+                <video id="showcaseVideo" autoplay muted loop playsinline
+                    src="{{ url_for('static', filename='video/animo-sphere-cascade-720p.webm') }}">
+                </video>
+            </div>
+        </div>
+
+        <!-- Showcase Highlights -->
+        <div class="video-highlights reveal-init delay-1">
+            <div class="video-hl-card">
+                <div class="video-hl-icon"><i class="fas fa-microchip"></i></div>
+                <div class="video-hl-info">
+                    <h4>Next-Gen Silicon</h4>
+                    <p>Cutting-edge 3nm architecture</p>
+                </div>
+            </div>
+            <div class="video-hl-card">
+                <div class="video-hl-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="video-hl-info">
+                    <h4>100% Authentic</h4>
+                    <p>Direct from official brand channels</p>
+                </div>
+            </div>
+            <div class="video-hl-card">
+                <div class="video-hl-icon"><i class="fas fa-shipping-fast"></i></div>
+                <div class="video-hl-info">
+                    <h4>Express Dispatch</h4>
+                    <p>Packaged in sealed tamper-proof boxes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== Why Choose Us / Advantage Grid ====== -->
+    <section class="why-us-section" id="why-us">
+        <div class="section-header reveal-init">
+            <h2 class="section-title">Why Tech Enthusiasts <span class="text-gradient">Choose Us</span></h2>
+            <p class="section-subtitle">Unmatched service standards, genuine hardware warranties, and a seamless digital
+                journey.</p>
         </div>
 
         <div class="features-grid">
-            <div class="feature-card fade-in-up">
-                <div class="feature-icon blue">
-                    <i class="fas fa-brain"></i>
+            <div class="feature-card reveal-init">
+                <div class="feature-icon-box cyan">
+                    <i class="fas fa-award"></i>
                 </div>
-                <h3>AI-Powered Forecasting</h3>
-                <p>Leverage deep learning models trained on your historical data to produce highly accurate sales
-                    predictions, quarter after quarter.</p>
+                <h3>100% Genuine Guaranteed</h3>
+                <p>Every product is sourced directly from verified authorized manufacturers with valid serial keys and
+                    warranty support.</p>
             </div>
-            <div class="feature-card fade-in-up fade-in-up-delay-1">
-                <div class="feature-icon navy">
-                    <i class="fas fa-chart-bar"></i>
+
+            <div class="feature-card reveal-init delay-1">
+                <div class="feature-icon-box purple">
+                    <i class="fas fa-lock"></i>
                 </div>
-                <h3>Interactive Dashboards</h3>
-                <p>Visualize your sales pipeline, revenue trends, and key metrics with beautifully crafted, real-time
-                    dashboards.</p>
+                <h3>Encrypted & Secure Payments</h3>
+                <p>Pay with confidence using UPI, Credit/Debit cards, Net Banking, or Cash on Delivery via bank-grade
+                    256-bit SSL encryption.</p>
             </div>
-            <div class="feature-card fade-in-up fade-in-up-delay-2">
-                <div class="feature-icon green">
-                    <i class="fas fa-database"></i>
+
+            <div class="feature-card reveal-init delay-2">
+                <div class="feature-icon-box emerald">
+                    <i class="fas fa-shipping-fast"></i>
                 </div>
-                <h3>Data Integration</h3>
-                <p>Seamlessly connect your CRM, ERP, and other data sources. Import data from CSV, Excel, or APIs in
-                    seconds.</p>
-            </div>
-            <div class="feature-card fade-in-up">
-                <div class="feature-icon purple">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Enterprise Security</h3>
-                <p>Your data is protected with end-to-end encryption, role-based access controls, and SOC 2 compliance.
+                <h3>Lightning Express Delivery</h3>
+                <p>Real-time order tracking from dispatch to your doorstep with free shipping on all orders nationwide.
                 </p>
             </div>
-            <div class="feature-card fade-in-up fade-in-up-delay-1">
-                <div class="feature-icon orange">
-                    <i class="fas fa-users-cog"></i>
+
+            <div class="feature-card reveal-init">
+                <div class="feature-icon-box amber">
+                    <i class="fas fa-undo-alt"></i>
                 </div>
-                <h3>Team Collaboration</h3>
-                <p>Share reports, annotate forecasts, and collaborate with your team in real time across departments.
-                </p>
+                <h3>7-Day Hassle-Free Returns</h3>
+                <p>Not satisfied with your device? Enjoy simple, zero-questions-asked replacements and prompt refund
+                    processing.</p>
             </div>
-            <div class="feature-card fade-in-up fade-in-up-delay-2">
-                <div class="feature-icon rose">
-                    <i class="fas fa-file-export"></i>
+
+            <div class="feature-card reveal-init delay-1">
+                <div class="feature-icon-box blue">
+                    <i class="fas fa-user-shield"></i>
                 </div>
-                <h3>Custom Reports & Export</h3>
-                <p>Generate detailed PDF and Excel reports on demand. Schedule automated email reports for stakeholders.
-                </p>
+                <h3>Personalized User Accounts</h3>
+                <p>Track your ongoing orders, manage delivery addresses, and download instant GST tax invoices with one
+                    tap.</p>
+            </div>
+
+            <div class="feature-card reveal-init delay-2">
+                <div class="feature-icon-box rose">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Dedicated Support</h3>
+                <p>Our expert tech concierge team is always available to help you choose the right device and resolve
+                    any queries.</p>
             </div>
         </div>
     </section>
 
     <!-- ====== How It Works Section ====== -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="how-it-works-inner">
-            <div class="section-header">
-                <span class="section-label">How It Works</span>
-                <h2 class="section-title">Get started in 4 simple steps</h2>
-                <p class="section-subtitle">No complex setup. No steep learning curve. Just actionable sales
-                    intelligence from day one.</p>
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="section-header reveal-init">
+            <h2 class="section-title">Effortless Shopping in <span class="text-gradient">4 Steps</span></h2>
+            <p class="section-subtitle">No convoluted steps. Just effortless browsing, secure checkout, and instant
+                delivery.</p>
+        </div>
+
+        <div class="steps-timeline">
+            <div class="step-card reveal-init">
+                <div class="step-badge-num">1</div>
+                <h3>Create Account</h3>
+                <p>Sign up in seconds to unlock personalized deals, saved addresses, and order history.</p>
             </div>
 
-            <div class="steps-grid">
-                <div class="step-card fade-in-up">
-                    <div class="step-number">1</div>
-                    <h3>Create Your Account</h3>
-                    <p>Sign up for free and set up your company profile in under two minutes.</p>
-                </div>
-                <div class="step-card fade-in-up fade-in-up-delay-1">
-                    <div class="step-number">2</div>
-                    <h3>Connect Your Data</h3>
-                    <p>Import historical sales data via CSV, Excel, or connect directly to your CRM.</p>
-                </div>
-                <div class="step-card fade-in-up fade-in-up-delay-2">
-                    <div class="step-number">3</div>
-                    <h3>Train & Forecast</h3>
-                    <p>Our AI models automatically train on your data and generate accurate predictions.</p>
-                </div>
-                <div class="step-card fade-in-up fade-in-up-delay-3">
-                    <div class="step-number">4</div>
-                    <h3>Analyze & Grow</h3>
-                    <p>Explore interactive dashboards and make data-driven decisions to grow revenue.</p>
-                </div>
+            <div class="step-card reveal-init delay-1">
+                <div class="step-badge-num">2</div>
+                <h3>Select Your Device</h3>
+                <p>Browse flagship smartphones, laptops, and audio gear with high-res specs and real reviews.</p>
+            </div>
+
+            <div class="step-card reveal-init delay-2">
+                <div class="step-badge-num">3</div>
+                <h3>Instant Checkout</h3>
+                <p>Pay securely via UPI, Card, or COD with instant order confirmation and tracking ID.</p>
+            </div>
+
+            <div class="step-card reveal-init delay-3">
+                <div class="step-badge-num">4</div>
+                <h3>Unbox & Enjoy</h3>
+                <p>Receive your brand-new electronics securely at your doorstep, ready to power your day.</p>
             </div>
         </div>
     </section>
 
     <!-- ====== Testimonials Section ====== -->
-    <section class="testimonials" id="testimonials">
-        <div class="section-header">
-            <span class="section-label">Testimonials</span>
-            <h2 class="section-title">Trusted by industry leaders</h2>
-            <p class="section-subtitle">See how businesses are transforming their sales strategy with our platform.</p>
+    <section class="testimonials-section">
+        <div class="section-header reveal-init">
+
+            <h2 class="section-title">Loved by Thousands of <span class="text-gradient">Buyers</span></h2>
+            <p class="section-subtitle">Real experiences from verified technology enthusiasts across the country.</p>
         </div>
 
         <div class="testimonials-grid">
-            <div class="testimonial-card fade-in-up">
-                <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                        class="fas fa-star"></i><i class="fas fa-star"></i>
+            <div class="review-card reveal-init">
+                <div>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-quote">"Ordered the iPhone 15 Pro Max and it was delivered within 36 hours in
+                        pristine sealed condition. The UPI checkout was lightning fast. Forecastify is easily the
+                        cleanest tech store online."</p>
                 </div>
-                <blockquote>"SFAD transformed how we approach quarterly planning. The forecasting accuracy is phenomenal
-                    — we saw a 30% reduction in unsold inventory within the first quarter."</blockquote>
-                <div class="testimonial-author">
+                <div class="review-author">
                     <div class="author-avatar">RK</div>
                     <div class="author-info">
                         <h4>Rajesh Kumar</h4>
-                        <p>VP of Sales, TechCorp India</p>
+                        <p>Verified Buyer • Mumbai</p>
                     </div>
                 </div>
             </div>
-            <div class="testimonial-card fade-in-up fade-in-up-delay-1">
-                <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                        class="fas fa-star"></i><i class="fas fa-star"></i>
+
+            <div class="review-card reveal-init delay-1">
+                <div>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-quote">"The MacBook Air M3 arrived with full official Apple warranty intact.
+                        Customer service replied to my RAM upgrade question in under 5 minutes. Outstanding customer
+                        experience!"</p>
                 </div>
-                <blockquote>"The interactive dashboards are a game-changer for our leadership reviews. We went from
-                    spreadsheet chaos to clear, actionable insights overnight."</blockquote>
-                <div class="testimonial-author">
+                <div class="review-author">
                     <div class="author-avatar">SP</div>
                     <div class="author-info">
                         <h4>Sarah Patel</h4>
-                        <p>Director of Analytics, RetailMax</p>
+                        <p>Verified Buyer • Bangalore</p>
                     </div>
                 </div>
             </div>
-            <div class="testimonial-card fade-in-up fade-in-up-delay-2">
-                <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+
+            <div class="review-card reveal-init delay-2">
+                <div>
+                    <div class="review-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                            class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="review-quote">"Got the Sony WF-1000XM5 earbuds at an unbeatable price with bank discount.
+                        Noise cancellation is incredible. Smooth experience from cart to unboxing."</p>
                 </div>
-                <blockquote>"Connecting our CRM data was effortless, and the AI models started delivering useful
-                    predictions within hours. Our revenue grew 18% in 6 months."</blockquote>
-                <div class="testimonial-author">
+                <div class="review-author">
                     <div class="author-avatar">AM</div>
                     <div class="author-info">
                         <h4>Ankit Mehta</h4>
-                        <p>CEO, GrowthBridge Solutions</p>
+                        <p>Verified Buyer • Delhi</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ====== CTA Section ====== -->
-    <section class="cta-section">
-        <div class="cta-inner">
-            <h2>Ready to transform your sales strategy?</h2>
-            <p>Join thousands of businesses already using SFAD to forecast smarter, sell better, and grow faster. Start
-                your free trial today — no credit card required.</p>
-            <a href="{{ url_for('register') }}" class="accent-btn">Get Started — It's Free</a>
+    <!-- ====== Interactive FAQ Accordion ====== -->
+    <section class="faq-section">
+        <div class="section-header reveal-init">
+
+            <h2 class="section-title">Frequently Asked <span class="text-gradient">Questions</span></h2>
+            <p class="section-subtitle">Everything you need to know about purchasing, warranty, and deliveries.</p>
+        </div>
+
+        <div class="faq-accordion reveal-init">
+            <div class="faq-item active">
+                <div class="faq-question">
+                    <span>Are all products on Forecastify 100% authentic?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, absolutely. All our smartphones, laptops, audio gear, and accessories are sourced directly
+                        from authorized brand distributors and come with official manufacturer warranty and tax
+                        invoices.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How long does express shipping take?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Metro cities typically receive orders within 24 to 48 hours. Non-metro locations take between 2
+                        to 4 business days. You will receive live SMS and email tracking links upon dispatch.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What payment methods are supported?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We support all major payment methods including UPI (Google Pay, PhonePe, Paytm), Visa &
+                        MasterCard Credit/Debit cards, Net Banking, and Cash on Delivery (COD) for eligible pin codes.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What is your return & replacement policy?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>We provide a 7-day replacement guarantee in case of any manufacturing defects, shipping damages,
+                        or discrepancies. Our support team arranges reverse pick-up at no additional cost.</p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- ====== Footer ====== -->
+    <!-- ====== Next-Level Luxury Call To Action ====== -->
+    <section class="cta-section">
+        <div class="cta-banner reveal-init">
+            <div class="cta-glow-mesh"></div>
+            <div class="cta-inner">
+                <h2>Ready to Upgrade to <span class="text-gradient">Flagship Tech?</span></h2>
+                <p>Join thousands of savvy buyers who trust Forecastify for genuine electronics, unbeatable pricing, and
+                    premier delivery speeds.</p>
+                <div class="btn-group" style="justify-content: center;">
+                    <a href="{{ url_for('products') }}" class="btn-gradient">
+                        <span>Browse Catalog Now</span>
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                    <a href="{{ url_for('register') }}" class="btn-glass">
+                        <span>Create Account</span>
+                        <i class="fas fa-user-plus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== Sophisticated Footer ====== -->
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <h3><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
-                            class="footer-logo"></h3>
-                    <p>Forecastify. Empowering businesses with AI-driven insights and real-time sales predictions for
-                        enterprise success.</p>
+                    <h3>
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
+                            class="footer-logo">
+                    </h3>
+                    <p>Your premier electronic hub for authentic flagship smartphones, pro laptops, studio earbuds, and
+                        wearables with verified warranty and express delivery.</p>
+                    <div class="footer-badges">
+                        <span class="f-badge"><i class="fas fa-shield-alt" style="color: var(--accent-cyan);"></i> 100%
+                            Genuine</span>
+                        <span class="f-badge"><i class="fas fa-truck" style="color: var(--accent-emerald);"></i> Free
+                            Shipping</span>
+                    </div>
                 </div>
+
                 <div class="footer-col">
-                    <h4>Product</h4>
+                    <h4>Categories</h4>
                     <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Integrations</a></li>
+                        <li><a href="{{ url_for('products') }}">Smartphones</a></li>
+                        <li><a href="{{ url_for('products') }}">Pro Laptops</a></li>
+                        <li><a href="{{ url_for('products') }}">Studio Earbuds</a></li>
+                        <li><a href="{{ url_for('products') }}">Smartwatches</a></li>
+                        <li><a href="{{ url_for('products') }}">Tablets & iPads</a></li>
                     </ul>
                 </div>
+
                 <div class="footer-col">
                     <h4>Company</h4>
                     <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="{{ url_for('about') }}">About Us</a></li>
+                        <li><a href="{{ url_for('contact') }}">Contact Concierge</a></li>
+                        <li><a href="{{ url_for('products') }}">Latest Deals</a></li>
+                        <li><a href="{{ url_for('login') }}">My Account</a></li>
                     </ul>
                 </div>
-                <div class="footer-col">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="#">Help Center</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
+
+                <div class="footer-col newsletter-box">
+                    <h4>Stay Ahead</h4>
+                    <p>Subscribe for exclusive flash drop announcements and member-only coupons.</p>
+                    <form class="newsletter-form"
+                        onsubmit="event.preventDefault(); alert('Thank you for subscribing to Forecastify VIP drop alerts!');">
+                        <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                        <button type="submit" class="newsletter-btn"><i class="fas fa-paper-plane"></i></button>
+                    </form>
                 </div>
             </div>
+
             <div class="footer-bottom">
-                <span>&copy; 2026 Forecastify. All rights reserved.</span>
+                <span>&copy; 2026 Forecastify Inc. All rights reserved. Crafted for excellence.</span>
                 <div class="footer-socials">
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- ====== Interactive Scripts & Animations ====== -->
     <script src="{{ url_for('static', filename='js/splash.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Mobile Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const navbarLinks = document.getElementById('navbarLinks');
+            if (menuToggle && navbarLinks) {
+                menuToggle.addEventListener('click', () => {
+                    navbarLinks.classList.toggle('show');
+                });
+            }
+
+            // 2. Interactive FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+
+            // 4. Smooth Scroll Reveal on Scroll (IntersectionObserver)
+            const revealElements = document.querySelectorAll('.reveal-init');
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+        });
+    </script>
 </body>
 
 </html>

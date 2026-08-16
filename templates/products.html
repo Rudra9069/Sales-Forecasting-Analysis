@@ -28,8 +28,8 @@
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
-                        class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i
+                        class="fas fa-shopping-bag"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -54,7 +54,6 @@
     <!-- ====== Products Hero ====== -->
     <section class="products-hero">
         <div class="products-hero-inner">
-            <span class="section-label"><i class="fas fa-bolt"></i> Our Collection</span>
             <h1>Premium Electronics</h1>
             <p>Discover cutting-edge technology. Handpicked products designed to elevate your digital lifestyle.</p>
             <div class="hero-stats-bar">
@@ -130,9 +129,9 @@
         <div class="products-inner">
             <div class="products-grid" id="productsGrid">
                 {% for product in products %}
-                <div class="product-card fade-in-up" data-category="{{ product.category }}"
-                    data-price="{{ product.price }}" data-rating="{{ product.rating }}"
-                    data-name="{{ product.name|lower }}" data-brand="{{ product.brand|lower }}">
+                <div class="product-card" data-category="{{ product.category }}" data-price="{{ product.price }}"
+                    data-rating="{{ product.rating }}" data-name="{{ product.name|lower }}"
+                    data-brand="{{ product.brand|lower }}">
 
                     <!-- Top Accent Bar -->
                     <div class="card-accent"></div>
@@ -203,11 +202,18 @@
                             </div>
                         </div>
 
-                        <button class="add-to-cart-btn" data-product-id="{{ product.product_id }}" {% if
-                            product.stock_quantity==0 %}disabled{% endif %}>
-                            <i class="fas fa-shopping-cart"></i>
-                            {% if product.stock_quantity > 0 %}Add to Cart{% else %}Sold Out{% endif %}
-                        </button>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn" data-product-id="{{ product.product_id }}" {% if
+                                product.stock_quantity==0 %}disabled{% endif %}>
+                                <i class="fas fa-shopping-cart"></i>
+                                {% if product.stock_quantity > 0 %}Add to Cart{% else %}Sold Out{% endif %}
+                            </button>
+                            {% if product.stock_quantity > 0 %}
+                            <a href="{{ url_for('buy_now', product_id=product.product_id) }}" class="buy-now-btn">
+                                Buy Now
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
@@ -323,21 +329,17 @@
                 visible.sort((a, b) => parseFloat(a.dataset.rating) - parseFloat(b.dataset.rating));
             }
 
-            // 3. Re-render
+            // 3. Re-render instantly
             allCards.forEach(card => {
                 card.style.display = 'none';
-                card.classList.remove('revealed');
             });
 
-            visible.forEach((card, index) => {
+            visible.forEach(card => {
                 card.style.display = 'flex';
-                card.style.animation = 'none';
-                card.offsetHeight;
-                card.style.animation = `fadeInUp 0.4s ease ${index * 0.05}s forwards`;
                 productsGrid.appendChild(card);
             });
 
-            // 4. Update count with animation
+            // 4. Update count
             const total = allCards.length;
             const countEl = resultsCount;
             if (visible.length === total) {
@@ -345,9 +347,6 @@
             } else {
                 countEl.textContent = `Showing ${visible.length} of ${total} products`;
             }
-            countEl.style.animation = 'none';
-            countEl.offsetHeight;
-            countEl.style.animation = 'fadeInUp 0.3s ease forwards';
 
             // 5. Show/hide empty state
             noResults.style.display = visible.length === 0 ? 'block' : 'none';
@@ -373,18 +372,6 @@
 
         // Initialize clear button state
         searchClear.style.display = 'none';
-
-        // ====== Scroll Reveal for Cards ======
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-        allCards.forEach(card => revealObserver.observe(card));
 
         // ====== Wishlist Toggle ======
         document.querySelectorAll('.wishlist-btn').forEach(btn => {
@@ -444,9 +431,11 @@
             }
         });
 
-        // Initialize animations and counts on first load
+        // Only run on load if filters are pre-filled by browser cache
         document.addEventListener('DOMContentLoaded', () => {
-            applyFilters();
+            if (searchInput.value.trim() !== '' || categorySelect.value !== 'all' || sortSelect.value !== 'default') {
+                applyFilters();
+            }
         });
         // Add to Cart Functionality
         document.querySelectorAll('.add-to-cart-btn').forEach(btn => {

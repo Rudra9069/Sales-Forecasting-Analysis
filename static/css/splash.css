@@ -20,15 +20,15 @@ body.splash-active {
     z-index: 99999;
 }
 
-/* When animate-out is added: background fades, but splash stays in DOM for the logo flight */
+/* When animate-out is added: background fades */
 #splash-screen.animate-out {
     background-color: transparent;
     transition: background-color 0.9s cubic-bezier(0.4, 0, 0.2, 1);
     pointer-events: none;
 }
 
-/* Text fades out immediately when animate-out starts */
-#splash-screen.animate-out .splash-title-container {
+/* Text fades out immediately when flight starts */
+#splash-screen.fly-logo .splash-title-container {
     opacity: 0 !important;
     transition: opacity 0.4s ease-out !important;
 }
@@ -51,7 +51,7 @@ body.splash-active {
 }
 
 /* When flying, remove the margin so position calc is accurate */
-#splash-screen.animate-out .splash-logo-wrapper {
+#splash-screen.fly-logo .splash-logo-wrapper {
     margin-bottom: 0;
 }
 
@@ -86,7 +86,7 @@ body.splash-active {
 }
 
 /* Hide sheen during flight */
-#splash-screen.animate-out .splash-sheen {
+#splash-screen.fly-logo .splash-sheen {
     display: none;
 }
 

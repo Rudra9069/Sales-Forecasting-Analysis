@@ -398,6 +398,18 @@ def remove_from_cart(product_id):
         session.modified = True
     return jsonify({'status': 'success'})
 
+@app.route('/buy_now/<product_id>')
+def buy_now(product_id):
+    product_id = str(product_id)
+    if 'cart' not in session:
+        session['cart'] = {}
+    
+    cart = session['cart']
+    cart[product_id] = cart.get(product_id, 0) + 1
+    session['cart'] = cart
+    session.modified = True
+    return redirect(url_for('checkout'))
+
 @app.route('/cart')
 def cart():
     cart_items, subtotal, total_discount = get_cart_details()

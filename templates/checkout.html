@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Forecastify</title>
     <meta name="description" content="Complete your purchase securely on Forecastify.">
+    <title>Checkout - Forecastify</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,8 +25,8 @@
             <li><a href="{{ url_for('products') }}">Products</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.2rem; margin-left: 10px;"><i
-                        class="fas fa-shopping-cart"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i
+                        class="fas fa-shopping-bag"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>

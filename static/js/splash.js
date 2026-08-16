@@ -14,34 +14,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hideSplashScreen = () => {
         if (navbarLogoImg) {
-            // Get positions
-            const sourceRect = splashLogoImg.getBoundingClientRect();
-            const targetRect = navbarLogoImg.getBoundingClientRect();
-
-            // Calculate deltas from center of source to center of target
-            const deltaX = (targetRect.left + targetRect.width / 2) - (sourceRect.left + sourceRect.width / 2);
-            const deltaY = (targetRect.top + targetRect.height / 2) - (sourceRect.top + sourceRect.height / 2) - 16; // -16px upward offset for margin compensation
-            const scale = targetRect.width / sourceRect.width;
-
             // Step 1: Kill the CSS intro animation so we can control transform via JS
             splashLogoWrapper.style.animation = 'none';
             splashLogoWrapper.style.opacity = '1';
             splashLogoWrapper.style.transform = 'scale(1)';
 
-            // Step 2: Start fading background and text simultaneously
-            splashScreen.classList.add('animate-out');
+            // Step 2: Hide text and prepare for flight
+            splashScreen.classList.add('fly-logo');
 
-            // Step 3: Force reflow, then fly the logo
+            // Step 3: Force reflow, then get exact positions and fly
             splashLogoWrapper.offsetHeight;
-            splashLogoWrapper.style.transition = 'transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease 1.2s';
-            splashLogoWrapper.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
-            splashLogoWrapper.style.opacity = '0'; // Fade out at the end of the flight (0.7s delay)
 
-            // Step 4: Allow scrolling and clean up after animation finishes
-            document.body.classList.remove('splash-active');
+            const sourceRect = splashLogoImg.getBoundingClientRect();
+            const targetRect = navbarLogoImg.getBoundingClientRect();
+
+            // Calculate deltas from top-left to top-left to avoid any wrapper centering drift
+            const deltaX = (targetRect.left - sourceRect.left) - 7.8;
+            const deltaY = (targetRect.top - sourceRect.top) + 0.5;
+            const scale = targetRect.width / sourceRect.width;
+
+            splashLogoWrapper.style.transformOrigin = 'top left';
+            splashLogoWrapper.style.transition = 'transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+            splashLogoWrapper.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${scale})`;
+
+            // Step 4: After flight completes, fade background and remove splash
             setTimeout(() => {
-                splashScreen.remove();
-            }, 1800);
+                splashScreen.classList.add('animate-out');
+                splashLogoWrapper.style.transition = 'opacity 0.5s ease';
+                splashLogoWrapper.style.opacity = '0';
+
+                document.body.classList.remove('splash-active');
+
+                setTimeout(() => {
+                    splashScreen.remove();
+                }, 900); // Wait for background to fade
+            }, 900); // Wait for flight to complete
         } else {
             // Fallback
             splashScreen.classList.add('fade-out');
