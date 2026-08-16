@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const matchIndicator = document.getElementById('match-indicator');
 
     if (confirmPasswordInput && matchIndicator && passwordInput) {
-        confirmPasswordInput.addEventListener('input', function() {
+        const checkPasswordMatch = () => {
             const password = passwordInput.value;
-            const confirmPassword = this.value;
+            const confirmPassword = confirmPasswordInput.value;
 
             if (confirmPassword.length === 0) {
                 matchIndicator.textContent = '';
@@ -96,25 +96,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 matchIndicator.textContent = '✗ Passwords do not match';
                 matchIndicator.className = 'match-indicator error';
             }
-        });
+        };
 
-        // Also re-check when the original password changes
-        passwordInput.addEventListener('input', function() {
-            const confirmPassword = confirmPasswordInput.value;
-
-            if (confirmPassword.length === 0) {
-                matchIndicator.textContent = '';
-                matchIndicator.className = 'match-indicator';
-                return;
-            }
-
-            if (this.value === confirmPassword) {
-                matchIndicator.textContent = '✓ Passwords match';
-                matchIndicator.className = 'match-indicator success';
-            } else {
-                matchIndicator.textContent = '✗ Passwords do not match';
-                matchIndicator.className = 'match-indicator error';
-            }
-        });
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+        passwordInput.addEventListener('input', checkPasswordMatch);
     }
 });

@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetRect = navbarLogoImg.getBoundingClientRect();
 
             // Calculate deltas from top-left to top-left to avoid any wrapper centering drift
-            const deltaX = (targetRect.left - sourceRect.left) - 7.8;
+            const deltaX = (targetRect.left - sourceRect.left) - 6;
             const deltaY = (targetRect.top - sourceRect.top) + 0.5;
             const scale = targetRect.width / sourceRect.width;
 

@@ -124,8 +124,28 @@
     border-radius: 16px;
     border: 1px solid var(--border-light);
     overflow: hidden;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+    animation: slideInUp 0.4s ease forwards;
+    opacity: 0;
+}
+
+.cart-item:nth-child(1) { animation-delay: 0.05s; }
+.cart-item:nth-child(2) { animation-delay: 0.1s; }
+.cart-item:nth-child(3) { animation-delay: 0.15s; }
+.cart-item:nth-child(4) { animation-delay: 0.2s; }
+.cart-item:nth-child(5) { animation-delay: 0.25s; }
+.cart-item:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .cart-item:hover {
@@ -445,7 +465,7 @@
     gap: 10px;
     width: calc(100% - 52px);
     margin: 24px 26px 0;
-    background: linear-gradient(135deg, #61eb78 0%, #11c30e 50%, #11c30e 100%);
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     background-size: 200% auto;
     color: var(--white);
     text-align: center;
@@ -455,8 +475,8 @@
     font-size: 16px;
     border: none;
     cursor: pointer;
-    /* box-shadow: 0 6px 20px rgba(77, 163, 255, 0.35); */
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     text-decoration: none;
     letter-spacing: 0.3px;
 }
@@ -464,7 +484,7 @@
 .checkout-btn:hover {
     background-position: right center;
     transform: translateY(-3px);
-    /* box-shadow: 0 10px 28px rgba(77, 163, 255, 0.45); */
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
 }
 
 .checkout-btn:active {
@@ -491,8 +511,7 @@
 
 .continue-shopping:hover {
     color: var(--primary-navy);
-    /* background: var(--bg-light); */
-    background: rgba(220, 220, 220, 0.41);
+    background: rgba(220, 220, 220, 0.4);
 }
 
 /* ---- Trust Badges ---- */
@@ -780,48 +799,6 @@
 .btn-confirm:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
-}
-
-/* ========== Entry Animations ========== */
-.cart-item {
-    animation: slideInUp 0.4s ease forwards;
-    opacity: 0;
-}
-
-.cart-item:nth-child(1) {
-    animation-delay: 0.05s;
-}
-
-.cart-item:nth-child(2) {
-    animation-delay: 0.1s;
-}
-
-.cart-item:nth-child(3) {
-    animation-delay: 0.15s;
-}
-
-.cart-item:nth-child(4) {
-    animation-delay: 0.2s;
-}
-
-.cart-item:nth-child(5) {
-    animation-delay: 0.25s;
-}
-
-.cart-item:nth-child(6) {
-    animation-delay: 0.3s;
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(24px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* ========== Responsive ========== */

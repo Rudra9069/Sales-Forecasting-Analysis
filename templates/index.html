@@ -8,6 +8,12 @@
     <meta name="description"
         content="Discover curated flagship smartphones, pro laptops, studio earbuds, and smart devices with nationwide express shipping and official brand warranty.">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -545,9 +551,31 @@
                 menuToggle.addEventListener('click', () => {
                     navbarLinks.classList.toggle('show');
                 });
+                navbarLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => navbarLinks.classList.remove('show'));
+                });
             }
 
-            // 2. Interactive FAQ Accordion
+            // 2. Buttery Smooth 60fps Navbar Scroll Morph
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                let ticking = false;
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(() => {
+                            if (window.scrollY > 40) {
+                                navbar.classList.add('scrolled');
+                            } else {
+                                navbar.classList.remove('scrolled');
+                            }
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                }, { passive: true });
+            }
+
+            // 3. Interactive FAQ Accordion
             const faqItems = document.querySelectorAll('.faq-item');
             faqItems.forEach(item => {
                 const question = item.querySelector('.faq-question');
@@ -560,7 +588,7 @@
                 });
             });
 
-            // 4. Smooth Scroll Reveal on Scroll (IntersectionObserver)
+            // 4. Staggered Scroll Reveal on Scroll (IntersectionObserver)
             const revealElements = document.querySelectorAll('.reveal-init');
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -570,8 +598,8 @@
                     }
                 });
             }, {
-                threshold: 0.15,
-                rootMargin: '0px 0px -50px 0px'
+                threshold: 0.12,
+                rootMargin: '0px 0px -40px 0px'
             });
 
             revealElements.forEach(el => revealObserver.observe(el));

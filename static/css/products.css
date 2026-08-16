@@ -453,11 +453,6 @@
     box-shadow: 0 4px 10px rgba(255, 138, 0, 0.3);
 }
 
-.product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-}
-
 /* Wishlist Button */
 .wishlist-btn {
     position: absolute;

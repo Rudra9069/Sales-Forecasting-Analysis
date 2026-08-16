@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 import smtplib
@@ -13,6 +13,10 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_super_secret_key')  # Needed for flash messages and sessions
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 # --- MySQL Database Configuration ---
 db_config = {
