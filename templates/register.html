@@ -13,11 +13,14 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
 </head>
 
 <body>
@@ -55,6 +58,12 @@
 
             <!-- Right Side: Form -->
             <div class="register-right">
+                <!-- Skeuomorphic Top Right Actions -->
+                <div class="top-right-actions">
+                    <a href="{{ url_for('login') }}" class="skeuo-btn">Sign in</a>
+                    <a href="{{ url_for('register') }}" class="skeuo-btn active">Sign up</a>
+                </div>
+
                 <div class="form-header">
                     <h2>Create your account</h2>
                     <p class="subtitle">Join us to get started.</p>
@@ -175,6 +184,28 @@
 
     <!-- Link to external JS -->
     <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const card = document.querySelector('.register-card');
+            const switchBtn = document.querySelector('.skeuo-btn:not(.active)');
+            
+            if (sessionStorage.getItem('cardFlipped') === 'toRegister') {
+                card.classList.add('card-flip-in-left');
+                sessionStorage.removeItem('cardFlipped');
+            }
+
+            if (switchBtn) {
+                switchBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = this.href;
+                    card.classList.add('card-flip-out-right');
+                    sessionStorage.setItem('cardFlipped', 'toLogin');
+                    setTimeout(() => window.location.href = targetUrl, 550);
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

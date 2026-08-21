@@ -27,6 +27,7 @@
     <!-- Custom Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/splash.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
 </head>
 
 <body class="home-body">
@@ -200,7 +201,7 @@
             <div class="video-glow"></div>
             <div class="video-frame">
                 <video id="showcaseVideo" autoplay muted loop playsinline
-                    src="{{ url_for('static', filename='video/animo-sphere-cascade-720p.webm') }}">
+                    src="{{ url_for('static', filename='video/sphere_2K.webm') }}">
                 </video>
             </div>
         </div>
@@ -605,6 +606,7 @@
             revealElements.forEach(el => revealObserver.observe(el));
         });
     </script>
+    <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
 </body>
 
 </html>

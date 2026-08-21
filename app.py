@@ -22,7 +22,7 @@ def favicon():
 db_config = {
     'host': os.environ.get('DB_HOST', 'localhost'),
     'user': os.environ.get('DB_USER', 'root'),
-    'password': os.environ.get('DB_PASSWORD', 'harshit0312'),
+    'password': os.environ.get('DB_PASSWORD', 'Rudra@1001'),
     'database': os.environ.get('DB_NAME', 'sales_forecasting_db')
 }
 
@@ -192,7 +192,7 @@ def login():
             session['user_email'] = user['email']
             session['user_role'] = user['role']
 
-            flash('Logged in successfully!', 'success')
+            flash(f"Welcome, {user['name']}!", 'success')
             return redirect(url_for('home'))
 
         except mysql.connector.Error as err:
@@ -438,6 +438,10 @@ def checkout():
     
     if not cart_items:
         return redirect(url_for('cart'))
+    
+    if 'user_id' not in session:
+        flash('Please register or log in to proceed to checkout.', 'info')
+        return redirect(url_for('login'))
     
     # Fetch user data for auto-filling the form
     user_data = {}

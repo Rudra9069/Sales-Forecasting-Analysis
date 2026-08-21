@@ -40,7 +40,9 @@
     --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -48,7 +50,7 @@
 
 body {
     background-color: var(--bg-light);
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.04) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(79, 70, 229, 0.04) 0px, transparent 50%),
         radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.5) 0px, transparent 100%);
@@ -140,8 +142,15 @@ body {
 }
 
 @keyframes floatSlow {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-15px) scale(1.05); }
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-15px) scale(1.05);
+    }
 }
 
 .branding-content {
@@ -255,6 +264,53 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+}
+
+/* Skeuomorphic Top Right Buttons */
+.top-right-actions {
+    position: absolute;
+    top: 24px;
+    right: 40px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+    background: #f4f4f5;
+    padding: 6px;
+    border-radius: 50px;
+    border: 1px solid rgba(144, 144, 144, 0.123);
+    box-shadow:
+        5px 5px 10px #d0d2d6e0;
+}
+
+.skeuo-btn {
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 13.5px;
+    letter-spacing: 0.5px;
+    padding: 8px 16px;
+    color: rgb(38, 111, 255);
+    background: transparent;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    box-shadow: none;
+    transition: all 0.25s ease;
+}
+
+.skeuo-btn:hover {
+    color: rgb(30, 85, 195);
+}
+
+.skeuo-btn:active,
+.skeuo-btn.active {
+    background: white;
+    color: var(--text-muted);
+    box-shadow:
+        inset 4px 4px 8px #cbd5e1,
+        inset -4px -4px 8px #ffffff;
 }
 
 .form-header {
@@ -602,10 +658,56 @@ body {
     .login-card.horizontal-layout {
         flex-direction: column;
     }
+
     .login-left {
         padding: 36px 24px;
     }
+
     .login-right {
-        padding: 32px 24px;
+        padding: 64px 24px 32px 24px;
     }
+
+    .top-right-actions {
+        top: 16px;
+        right: 24px;
+    }
+}
+
+/* Card Flip Animations */
+.card-flip-out-left {
+    animation: flipOutLeft 0.55s forwards cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.card-flip-in-left {
+    animation: flipInLeft 0.6s forwards cubic-bezier(0.0, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.card-flip-out-right {
+    animation: flipOutRight 0.55s forwards cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+.card-flip-in-right {
+    animation: flipInRight 0.6s forwards cubic-bezier(0.0, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+@keyframes flipOutLeft {
+    0%   { transform: perspective(1800px) rotateY(0deg) scale(1); opacity: 1; }
+    50%  { opacity: 1; }
+    100% { transform: perspective(1800px) rotateY(-90deg) scale(0.95); opacity: 0; }
+}
+@keyframes flipInLeft {
+    0%   { transform: perspective(1800px) rotateY(90deg) scale(0.95); opacity: 0; }
+    40%  { opacity: 0.5; }
+    100% { transform: perspective(1800px) rotateY(0deg) scale(1); opacity: 1; }
+}
+@keyframes flipOutRight {
+    0%   { transform: perspective(1800px) rotateY(0deg) scale(1); opacity: 1; }
+    50%  { opacity: 1; }
+    100% { transform: perspective(1800px) rotateY(90deg) scale(0.95); opacity: 0; }
+}
+@keyframes flipInRight {
+    0%   { transform: perspective(1800px) rotateY(-90deg) scale(0.95); opacity: 0; }
+    40%  { opacity: 0.5; }
+    100% { transform: perspective(1800px) rotateY(0deg) scale(1); opacity: 1; }
 }

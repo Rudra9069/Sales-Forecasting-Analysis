@@ -13,7 +13,7 @@
     --bg-light: #F8F7F4;
     --bg-offwhite: #F8FAFC;
     --white: #FFFFFF;
-    
+
     /* Text Hierarchy */
     --text-dark: #0F172A;
     --text-primary: #0F172A;
@@ -65,34 +65,14 @@
 }
 
 /* =========================================================
-   CUSTOM LUXURY SCROLLBAR & GLOBAL RESET
+   GLOBAL RESET (Scrollbar handled by scrollbar.css + scrollbar.js)
    ========================================================= */
-::-webkit-scrollbar {
-    width: 9px;
-    height: 9px;
-}
-
-::-webkit-scrollbar-track {
-    background: #F1F5F9;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #CBD5E1;
-    border-radius: 999px;
-    border: 2px solid #F1F5F9;
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #94A3B8;
-}
-
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    scrollbar-width: thin;
-    scrollbar-color: #CBD5E1 #F1F5F9;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -105,7 +85,7 @@ html {
 }
 
 /* Smooth anchor landing without navbar clipping */
-section, [id] {
+section[id] {
     scroll-margin-top: 100px;
 }
 
@@ -115,6 +95,7 @@ section, [id] {
         opacity: 0;
         transform: translateY(6px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -134,7 +115,7 @@ body {
 
 body.home-body {
     background-color: var(--bg-light);
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.04) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(79, 70, 229, 0.04) 0px, transparent 50%),
         radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.5) 0px, transparent 100%);
@@ -147,7 +128,8 @@ a {
     transition: var(--transition);
 }
 
-img, video {
+img,
+video {
     max-width: 100%;
     height: auto;
     display: block;
@@ -189,23 +171,17 @@ button {
     border-top: none;
     transform: translateZ(0);
     backface-visibility: hidden;
-    transition: padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: box-shadow 0.3s ease;
 }
 
 .navbar.scrolled {
-    padding: 8px 24px;
-    background-color: rgba(11, 19, 43, 0.94);
+    background-color: #0B132B;
     box-shadow: 0 20px 48px rgba(6, 12, 29, 0.35);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border-color: rgba(255, 255, 255, 0.14);
 }
 
 /* Inverted rounded corners connecting to top edge */
-.navbar::before, .navbar::after {
+.navbar::before,
+.navbar::after {
     content: '';
     position: absolute;
     top: 0;
@@ -276,7 +252,7 @@ button {
     color: #0B132B !important;
     padding: 8px 22px;
     border-radius: 24px;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 600 !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     transition: var(--transition);
@@ -779,6 +755,7 @@ button {
     0% {
         transform: translateX(0);
     }
+
     100% {
         transform: translateX(calc(-100% - 70px));
     }
@@ -837,7 +814,8 @@ button {
 }
 
 .video-container {
-    max-width: 1140px;
+    width: 100%;
+    max-width: 1440px;
     margin: 0 auto;
     position: relative;
 }
@@ -867,6 +845,9 @@ button {
 
 .video-frame video {
     width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    object-position: center;
     display: block;
     border-radius: 24px;
 }
@@ -1035,10 +1016,10 @@ button {
     left: 10%;
     right: 10%;
     height: 2px;
-    background: linear-gradient(90deg, 
-        rgba(2, 132, 199, 0.15) 0%, 
-        rgba(37, 99, 235, 0.4) 50%, 
-        rgba(79, 70, 229, 0.4) 100%);
+    background: linear-gradient(90deg,
+            rgba(2, 132, 199, 0.15) 0%,
+            rgba(37, 99, 235, 0.4) 50%,
+            rgba(79, 70, 229, 0.4) 100%);
     z-index: 0;
 }
 
@@ -1267,7 +1248,7 @@ button {
     right: 0;
     bottom: 0;
     background: radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.15), transparent 40%),
-                radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15), transparent 40%);
+        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15), transparent 40%);
     pointer-events: none;
 }
 
@@ -1466,18 +1447,24 @@ button {
    KEYFRAME ANIMATIONS
    ========================================================= */
 @keyframes floatProduct {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0) rotate(0deg);
     }
+
     50% {
         transform: translateY(-12px) rotate(1.5deg);
     }
 }
 
 @keyframes floatChip {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -1487,16 +1474,20 @@ button {
     0% {
         transform: translateX(0);
     }
+
     100% {
         transform: translateX(-50%);
     }
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.4;
         transform: scale(1.3);
@@ -1509,8 +1500,8 @@ button {
     transform: translateY(28px) scale(0.985);
     filter: blur(4px);
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform, filter;
     backface-visibility: hidden;
 }
@@ -1521,10 +1512,21 @@ button {
     filter: blur(0px);
 }
 
-.delay-1 { transition-delay: 0.1s; }
-.delay-2 { transition-delay: 0.2s; }
-.delay-3 { transition-delay: 0.3s; }
-.delay-4 { transition-delay: 0.4s; }
+.delay-1 {
+    transition-delay: 0.1s;
+}
+
+.delay-2 {
+    transition-delay: 0.2s;
+}
+
+.delay-3 {
+    transition-delay: 0.3s;
+}
+
+.delay-4 {
+    transition-delay: 0.4s;
+}
 
 /* =========================================================
    RESPONSIVE DESIGN
@@ -1645,7 +1647,8 @@ button {
         text-align: center;
     }
 
-    .floating-chip-1, .floating-chip-2 {
+    .floating-chip-1,
+    .floating-chip-2 {
         display: none;
     }
 }

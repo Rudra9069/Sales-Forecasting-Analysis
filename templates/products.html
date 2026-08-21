@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
 </head>
 
 <body>
@@ -393,25 +394,43 @@
             });
         });
 
-        // ====== Add to Cart with Ripple ======
+        // ====== Add to Cart Functionality ======
         document.querySelectorAll('.add-to-cart-btn:not([disabled])').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                // Ripple effect
-                const ripple = document.createElement('span');
-                ripple.classList.add('btn-ripple');
-                const rect = btn.getBoundingClientRect();
-                ripple.style.left = (e.clientX - rect.left) + 'px';
-                ripple.style.top = (e.clientY - rect.top) + 'px';
-                btn.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
+            btn.addEventListener('click', function (e) {
+                const productId = this.getAttribute('data-product-id');
+                if (!productId) return;
 
-                // State change
-                btn.classList.add('added');
-                btn.innerHTML = '<i class="fas fa-check"></i> Added!';
-                setTimeout(() => {
-                    btn.classList.remove('added');
-                    btn.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
-                }, 2000);
+                // Loading state
+                const originalHtml = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+                this.disabled = true;
+
+                fetch(`/add_to_cart/${productId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quantity: 1 })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.disabled = false;
+                        if (data.status === 'success') {
+                            this.classList.add('added');
+                            this.innerHTML = '<i class="fas fa-check"></i> Added!';
+                            showProductToast('Added to Cart Successfully!');
+                            setTimeout(() => {
+                                this.classList.remove('added');
+                                this.innerHTML = originalHtml;
+                            }, 2000);
+                        } else {
+                            this.innerHTML = originalHtml;
+                            showProductToast(data.message || 'Error adding to cart');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        this.disabled = false;
+                        this.innerHTML = originalHtml;
+                    });
             });
         });
 
@@ -443,34 +462,6 @@
                 applyFilters();
             }
         });
-        // Add to Cart Functionality
-        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const productId = this.getAttribute('data-product-id');
-                if (!productId) return;
-
-                // Add simple loading state
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
-
-                fetch(`/add_to_cart/${productId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity: 1 })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        this.innerHTML = originalText;
-                        if (data.status === 'success') {
-                            showProductToast('Added to Cart Successfully!');
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        this.innerHTML = originalText;
-                    });
-            });
-        });
 
         function showProductToast(msg) {
             let container = document.getElementById('product-toast-container');
@@ -494,6 +485,7 @@
         }
     </script>
 
+    <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
 </body>
 
 </html>
