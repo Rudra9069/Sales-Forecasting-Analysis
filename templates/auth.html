@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Forecastify</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Link to unified CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <div class="auth-container {% if panel == 'register' %}flipped{% endif %}" id="authContainer">
+        <div class="auth-card-flipper">
+
+            <!-- =========================================================
+                 FRONT FACE: LOGIN FORM
+                 ========================================================= -->
+            <div class="card-face face-login">
+                <!-- Left Side: Branding -->
+                <div class="auth-left">
+                    <div class="branding-content">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
+                            class="auth-logo">
+                        <p class="branding-subtitle">Sales forecasting & analysis dashboard</p>
+
+                        <!-- Radial Target Gauge Widget (Idea 2) -->
+                        <div class="left-radial-container">
+                            <div class="radial-header-badge">
+                                <span><i class="fas fa-bullseye"></i> Goal Progress</span>
+                                <span class="badge-growth">94% Met</span>
+                            </div>
+
+                            <div class="radial-body-row">
+                                <!-- Left/Center: Animated Gauge SVG Rings -->
+                                <div class="radial-svg-wrapper">
+                                    <svg class="radial-gauge-svg" viewBox="0 0 200 200" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <filter id="radial-glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                                                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                                <feMerge>
+                                                    <feMergeNode in="blur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
+                                            <filter id="radial-glow-orange" x="-20%" y="-20%" width="140%"
+                                                height="140%">
+                                                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                                <feMerge>
+                                                    <feMergeNode in="blur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
+                                            <filter id="radial-glow-pink" x="-20%" y="-20%" width="140%" height="140%">
+                                                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                                <feMerge>
+                                                    <feMergeNode in="blur" />
+                                                    <feMergeNode in="SourceGraphic" />
+                                                </feMerge>
+                                            </filter>
+                                        </defs>
+
+                                        <!-- Outer Track & Ring (Emerald Green - 85% Filled) -->
+                                        <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.08)"
+                                            stroke-width="10" />
+                                        <circle class="ring-circle ring-outer" cx="100" cy="100" r="80" stroke="#34D399"
+                                            stroke-width="10" stroke-linecap="round" stroke-dasharray="502"
+                                            stroke-dashoffset="75" filter="url(#radial-glow-green)" />
+
+                                        <!-- Middle Track & Ring (Bright Orange - 75% Filled) -->
+                                        <circle cx="100" cy="100" r="62" stroke="rgba(255,255,255,0.08)"
+                                            stroke-width="10" />
+                                        <circle class="ring-circle ring-middle" cx="100" cy="100" r="62"
+                                            stroke="#FF9F43" stroke-width="10" stroke-linecap="round"
+                                            stroke-dasharray="390" stroke-dashoffset="98"
+                                            filter="url(#radial-glow-orange)" />
+
+                                        <!-- Inner Track & Ring (Hot Pink - 65% Filled) -->
+                                        <circle cx="100" cy="100" r="44" stroke="rgba(255,255,255,0.08)"
+                                            stroke-width="10" />
+                                        <circle class="ring-circle ring-inner" cx="100" cy="100" r="44" stroke="#FF2A6D"
+                                            stroke-width="10" stroke-linecap="round" stroke-dasharray="276"
+                                            stroke-dashoffset="96" filter="url(#radial-glow-pink)" />
+                                    </svg>
+                                </div>
+
+                                <!-- Right Side: Glass Legend Box -->
+                                <div class="radial-legend-card">
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-green"></span>
+                                        <span class="legend-label">Mobile</span>
+                                    </div>
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-orange"></span>
+                                        <span class="legend-label">Laptop</span>
+                                    </div>
+                                    <div class="legend-row">
+                                        <span class="legend-dot dot-red"></span>
+                                        <span class="legend-label">Earphones</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Form -->
+                <div class="auth-right">
+                    <div class="top-right-actions">
+                        <button type="button" class="skeuo-btn active btn-show-login">Sign in</button>
+                        <button type="button" class="skeuo-btn btn-show-register">Sign up</button>
+                    </div>
+
+                    <div class="form-header">
+                        <h2>Welcome back</h2>
+                        <p class="subtitle">Please enter your details to sign in.</p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    {% if message.startswith('email_success:') %}
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            Swal.fire({
+                                title: 'Registration Successful!',
+                                text: '{{ message.split(":", 1)[1] }}',
+                                icon: 'success',
+                                confirmButtonColor: '#1E3A5F',
+                                confirmButtonText: 'Continue to Login'
+                            });
+                        });
+                    </script>
+                    {% elif message.startswith('email_error:') %}
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            Swal.fire({
+                                title: 'Registration Complete',
+                                text: '{{ message.split(":", 1)[1] }}',
+                                icon: 'warning',
+                                confirmButtonColor: '#1E3A5F',
+                                confirmButtonText: 'Okay'
+                            });
+                        });
+                    </script>
+                    {% else %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="far fa-envelope"></i>
+                                <input type="email" id="loginEmail" name="email" placeholder="user@gmail.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="loginPassword" name="password"
+                                    placeholder="Enter your password" required>
+                                <i class="far fa-eye toggle-password" data-target="loginPassword"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox" name="remember">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" id="openForgotModal" class="forgot-password">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn">Sign In</button>
+                    </form>
+
+                    <div class="auth-links">
+                        <p>Don't have an account? <a href="#" class="btn-show-register">Create an account</a></p>
+                        <p style="margin-top: 12px;"><a href="{{ url_for('home') }}" class="back-home"><i
+                                    class="fas fa-arrow-left"></i> Back to Home</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================================================
+                 BACK FACE: REGISTRATION FORM
+                 ========================================================= -->
+            <div class="card-face face-register">
+                <!-- Left Side: Branding -->
+                <div class="auth-left">
+                    <div class="branding-content">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
+                            class="auth-logo">
+                        <p class="branding-subtitle">Sales forecasting & analysis dashboard</p>
+
+                        <!-- Upward Animating 4-Line Chart -->
+                        <div class="left-chart-container">
+                            <div class="chart-header-badge">
+                                <span><i class="fas fa-chart-line"></i> Real-Time Forecast</span>
+                                <span class="badge-growth">+34.8% ↑</span>
+                            </div>
+                            <svg class="left-anim-chart" viewBox="0 0 320 160" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <filter id="glow-green2" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="1" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                    <filter id="glow-lightblue2" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="1" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                    <filter id="glow-orange2" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="1" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                    <filter id="glow-purple2" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="1" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                    <filter id="glow-pink2" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="1" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                    <linearGradient id="grad-green2" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#059669" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#34D399" stop-opacity="1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-lightblue2" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#0284C7" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#38BDF8" stop-opacity="1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-orange2" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#EA580C" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#FB923C" stop-opacity="1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-purple2" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#7E22CE" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#C084FC" stop-opacity="1" />
+                                    </linearGradient>
+                                    <linearGradient id="grad-pink2" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#E11D48" stop-opacity="0.3" />
+                                        <stop offset="100%" stop-color="#FB7185" stop-opacity="1" />
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Grid Lines -->
+                                <line x1="20" y1="35" x2="300" y2="35" stroke="rgba(255,255,255,0.06)"
+                                    stroke-dasharray="4 4" />
+                                <line x1="20" y1="75" x2="300" y2="75" stroke="rgba(255,255,255,0.06)"
+                                    stroke-dasharray="4 4" />
+                                <line x1="20" y1="115" x2="300" y2="115" stroke="rgba(255,255,255,0.06)"
+                                    stroke-dasharray="4 4" />
+
+                                <!-- Line 5: Pink (Starts below -> Middle -> Down -> Up) -->
+                                <path class="chart-line line-pink" d="M 20 148 L 80 70 L 150 120 L 230 90 L 300 50"
+                                    stroke="url(#grad-pink2)" stroke-width="2.5" stroke-linejoin="round" fill="none"
+                                    filter="url(#glow-pink2)" />
+
+                                <!-- Line 4: Purple (Starts below -> Mid -> Bottom) -->
+                                <path class="chart-line line-purple" d="M 20 145 L 90 95 L 170 110 L 240 125 L 300 138"
+                                    stroke="url(#grad-purple2)" stroke-width="2.5" stroke-linejoin="round" fill="none"
+                                    filter="url(#glow-purple2)" />
+
+                                <!-- Line 3: Orange (Starts below -> High -> Middle) -->
+                                <path class="chart-line line-orange" d="M 20 142 L 80 40 L 160 55 L 230 65 L 300 75"
+                                    stroke="url(#grad-orange2)" stroke-width="2.5" stroke-linejoin="round" fill="none"
+                                    filter="url(#glow-orange2)" />
+
+                                <!-- Line 2: Light Blue (Starts below -> Slightly below top) -->
+                                <path class="chart-line line-lightblue"
+                                    d="M 20 140 L 100 100 L 180 60 L 250 40 L 300 30" stroke="url(#grad-lightblue2)"
+                                    stroke-width="3" stroke-linejoin="round" fill="none"
+                                    filter="url(#glow-lightblue2)" />
+
+                                <!-- Line 1: Green (Starts below -> Top) -->
+                                <path class="chart-line line-green" d="M 20 138 L 90 90 L 170 45 L 240 25 L 300 10"
+                                    stroke="url(#grad-green2)" stroke-width="3.5" stroke-linejoin="round" fill="none"
+                                    filter="url(#glow-green2)" />
+
+                                <!-- Peak Node Pulsing Dots -->
+                                <circle cx="300" cy="10" r="4.5" fill="#34D399" class="chart-dot dot-green" />
+                                <circle cx="300" cy="30" r="4" fill="#38BDF8" class="chart-dot dot-lightblue" />
+                                <circle cx="300" cy="75" r="3.5" fill="#FB923C" class="chart-dot dot-orange" />
+                                <circle cx="300" cy="138" r="3.5" fill="#C084FC" class="chart-dot dot-purple" />
+                                <circle cx="300" cy="50" r="3.5" fill="#FB7185" class="chart-dot dot-pink" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Form -->
+                <div class="auth-right">
+                    <div class="top-right-actions">
+                        <button type="button" class="skeuo-btn btn-show-login">Sign in</button>
+                        <button type="button" class="skeuo-btn active btn-show-register">Sign up</button>
+                    </div>
+
+                    <div class="form-header">
+                        <h2>Create your account</h2>
+                        <p class="subtitle">Join us to get started.</p>
+                    </div>
+
+                    <form id="registerForm" action="{{ url_for('register') }}" method="POST">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="regName">Full Name</label>
+                                <div class="input-wrapper">
+                                    <i class="far fa-user"></i>
+                                    <input type="text" id="regName" name="name" placeholder="Full name" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="regPhone">Phone Number</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <input type="tel" id="regPhone" name="phone" placeholder="+91 XXXXX-XXXXX">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regEmail">Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="far fa-envelope"></i>
+                                <input type="email" id="regEmail" name="email" placeholder="user@gmail.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="regAddress">Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="regAddress" name="address" placeholder="123 Main Street">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="regCity">City</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-city"></i>
+                                    <input type="text" id="regCity" name="city" placeholder="Ahmedabad">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="regState">State</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-map"></i>
+                                    <input type="text" id="regState" name="state" placeholder="Gujarat">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="regPincode">Pincode</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-map-pin"></i>
+                                    <input type="text" id="regPincode" name="pincode" placeholder="380001"
+                                        maxlength="10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="password" name="password" placeholder="Create password"
+                                        required>
+                                    <i class="far fa-eye toggle-password" data-target="password"></i>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="strength-bar"></div>
+                                    <div class="strength-bar"></div>
+                                    <div class="strength-bar"></div>
+                                </div>
+                                <span class="password-strength-text"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm_password">Confirm Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-check-circle"></i>
+                                    <input type="password" id="confirm_password" name="confirm_password"
+                                        placeholder="Repeat password" required>
+                                    <i class="far fa-eye toggle-password" data-target="confirm_password"></i>
+                                </div>
+                                <div id="match-indicator" class="match-indicator"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn">Register</button>
+                    </form>
+
+                    <div class="auth-links">
+                        <p>Already have an account? <a href="#" class="btn-show-login">Sign In</a></p>
+                        <p style="margin-top: 12px;"><a href="{{ url_for('home') }}" class="back-home"><i
+                                    class="fas fa-arrow-left"></i> Back to Home</a></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================================
+         FORGOT PASSWORD POPUP MODAL
+         ========================================================= -->
+    <div id="forgotPasswordModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="close-modal" id="closeForgotModal">&times;</button>
+
+            <!-- Step 1: Send Email -->
+            <div id="forgotStep1" class="modal-step">
+                <div class="form-header">
+                    <h2>Forgot Password</h2>
+                    <p class="subtitle">Enter your email address to receive a 6-digit verification code.</p>
+                </div>
+                <div id="forgotMsgStep1" class="modal-alert"></div>
+                <form id="forgotEmailForm">
+                    <div class="form-group">
+                        <label for="forgotEmail">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="far fa-envelope"></i>
+                            <input type="email" id="forgotEmail" name="email" placeholder="user@gmail.com" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="sendCodeBtn">Send Verification Code</button>
+                </form>
+            </div>
+
+            <!-- Step 2: Verify Code -->
+            <div id="forgotStep2" class="modal-step" style="display: none;">
+                <div class="form-header">
+                    <h2>Enter Verification Code</h2>
+                    <p class="subtitle">Enter the 6-digit code sent to your email.</p>
+                </div>
+                <div id="forgotMsgStep2" class="modal-alert"></div>
+                <form id="forgotCodeForm">
+                    <div class="form-group">
+                        <label for="forgotCode">6-Digit Code</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-key"></i>
+                            <input type="text" id="forgotCode" name="code" placeholder="123456" maxlength="6" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="verifyCodeBtn">Verify Code</button>
+                </form>
+            </div>
+
+            <!-- Step 3: Reset Password -->
+            <div id="forgotStep3" class="modal-step" style="display: none;">
+                <div class="form-header">
+                    <h2>Reset Password</h2>
+                    <p class="subtitle">Enter your new password below.</p>
+                </div>
+                <div id="forgotMsgStep3" class="modal-alert"></div>
+                <form id="forgotResetForm">
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="newPassword" name="password" placeholder="Enter new password"
+                                required>
+                            <i class="far fa-eye toggle-password" data-target="newPassword"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmNewPassword" name="confirm_password"
+                                placeholder="Confirm new password" required>
+                            <i class="far fa-eye toggle-password" data-target="confirmNewPassword"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="resetPassBtn">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authContainer = document.getElementById('authContainer');
+            const showRegisterBtns = document.querySelectorAll('.btn-show-register');
+            const showLoginBtns = document.querySelectorAll('.btn-show-login');
+
+            // Handle URL Parameters for initial panel state (e.g. ?panel=register)
+            const urlParams = new URLSearchParams(window.location.search);
+            const panel = urlParams.get('panel');
+            if (panel === 'register') {
+                authContainer.classList.add('flipped');
+            } else if (panel === 'login') {
+                authContainer.classList.remove('flipped');
+            }
+
+            // Flip Card Triggers
+            showRegisterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    authContainer.classList.add('flipped');
+                    // Update URL browser state quietly without reloading
+                    history.replaceState(null, '', '{{ url_for("register") }}');
+                });
+            });
+
+            showLoginBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    authContainer.classList.remove('flipped');
+                    // Update URL browser state quietly without reloading
+                    history.replaceState(null, '', '{{ url_for("login") }}');
+                });
+            });
+
+            // Toggle Password Visibility Handler
+            document.querySelectorAll('.toggle-password').forEach(icon => {
+                icon.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    if (input) {
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            this.classList.remove('fa-eye');
+                            this.classList.add('fa-eye-slash');
+                        } else {
+                            input.type = 'password';
+                            this.classList.remove('fa-eye-slash');
+                            this.classList.add('fa-eye');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -158,7 +158,8 @@ def register():
                 cursor.close()
                 conn.close()
 
-    return render_template('register.html')
+    panel = request.args.get('panel', 'register')
+    return render_template('auth.html', panel=panel)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -203,7 +204,8 @@ def login():
                 cursor.close()
                 conn.close()
 
-    return render_template('login.html')
+    panel = request.args.get('panel', 'login')
+    return render_template('auth.html', panel=panel)
 
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
