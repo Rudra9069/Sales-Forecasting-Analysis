@@ -484,8 +484,9 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <h3>
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify"
-                            class="footer-logo">
+                        <a href="{{ url_for('admin_login') }}" target="_blank" title="Admin Portal">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo">
+                        </a>
                     </h3>
                     <p>Your premier electronic hub for authentic flagship smartphones, pro laptops, studio earbuds, and
                         wearables with verified warranty and express delivery.</p>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecastify | Admin Settings & Security</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Dedicated Admin Dashboard CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_dashboard.css') }}">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.015);
+            margin-bottom: 24px;
+        }
+
+        .settings-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 14px;
+        }
+
+        .settings-card-header i {
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+        }
+
+        .settings-card-header h2 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .setting-input-group {
+            margin-bottom: 18px;
+        }
+
+        .setting-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .setting-input-group input {
+            width: 100%;
+            padding: 11px 16px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .setting-input-group input:focus {
+            background: #ffffff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-save-setting {
+            padding: 11px 24px;
+            border-radius: 14px;
+            border: none;
+            background: var(--accent-dark);
+            color: #ffffff;
+            font-family: var(--font-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-save-setting:hover {
+            background: #27272a;
+        }
+
+        .sec-info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sec-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+
+        .sec-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .sec-info-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .sec-info-value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+
+<body class="admin-dashboard-body">
+
+    <div class="dash-app-container">
+
+        <!-- Top Header Navigation Bar -->
+        <header class="dash-header-nav">
+            <div class="dash-brand-title">
+                <span>Forecastify</span>
+            </div>
+
+            <nav class="dash-nav-pills">
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-pill-link">Dashboard</a>
+                <a href="{{ url_for('admin_products') }}" class="dash-pill-link">Products ({{ product_count }})</a>
+                <a href="{{ url_for('admin_orders') }}" class="dash-pill-link">Orders ({{ order_count }})</a>
+                <a href="{{ url_for('admin_customers') }}" class="dash-pill-link">Customers ({{ customer_count }})</a>
+            </nav>
+
+            <div class="dash-header-actions">
+                <a href="{{ url_for('admin_settings') }}" class="icon-btn active" title="Settings" style="background: #ffffff; border-color: #cbd5e1; text-decoration: none;">
+                    <i class="fas fa-cog" style="color: var(--accent-blue);"></i>
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="icon-btn" title="Logout" style="margin-left: 6px; color: #ef4444; text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">
+                        <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}" style="margin-right: 8px;"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Section Title -->
+        <div class="dash-section-header">
+            <h1>Admin Account & Security Settings</h1>
+        </div>
+
+        <div class="settings-grid">
+
+            <!-- Left Main Column: Profile & Security Forms -->
+            <div>
+                <!-- Form 1: Admin Profile Details -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-user-shield"></i>
+                        <h2>Admin Profile Information</h2>
+                    </div>
+                    <form action="{{ url_for('admin_update_profile') }}" method="POST">
+                        <div class="form-row-2">
+                            <div class="setting-input-group">
+                                <label for="name">Admin Full Name *</label>
+                                <input type="text" id="name" name="name" value="{{ admin.name }}" required>
+                            </div>
+                            <div class="setting-input-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" value="{{ admin.phone or '' }}" placeholder="+91 9876543210">
+                            </div>
+                        </div>
+                        <div class="setting-input-group">
+                            <label for="email">Admin Email Address *</label>
+                            <input type="email" id="email" name="email" value="{{ admin.email }}" required>
+                        </div>
+                        <div style="text-align: right; margin-top: 10px;">
+                            <button type="submit" class="btn-save-setting">
+                                <i class="fas fa-save" style="margin-right: 6px;"></i> Save Profile Details
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Form 2: Change Admin Password -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-key"></i>
+                        <h2>Change Admin Password</h2>
+                    </div>
+                    <form action="{{ url_for('admin_update_password') }}" method="POST">
+                        <div class="setting-input-group">
+                            <label for="current_password">Current Password *</label>
+                            <input type="password" id="current_password" name="current_password" placeholder="••••••••" required>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="setting-input-group">
+                                <label for="new_password">New Password *</label>
+                                <input type="password" id="new_password" name="new_password" placeholder="At least 6 characters" required minlength="6">
+                            </div>
+                            <div class="setting-input-group">
+                                <label for="confirm_password">Confirm New Password *</label>
+                                <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat new password" required minlength="6">
+                            </div>
+                        </div>
+                        <div style="text-align: right; margin-top: 10px;">
+                            <button type="submit" class="btn-save-setting" style="background: #2563eb;">
+                                <i class="fas fa-shield-alt" style="margin-right: 6px;"></i> Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Security Status Card -->
+            <div>
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <i class="fas fa-lock" style="color: #10b981;"></i>
+                        <h2>Security Overview</h2>
+                    </div>
+                    <ul class="sec-info-list">
+                        <li class="sec-info-item">
+                            <span class="sec-info-label">Account Role</span>
+                            <span class="sec-info-value" style="color: #2563eb; background: #dbeafe; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;">Administrator</span>
+                        </li>
+                        <li class="sec-info-item">
+                            <span class="sec-info-label">Admin ID</span>
+                            <span class="sec-info-value">#{{ admin.user_id }}</span>
+                        </li>
+                        <li class="sec-info-item">
+                            <span class="sec-info-label">Password Hashing</span>
+                            <span class="sec-info-value">Werkzeug (pbkdf2:sha256)</span>
+                        </li>
+                        <li class="sec-info-item">
+                            <span class="sec-info-label">Session Status</span>
+                            <span class="sec-info-value" style="color: #16a34a;"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> Active</span>
+                        </li>
+                        <li class="sec-info-item">
+                            <span class="sec-info-label">Store Database</span>
+                            <span class="sec-info-value">sales_forecasting_db</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

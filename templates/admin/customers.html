@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecastify | Manage Customers</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Dedicated Admin Dashboard CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_dashboard.css') }}">
+</head>
+
+<body class="admin-dashboard-body">
+
+    <div class="dash-app-container">
+
+        <!-- Top Header Navigation Bar -->
+        <header class="dash-header-nav">
+            <div class="dash-brand-title">
+                <span>Forecastify</span>
+            </div>
+
+            <nav class="dash-nav-pills">
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-pill-link">Dashboard</a>
+                <a href="{{ url_for('admin_products') }}" class="dash-pill-link">Products ({{ product_count }})</a>
+                <a href="{{ url_for('admin_orders') }}" class="dash-pill-link">Orders ({{ order_count }})</a>
+                <a href="{{ url_for('admin_customers') }}" class="dash-pill-link active">Customers ({{ customer_count }})</a>
+            </nav>
+
+            <div class="dash-header-actions">
+                <a href="{{ url_for('admin_settings') }}" class="icon-btn" title="Settings" style="text-decoration: none;"><i class="fas fa-cog"></i></a>
+                <a href="{{ url_for('admin_logout') }}" class="icon-btn" title="Logout" style="margin-left: 6px; color: #ef4444; text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">
+                        <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}" style="margin-right: 8px;"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Section Title & Action -->
+        <div class="dash-section-header">
+            <h1>Customer Management</h1>
+            <button class="btn-new-task" onclick="openModal('addCustomerModal')">
+                <i class="fas fa-plus"></i> Add New Customer
+            </button>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="search-filter-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="customerSearch" class="search-input" placeholder="Search customers by name, email, city..." onkeyup="filterCustomers()">
+            </div>
+        </div>
+
+        <!-- Customers Table Card -->
+        <div class="dash-table-card">
+            <table class="dash-table" id="customersTable">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>City / State</th>
+                        <th>Orders Placed</th>
+                        <th>Joined Date</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cust in customers %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #18181b; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem;">
+                                    {{ cust.name[0] if cust.name else 'U' }}
+                                </div>
+                                <div>
+                                    <strong style="display: block; color: var(--text-dark); font-size: 0.9rem;">{{ cust.name }}</strong>
+                                    <span style="font-size: 0.775rem; color: var(--text-muted);">ID: #{{ cust.user_id }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ cust.email }}</td>
+                        <td>{{ cust.phone or 'N/A' }}</td>
+                        <td>{{ cust.city or 'N/A' }}{% if cust.state %}, {{ cust.state }}{% endif %}</td>
+                        <td><strong>{{ cust.total_orders or 0 }} Orders</strong></td>
+                        <td>{{ cust.created_at.strftime('%b %d, %Y') if cust.created_at else 'N/A' }}</td>
+                        <td style="text-align: right;">
+                            <div class="action-btn-group" style="justify-content: flex-end;">
+                                <button class="btn-act btn-act-edit" title="Edit Customer" data-customer='{{ cust|tojson }}' onclick="editCustomerFromBtn(this)">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <form action="{{ url_for('admin_delete_customer', user_id=cust.user_id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete customer {{ cust.name }}?');">
+                                    <button type="submit" class="btn-act btn-act-delete" title="Delete Customer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No customers found. Click "+ Add New Customer" to register one.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ADD CUSTOMER MODAL -->
+    <div class="modal-overlay" id="addCustomerModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add New Customer</h3>
+                <button class="modal-close-btn" onclick="closeModal('addCustomerModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form action="{{ url_for('admin_add_customer') }}" method="POST">
+                <div class="modal-form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" name="name" placeholder="John Doe" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" name="email" placeholder="john@example.com" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="modal-form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+91 9876543210">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="modal-form-group">
+                        <label for="city">City</label>
+                        <input type="text" name="city" placeholder="Ahmedabad">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="state">State</label>
+                        <input type="text" name="state" placeholder="Gujarat">
+                    </div>
+                </div>
+                <div class="modal-form-group">
+                    <label for="address">Address</label>
+                    <input type="text" name="address" placeholder="123 Street Name">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('addCustomerModal')">Cancel</button>
+                    <button type="submit" class="btn-submit">Register Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT CUSTOMER MODAL -->
+    <div class="modal-overlay" id="editCustomerModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Edit Customer Profile</h3>
+                <button class="modal-close-btn" onclick="closeModal('editCustomerModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editCustomerForm" method="POST">
+                <div class="modal-form-group">
+                    <label for="edit_name">Full Name *</label>
+                    <input type="text" id="edit_name" name="name" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit_email">Email Address *</label>
+                    <input type="email" id="edit_email" name="email" required>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit_phone">Phone Number</label>
+                    <input type="tel" id="edit_phone" name="phone">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="modal-form-group">
+                        <label for="edit_city">City</label>
+                        <input type="text" id="edit_city" name="city">
+                    </div>
+                    <div class="modal-form-group">
+                        <label for="edit_state">State</label>
+                        <input type="text" id="edit_state" name="state">
+                    </div>
+                </div>
+                <div class="modal-form-group">
+                    <label for="edit_address">Address</label>
+                    <input type="text" id="edit_address" name="address">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('editCustomerModal')">Cancel</button>
+                    <button type="submit" class="btn-submit">Update Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function editCustomerFromBtn(btn) {
+            const cust = JSON.parse(btn.dataset.customer);
+            editCustomer(cust);
+        }
+        function editCustomer(cust) {
+            document.getElementById('editCustomerForm').action = "/admin/customers/edit/" + cust.user_id;
+            document.getElementById('edit_name').value = cust.name;
+            document.getElementById('edit_email').value = cust.email;
+            document.getElementById('edit_phone').value = cust.phone || '';
+            document.getElementById('edit_city').value = cust.city || '';
+            document.getElementById('edit_state').value = cust.state || '';
+            document.getElementById('edit_address').value = cust.address || '';
+            openModal('editCustomerModal');
+        }
+        function filterCustomers() {
+            const query = document.getElementById('customerSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#customersTable tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecastify | Admin Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Dedicated Admin Dashboard CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_dashboard.css') }}">
+    <!-- Chart.js for Dynamic Graph Reports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="admin-dashboard-body">
+
+    <div class="dash-app-container">
+
+        <!-- Top Header Navigation Bar (NO LOGO IMAGE) -->
+        <header class="dash-header-nav">
+            <div class="dash-brand-title">
+                <span>Forecastify</span>
+            </div>
+
+            <nav class="dash-nav-pills">
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-pill-link active">Dashboard</a>
+                <a href="{{ url_for('admin_products') }}" class="dash-pill-link">Products ({{ data.product_count }})</a>
+                <a href="{{ url_for('admin_orders') }}" class="dash-pill-link">Orders ({{ data.tx_count }})</a>
+                <a href="{{ url_for('admin_customers') }}" class="dash-pill-link">Customers ({{ data.user_count }})</a>
+            </nav>
+
+            <div class="dash-header-actions">
+                <a href="{{ url_for('admin_settings') }}" class="icon-btn" title="Settings"
+                    style="text-decoration: none;"><i class="fas fa-cog"></i></a>
+                <a href="{{ url_for('admin_logout') }}" class="icon-btn" title="Logout"
+                    style="margin-left: 6px; color: #ef4444; text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Section Title & Action -->
+        <div class="dash-section-header">
+            <h1>Sales & Operations Overview</h1>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <a href="{{ url_for('admin_products') }}" class="btn-new-task">
+                    <i class="fas fa-plus"></i> New Product
+                </a>
+            </div>
+        </div>
+
+        <!-- Top 3 Dynamic Metric Cards Row -->
+        <div class="dash-kpi-grid">
+
+            <!-- Card 1: Active Orders -->
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon-wrapper kpi-icon-green">
+                            <i class="fas fa-boxes-packing"></i>
+                        </div>
+                        <div class="kpi-title-block">
+                            <span>Active<br>Orders</span>
+                        </div>
+                        <a href="{{ url_for('admin_orders') }}" class="btn-arrow-icon"><i
+                                class="fas fa-arrow-up-right-from-square"></i></a>
+                    </div>
+
+                    <div class="kpi-metric-row">
+                        <span class="kpi-big-number">{{ data.tx_count }}</span>
+                        {% if data.tx_count > 0 %}
+                        <span class="badge-tag badge-green"><i class="fas fa-arrow-up"></i> Live</span>
+                        {% else %}
+                        <span class="badge-tag badge-red">0 New</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="kpi-card-footer">
+                    <span><i class="fas fa-infinity" style="margin-right: 4px;"></i> Real-time DB Sync</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Total Revenue -->
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon-wrapper kpi-icon-blue">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="kpi-title-block">
+                            <span>Total<br>Revenue</span>
+                        </div>
+                        <a href="{{ url_for('admin_orders') }}" class="btn-arrow-icon"><i
+                                class="fas fa-arrow-up-right-from-square"></i></a>
+                    </div>
+
+                    <div class="kpi-metric-row">
+                        <span class="kpi-big-number">₹{{ "{:,.0f}".format(data.total_revenue) }}</span>
+                        <span class="badge-tag badge-green"><i class="fas fa-arrow-up"></i> DB Total</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card-footer">
+                    <span><i class="fas fa-infinity" style="margin-right: 4px;"></i> Verified Transactions</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Active Customers -->
+            <div class="kpi-card">
+                <div>
+                    <div class="kpi-card-header">
+                        <div class="kpi-icon-wrapper kpi-icon-pink">
+                            <i class="fas fa-users-gear"></i>
+                        </div>
+                        <div class="kpi-title-block">
+                            <span>Registered<br>Customers</span>
+                        </div>
+                        <a href="{{ url_for('admin_customers') }}" class="btn-arrow-icon"><i
+                                class="fas fa-arrow-up-right-from-square"></i></a>
+                    </div>
+
+                    <div class="kpi-metric-row">
+                        <span class="kpi-big-number">{{ data.user_count }}</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card-footer">
+                    <a href="{{ url_for('admin_customers') }}"
+                        style="text-decoration: none; color: inherit; font-weight: 600;">Manage Customers</a>
+                    <div class="avatar-stack">
+                        <div class="avatar-stack-add"><i class="fas fa-plus"></i></div>
+                        {% for customer in data.recent_customers %}
+                        <div class="avatar-stack-item"
+                            style="background: #18181b; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700;">
+                            {{ customer.name[0] if customer.name else 'U' }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom 3 Detailed Panels Row -->
+        <div class="dash-panels-grid">
+
+            <!-- Bottom Left: Category Breakdown & Progress -->
+            <div class="dash-panel-card">
+                <div>
+                    <div class="panel-header-row">
+                        <h3>Top Categories</h3>
+                        <div class="category-badges">
+                            {% for cat in data.categories %}
+                            <span class="cat-chip {{ cat.chip_class }}">
+                                <i class="fas fa-square" style="font-size: 0.5rem;"></i> {{ cat.name }} ({{ cat.count
+                                }})
+                            </span>
+                            {% else %}
+                            <span class="cat-chip chip-blue">No Categories</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="progress-big-metric">
+                        <div class="percentage">{{ data.avg_progress }}% Share</div>
+                        <div class="sub-text">Average catalog share of top categories</div>
+                    </div>
+                </div>
+
+                <div class="bars-visual-container"
+                    style="gap: 16px; align-items: flex-end; height: 160px; padding-bottom: 28px;">
+                    {% for cat in data.categories %}
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end;">
+                        <div class="bar-pillar {{ cat.bar_class }}"
+                            style="--h: {{ [cat.pct * 2.5, 100]|min }}%; height: var(--h); width: 100%;">
+                            <span class="bar-pillar-label">{{ cat.count }} prods</span>
+                        </div>
+                        <span
+                            style="font-size: 0.775rem; font-weight: 700; color: var(--text-dark); margin-top: 10px; white-space: nowrap;">{{
+                            cat.name }}</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">{{ cat.pct }}% catalog</span>
+                    </div>
+                    {% else %}
+                    <div class="bar-pillar bar-blue" style="height: 60%;">
+                        <span class="bar-pillar-label">0</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Bottom Middle: Order Status Donut Card -->
+            <div class="dash-panel-card">
+                <div>
+                    <div class="panel-header-row">
+                        <h3>Order Breakdown</h3>
+                        <div style="display: flex; gap: 8px; color: var(--text-muted); font-size: 0.9rem;">
+                            <span>Σ</span>
+                            <span>%</span>
+                        </div>
+                    </div>
+
+                    <div class="donut-center-container">
+                        <svg class="donut-svg" viewBox="0 0 100 100">
+                            <!-- Background track -->
+                            <circle class="donut-segment" cx="50" cy="50" r="38" stroke="#f1f3f7"
+                                stroke-dasharray="238.76" stroke-dashoffset="0"></circle>
+
+                            <!-- Delivered Arc (Green) -->
+                            <circle class="donut-segment donut-green" cx="50" cy="50" r="38"
+                                style="--len: {{ (data.completed_pct / 100) * 238.76 }}; stroke-dasharray: var(--len) 238.76; stroke-dashoffset: 0;">
+                            </circle>
+
+                            <!-- Shipped Arc (Pink) -->
+                            <circle class="donut-segment donut-pink" cx="50" cy="50" r="38"
+                                style="--len: {{ (data.in_progress_pct / 100) * 238.76 }}; --off: {{ -((data.completed_pct / 100) * 238.76) }}; stroke-dasharray: var(--len) 238.76; stroke-dashoffset: var(--off);">
+                            </circle>
+
+                            <!-- Pending Arc (Blue) -->
+                            <circle class="donut-segment donut-blue" cx="50" cy="50" r="38"
+                                style="--len: {{ (data.pending_pct / 100) * 238.76 }}; --off: {{ -(((data.completed_pct + data.in_progress_pct) / 100) * 238.76) }}; stroke-dasharray: var(--len) 238.76; stroke-dashoffset: var(--off);">
+                            </circle>
+                        </svg>
+                        <div class="donut-center-text">
+                            <div class="count">{{ data.product_count }}</div>
+                            <div class="label">products</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-progress-list">
+                    <div class="status-item-row">
+                        <div class="status-item-header">
+                            <span>Delivered</span>
+                            <span>{{ data.completed_orders }}/{{ data.tx_count }}</span>
+                        </div>
+                        <div class="status-bar-track">
+                            <div class="status-bar-fill fill-green"
+                                style="--w: {{ data.completed_pct }}%; width: var(--w);"></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item-row">
+                        <div class="status-item-header">
+                            <span>Shipped</span>
+                            <span>{{ data.in_progress_orders }}/{{ data.tx_count }}</span>
+                        </div>
+                        <div class="status-bar-track">
+                            <div class="status-bar-fill fill-pink"
+                                style="--w: {{ data.in_progress_pct }}%; width: var(--w);"></div>
+                        </div>
+                    </div>
+
+                    <div class="status-item-row">
+                        <div class="status-item-header">
+                            <span>Pending</span>
+                            <span>{{ data.pending_orders }}/{{ data.tx_count }}</span>
+                        </div>
+                        <div class="status-bar-track">
+                            <div class="status-bar-fill fill-blue"
+                                style="--w: {{ data.pending_pct }}%; width: var(--w);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Right: Sales Trend Card -->
+            <div class="dash-panel-card">
+                <div>
+                    <div class="panel-header-row">
+                        <h3>Revenue Trend</h3>
+                    </div>
+
+                    <div class="trend-tooltips-row">
+                        <span class="trend-tooltip-pill tooltip-dark"><i class="fas fa-circle"
+                                style="font-size: 0.45rem; color: #3b82f6;"></i> Live DB Transactions</span>
+                        <span class="trend-tooltip-pill tooltip-pink"><i class="fas fa-circle"
+                                style="font-size: 0.45rem; color: #ec4899;"></i> Orders Activity</span>
+                    </div>
+
+                    <!-- Interactive Canvas Chart -->
+                    <div class="trend-svg-container" style="height: 130px; position: relative;">
+                        <canvas id="revenueTrendMiniChart"></canvas>
+                    </div>
+
+
+                </div>
+
+                <div class="trend-stats-footer">
+                    <div class="trend-stat-col">
+                        <span>Database Revenue</span>
+                        <strong>₹{{ "{:,.0f}".format(data.total_revenue) }} <span class="badge-tag badge-green"><i
+                                    class="fas fa-arrow-up"></i> Real</span></strong>
+                    </div>
+
+                    <div class="trend-stat-col" style="text-align: right;">
+                        <span>Pending Orders</span>
+                        <strong>{{ data.pending_orders }} <span class="badge-tag badge-red">Pending</span></strong>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================
+             EXPANDED SECTION: FULL SALES & OPERATIONS REPORT
+             ============================================================ -->
+        <div style="margin-top: 40px; margin-bottom: 40px;">
+            <div class="dash-section-header" style="margin-bottom: 20px;">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-dark);">Full Sales & Operational
+                        Report</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Comprehensive real-time
+                        report covering orders, best-selling products, top customers, and financial performance.</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="badge-status delivered" style="padding: 6px 14px;"><i class="fas fa-database"></i> Live
+                        Database Sync</span>
+                    <a href="{{ url_for('export_master_report') }}" class="btn-new-task"
+                        style="background: #10b981; color: #ffffff; text-decoration: none;">
+                        <i class="fas fa-file-csv"></i> Export Report (.CSV)
+                    </a>
+                    <a href="{{ url_for('admin_orders') }}" class="btn-new-task"
+                        style="background: #ffffff; color: var(--text-dark); border: 1px solid #cbd5e1; text-decoration: none;">
+                        <i class="fas fa-list"></i> View All Orders
+                    </a>
+                </div>
+            </div>
+
+            <!-- Key Financial Performance Bar -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div class="dash-panel-card" style="padding: 18px 22px;">
+                    <span
+                        style="font-size: 0.775rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Total
+                        Gross Revenue</span>
+                    <strong style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark);">₹{{
+                        "{:,.2f}".format(data.total_revenue) }}</strong>
+                </div>
+                <div class="dash-panel-card" style="padding: 18px 22px;">
+                    <span
+                        style="font-size: 0.775rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Average
+                        Order Value (AOV)</span>
+                    <strong style="font-size: 1.35rem; font-weight: 800; color: #2563eb;">₹{{ "{:,.2f}".format(data.aov)
+                        }}</strong>
+                </div>
+                <div class="dash-panel-card" style="padding: 18px 22px;">
+                    <span
+                        style="font-size: 0.775rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Total
+                        Orders Processed</span>
+                    <strong style="font-size: 1.35rem; font-weight: 800; color: #10b981;">{{ data.tx_count }}
+                        Orders</strong>
+                </div>
+                <div class="dash-panel-card" style="padding: 18px 22px;">
+                    <span
+                        style="font-size: 0.775rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Active
+                        Customer Base</span>
+                    <strong style="font-size: 1.35rem; font-weight: 800; color: #ec4899;">{{ data.user_count }}
+                        Users</strong>
+                </div>
+            </div>
+
+            <!-- DYNAMIC REPORT GRAPH SECTION (WITH BACKGROUND GRID LINES) -->
+            <div class="chart-card-full">
+                <div class="chart-header-container">
+                    <div class="chart-title-block">
+                        <h3><i class="fas fa-chart-area" style="color: #2563eb;"></i> Dynamic Sales & Revenue Timeline
+                            Graph</h3>
+                        <p>Real-time transaction telemetry, order volume, and revenue trend analysis rendered with crisp
+                            background grid lines.</p>
+                    </div>
+                    <div class="chart-filter-pills">
+                        <button class="chart-pill-btn active" onclick="switchMainChart('both')">Revenue &
+                            Volume</button>
+                        <button class="chart-pill-btn" onclick="switchMainChart('revenue')">Revenue Only</button>
+                        <button class="chart-pill-btn" onclick="switchMainChart('orders')">Orders Only</button>
+                    </div>
+                </div>
+
+                <div class="chart-grid-wrapper">
+                    <canvas id="fullRevenueTimelineChart"></canvas>
+                </div>
+
+                <div class="chart-legend-row">
+                    <span class="chart-legend-badge">
+                        <span class="chart-legend-dot" style="background: #2563eb;"></span> Daily Revenue (₹)
+                    </span>
+                    <span class="chart-legend-badge">
+                        <span class="chart-legend-dot" style="background: #ec4899;"></span> Order Volume (Count)
+                    </span>
+                    <span class="chart-legend-badge" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+                        <i class="fas fa-border-all" style="color: #64748b;"></i> Background Grid Lines Active
+                    </span>
+                </div>
+            </div>
+
+            <!-- Side-by-Side Dynamic Report Graphs Row -->
+            <div class="chart-grid-row">
+                <!-- Product Performance Graph -->
+                <div class="chart-card-full" style="margin-bottom: 0;">
+                    <div class="chart-header-container">
+                        <div class="chart-title-block">
+                            <h3><i class="fas fa-box-open" style="color: #ec4899;"></i> Product Sales Leaderboard Graph
+                            </h3>
+                            <p>Revenue (₹) and units sold per top product with dual-scaled axes & background grid lines.
+                            </p>
+                        </div>
+                        <div class="chart-filter-pills" id="prodChartPills">
+                            <button class="chart-pill-btn active" onclick="switchProdChart('both')">Dual Scale</button>
+                            <button class="chart-pill-btn" onclick="switchProdChart('revenue')">Revenue (₹)</button>
+                            <button class="chart-pill-btn" onclick="switchProdChart('units')">Units Sold</button>
+                        </div>
+                    </div>
+                    <div class="chart-grid-wrapper chart-grid-wrapper-sm">
+                        <canvas id="productsPerformanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Category Revenue & Volume Distribution Graph -->
+                <div class="chart-card-full" style="margin-bottom: 0;">
+                    <div class="chart-header-container">
+                        <div class="chart-title-block">
+                            <h3><i class="fas fa-tags" style="color: #f59e0b;"></i> Category Revenue & Volume
+                                Distribution Graph</h3>
+                            <p>Category sales revenue (₹) bars and total units sold volume curve with dual-axis
+                                background grid lines.</p>
+                        </div>
+                        <div class="chart-filter-pills" id="catChartPills">
+                            <button class="chart-pill-btn active" onclick="switchCatChart('both')">Revenue &
+                                Volume</button>
+                            <button class="chart-pill-btn" onclick="switchCatChart('revenue')">Revenue Only (₹)</button>
+                            <button class="chart-pill-btn" onclick="switchCatChart('units')">Units Only</button>
+                        </div>
+                    </div>
+                    <div class="chart-grid-wrapper chart-grid-wrapper-sm">
+                        <canvas id="categoryDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Grid: Recent Orders Table & Top Spenders -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+
+                <!-- Panel A: Recent Orders Audit Table -->
+                <div class="dash-table-card">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                        <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark);"><i
+                                class="fas fa-shopping-bag" style="color: #2563eb; margin-right: 8px;"></i> Recent Order
+                            Transactions</h3>
+                        <a href="{{ url_for('admin_orders') }}"
+                            style="font-size: 0.8rem; font-weight: 700; color: #2563eb; text-decoration: none;">View All
+                            ({{ data.tx_count }}) &rarr;</a>
+                    </div>
+                    <table class="dash-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Payment</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in data.report_orders %}
+                            <tr>
+                                <td><strong>#{{ order.order_id }}</strong></td>
+                                <td>
+                                    <strong style="display: block; font-size: 0.85rem; color: var(--text-dark);">{{
+                                        order.customer_name or 'User #' ~ order.user_id }}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ order.customer_email
+                                        or '' }}</span>
+                                </td>
+                                <td>{{ order.order_date.strftime('%b %d, %Y') if order.order_date else 'N/A' }}</td>
+                                <td><span
+                                        style="font-size: 0.75rem; font-weight: 700; background: #f1f5f9; padding: 3px 8px; border-radius: 8px;">{{
+                                        order.payment_method or 'N/A' }}</span></td>
+                                <td><strong>₹{{ "{:,.2f}".format(order.total_amount) }}</strong></td>
+                                <td><span class="badge-status {{ order.status }}"><i class="fas fa-circle"
+                                            style="font-size: 0.35rem;"></i> {{ order.status|title }}</span></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-muted);">No recent orders
+                                    found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Panel B: Top Spending Customers -->
+                <div class="dash-table-card">
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                        <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark);"><i
+                                class="fas fa-trophy" style="color: #f59e0b; margin-right: 8px;"></i> Top Customers</h3>
+                        <a href="{{ url_for('admin_customers') }}"
+                            style="font-size: 0.8rem; font-weight: 700; color: #2563eb; text-decoration: none;">Manage
+                            &rarr;</a>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        {% for cust in data.report_customers %}
+                        <li
+                            style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div
+                                    style="width: 36px; height: 36px; border-radius: 50%; background: #18181b; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
+                                    {{ cust.name[0] if cust.name else 'C' }}
+                                </div>
+                                <div>
+                                    <strong style="display: block; font-size: 0.85rem; color: var(--text-dark);">{{
+                                        cust.name }}</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">{{ cust.city or 'India'
+                                        }} • {{ cust.total_orders }} orders</span>
+                                </div>
+                            </div>
+                            <strong style="font-size: 0.9rem; color: #10b981;">₹{{ "{:,.0f}".format(cust.total_spent)
+                                }}</strong>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Panel C: Top Selling Products Leaderboard -->
+            <div class="dash-table-card">
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark);"><i class="fas fa-fire"
+                            style="color: #ec4899; margin-right: 8px;"></i> Best Selling Products Performance</h3>
+                    <a href="{{ url_for('admin_products') }}"
+                        style="font-size: 0.8rem; font-weight: 700; color: #2563eb; text-decoration: none;">Full Catalog
+                        ({{ data.product_count }}) &rarr;</a>
+                </div>
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Unit Price</th>
+                            <th>Units Sold</th>
+                            <th>Stock Status</th>
+                            <th>Revenue Generated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prod in data.report_products %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="{{ prod.image_url }}" alt="{{ prod.name }}" class="prod-thumb"
+                                        onerror="this.src='/static/images/logo.png'">
+                                    <strong style="font-size: 0.875rem; color: var(--text-dark);">{{ prod.name
+                                        }}</strong>
+                                </div>
+                            </td>
+                            <td><span
+                                    style="font-weight: 600; font-size: 0.8rem; background: #f8fafc; padding: 4px 10px; border-radius: 12px; border: 1px solid #e2e8f0;">{{
+                                    prod.category }}</span></td>
+                            <td>₹{{ "{:,.2f}".format(prod.price) }}</td>
+                            <td><strong style="color: #2563eb;">{{ prod.units_sold }} Units</strong></td>
+                            <td>
+                                {% if prod.stock_quantity > 0 %}
+                                <span style="font-weight: 600; color: #10b981;">{{ prod.stock_quantity }}
+                                    Available</span>
+                                {% else %}
+                                <span style="font-weight: 600; color: #ef4444;">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                            <td><strong style="color: #10b981;">₹{{ "{:,.2f}".format(prod.revenue_generated) }}</strong>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Dynamic Graph Data Container -->
+    <script id="admin-chart-data" type="application/json">
+    {
+        "timeline": {{ (data.timeline_data | default([])) | tojson | safe }},
+        "prod": {{ (data.prod_chart_data | default([])) | tojson | safe }},
+        "cust": {{ (data.cust_chart_data | default([])) | tojson | safe }},
+        "cat": {{ (data.cat_chart_data | default([])) | tojson | safe }},
+        "kpiPeriods": {{ (data.kpi_periods | default({})) | tojson | safe }},
+        "daily": {{ (data.daily_data | default([])) | tojson | safe }}
+    }
+    </script>
+
+    <!-- Dynamic Graph Render Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Data passed from backend Flask controller
+            let chartData = {};
+            try {
+                const dataElem = document.getElementById('admin-chart-data');
+                if (dataElem) {
+                    chartData = JSON.parse(dataElem.textContent);
+                }
+            } catch (e) {
+                console.error("Error parsing dashboard chart data:", e);
+            }
+
+            const timelineData = chartData.timeline || [];
+            const prodData = chartData.prod || [];
+            const custData = chartData.cust || [];
+            const catData = chartData.cat || [];
+
+        // Global Chart Grid Settings
+        const commonGridStyle = {
+            display: true,
+            color: 'rgba(203, 213, 225, 0.7)',
+            borderColor: '#94a3b8',
+            borderDash: [4, 4],
+            lineWidth: 1,
+            drawTicks: true
+        };
+
+        // 0. Interactive Revenue & Order Trend Mini Chart
+        const dailyData = chartData.daily || [];
+        const dailyLabels = dailyData.length > 0 ? dailyData.map(d => d.day_name) : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        const dailyRevenue = dailyData.length > 0 ? dailyData.map(d => Number(d.day_revenue) || 0) : [0, 0, 0, 0, 0];
+        const dailyOrders = dailyData.length > 0 ? dailyData.map(d => Number(d.tx_cnt) || 0) : [0, 0, 0, 0, 0];
+
+        const ctxTrendElem = document.getElementById('revenueTrendMiniChart');
+        if (ctxTrendElem) {
+            const ctxTrend = ctxTrendElem.getContext('2d');
+            const trendRevGradient = ctxTrend.createLinearGradient(0, 0, 0, 130);
+            trendRevGradient.addColorStop(0, 'rgba(37, 99, 235, 0.3)');
+            trendRevGradient.addColorStop(1, 'rgba(37, 99, 235, 0.01)');
+
+            window.revenueTrendMiniChart = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: dailyLabels,
+                    datasets: [
+                        {
+                            label: 'Live DB Revenue (₹)',
+                            data: dailyRevenue,
+                            borderColor: '#2563eb',
+                            backgroundColor: trendRevGradient,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#2563eb',
+                            pointBorderColor: '#ffffff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'yRev'
+                        },
+                        {
+                            label: 'Orders Activity',
+                            data: dailyOrders,
+                            borderColor: '#ec4899',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2.5,
+                            borderDash: [4, 4],
+                            fill: false,
+                            tension: 0.4,
+                            pointBackgroundColor: '#ec4899',
+                            pointBorderColor: '#ffffff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            yAxisID: 'yOrd'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
+                            bodyFont: { family: 'Plus Jakarta Sans', size: 11 },
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function (ctx) {
+                                    if (ctx.dataset.label.includes('Revenue')) {
+                                        return ' Revenue: ₹' + ctx.parsed.y.toLocaleString('en-IN');
+                                    }
+                                    return ' Orders: ' + ctx.parsed.y + ' orders';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' } }
+                        },
+                        yRev: { display: false },
+                        yOrd: { display: false }
+                    }
+                }
+            });
+        }
+
+        // 1. Dynamic Main Timeline Chart (Combination Area Line & Bar)
+        const timelineLabels = timelineData.length > 0 ? timelineData.map(d => d.date) : ['No Data'];
+        const timelineRevenue = timelineData.length > 0 ? timelineData.map(d => d.revenue) : [0];
+        const timelineOrders = timelineData.length > 0 ? timelineData.map(d => d.orders) : [0];
+
+        const ctxTimeline = document.getElementById('fullRevenueTimelineChart').getContext('2d');
+
+        const revGradient = ctxTimeline.createLinearGradient(0, 0, 0, 300);
+        revGradient.addColorStop(0, 'rgba(37, 99, 235, 0.35)');
+        revGradient.addColorStop(1, 'rgba(37, 99, 235, 0.01)');
+
+        window.mainTimelineChart = new Chart(ctxTimeline, {
+            type: 'line',
+            data: {
+                labels: timelineLabels,
+                datasets: [
+                    {
+                        label: 'Revenue (₹)',
+                        data: timelineRevenue,
+                        borderColor: '#2563eb',
+                        backgroundColor: revGradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#2563eb',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        yAxisID: 'yRevenue'
+                    },
+                    {
+                        label: 'Order Count',
+                        data: timelineOrders,
+                        type: 'bar',
+                        backgroundColor: 'rgba(236, 72, 153, 0.75)',
+                        borderColor: '#ec4899',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barThickness: 24,
+                        yAxisID: 'yOrders'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 'bold' },
+                        bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+                        padding: 12,
+                        cornerRadius: 10,
+                        callbacks: {
+                            label: function (context) {
+                                if (context.dataset.label.includes('Revenue')) {
+                                    return ' Revenue: ₹' + context.parsed.y.toLocaleString('en-IN');
+                                } else {
+                                    return ' Orders: ' + context.parsed.y + ' orders';
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: commonGridStyle,
+                        ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                    },
+                    yRevenue: {
+                        type: 'linear',
+                        position: 'left',
+                        grid: commonGridStyle,
+                        ticks: {
+                            color: '#2563eb',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            callback: value => '₹' + value.toLocaleString('en-IN')
+                        }
+                    },
+                    yOrders: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: { display: false },
+                        ticks: {
+                            color: '#ec4899',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Best Selling Products Performance Chart (Dual X-Axes Horizontal Bar Chart)
+        const prodLabels = prodData.length > 0 ? prodData.map(p => p.name.length > 18 ? p.name.substring(0, 18) + '...' : p.name) : ['No Data'];
+        const prodRevenue = prodData.length > 0 ? prodData.map(p => p.revenue) : [0];
+        const prodUnits = prodData.length > 0 ? prodData.map(p => p.units) : [0];
+
+        const ctxProd = document.getElementById('productsPerformanceChart').getContext('2d');
+        window.prodPerformanceChart = new Chart(ctxProd, {
+            type: 'bar',
+            data: {
+                labels: prodLabels,
+                datasets: [
+                    {
+                        label: 'Revenue (₹)',
+                        data: prodRevenue,
+                        backgroundColor: 'rgba(37, 99, 235, 0.85)',
+                        borderColor: '#2563eb',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        xAxisID: 'xRevenue'
+                    },
+                    {
+                        label: 'Units Sold',
+                        data: prodUnits,
+                        backgroundColor: 'rgba(236, 72, 153, 0.85)',
+                        borderColor: '#ec4899',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        xAxisID: 'xUnits'
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: '700' } } },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 'bold' },
+                        bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+                        padding: 12,
+                        cornerRadius: 10,
+                        callbacks: {
+                            label: function (ctx) {
+                                if (ctx.dataset.label.includes('Revenue')) {
+                                    return ' Revenue: ₹' + ctx.parsed.x.toLocaleString('en-IN');
+                                }
+                                return ' Units Sold: ' + ctx.parsed.x + ' units';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: commonGridStyle,
+                        ticks: { color: '#0f172a', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                    },
+                    xRevenue: {
+                        type: 'linear',
+                        position: 'bottom',
+                        grid: commonGridStyle,
+                        ticks: {
+                            color: '#2563eb',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            callback: val => {
+                                if (val >= 10000000) return '₹' + (val / 10000000).toFixed(1) + ' Cr';
+                                if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + ' L';
+                                if (val >= 1000) return '₹' + (val / 1000).toFixed(0) + 'k';
+                                return '₹' + val;
+                            }
+                        }
+                    },
+                    xUnits: {
+                        type: 'linear',
+                        position: 'top',
+                        grid: { display: false },
+                        ticks: {
+                            color: '#ec4899',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            stepSize: 10,
+                            callback: val => val + ' u'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Category Distribution Graph (Dual Y-Axes Combination Bar & Line Chart)
+        const catLabels = catData.length > 0 ? catData.map(c => c.category) : ['No Data'];
+        const catRevenue = catData.length > 0 ? catData.map(c => c.revenue) : [0];
+        const catUnits = catData.length > 0 ? catData.map(c => c.units) : [0];
+
+        const ctxCat = document.getElementById('categoryDistributionChart').getContext('2d');
+        window.categoryDistChart = new Chart(ctxCat, {
+            type: 'bar',
+            data: {
+                labels: catLabels,
+                datasets: [
+                    {
+                        label: 'Category Revenue (₹)',
+                        data: catRevenue,
+                        type: 'bar',
+                        backgroundColor: 'rgba(245, 158, 11, 0.85)',
+                        borderColor: '#f59e0b',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        barThickness: 32,
+                        yAxisID: 'yRevenue'
+                    },
+                    {
+                        label: 'Total Units Sold',
+                        data: catUnits,
+                        type: 'line',
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#10b981',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        yAxisID: 'yUnits'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { position: 'top', labels: { font: { family: 'Plus Jakarta Sans', weight: '700' } } },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 'bold' },
+                        bodyFont: { family: 'Plus Jakarta Sans', size: 12 },
+                        padding: 12,
+                        cornerRadius: 10,
+                        callbacks: {
+                            label: function (ctx) {
+                                if (ctx.dataset.label.includes('Revenue')) {
+                                    return ' Revenue: ₹' + ctx.parsed.y.toLocaleString('en-IN');
+                                }
+                                return ' Volume: ' + ctx.parsed.y + ' units';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: commonGridStyle,
+                        ticks: { color: '#0f172a', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                    },
+                    yRevenue: {
+                        type: 'linear',
+                        position: 'left',
+                        grid: commonGridStyle,
+                        ticks: {
+                            color: '#d97706',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            callback: val => {
+                                if (val >= 10000000) return '₹' + (val / 10000000).toFixed(1) + ' Cr';
+                                if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + ' L';
+                                if (val >= 1000) return '₹' + (val / 1000).toFixed(0) + 'k';
+                                return '₹' + val;
+                            }
+                        }
+                    },
+                    yUnits: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: { display: false },
+                        ticks: {
+                            color: '#10b981',
+                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            stepSize: 20,
+                            callback: val => val + ' units'
+                        }
+                    }
+                }
+            }
+        });
+        });
+
+        // Filter toggle for main timeline graph
+        function switchMainChart(mode) {
+            const chart = window.mainTimelineChart;
+            if (!chart) return;
+
+            document.querySelectorAll('.chart-filter-pills .chart-pill-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'revenue') {
+                chart.show(0);
+                chart.hide(1);
+            } else if (mode === 'orders') {
+                chart.hide(0);
+                chart.show(1);
+            } else {
+                chart.show(0);
+                chart.show(1);
+            }
+            chart.update();
+        }
+
+        // Filter toggle for Product Leaderboard graph
+        function switchProdChart(mode) {
+            const chart = window.prodPerformanceChart;
+            if (!chart) return;
+
+            document.querySelectorAll('#prodChartPills .chart-pill-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'revenue') {
+                chart.show(0);
+                chart.hide(1);
+            } else if (mode === 'units') {
+                chart.hide(0);
+                chart.show(1);
+            } else {
+                chart.show(0);
+                chart.show(1);
+            }
+            chart.update();
+        }
+
+        // Filter toggle for Category Distribution graph
+        function switchCatChart(mode) {
+            const chart = window.categoryDistChart;
+            if (!chart) return;
+
+            document.querySelectorAll('#catChartPills .chart-pill-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (mode === 'revenue') {
+                chart.show(0);
+                chart.hide(1);
+            } else if (mode === 'units') {
+                chart.hide(0);
+                chart.show(1);
+            } else {
+                chart.show(0);
+                chart.show(1);
+            }
+            chart.update();
+        }
+
+        // Dynamic KPI Card timeframe filtering
+        function filterKpiCard(selectElem, type) {
+            const val = selectElem.value;
+            const card = selectElem.closest('.kpi-card');
+            if (!card) return;
+
+            const metricElem = card.querySelector('.kpi-big-number');
+            if (!metricElem) return;
+
+            if (!card.dataset.origVal) {
+                card.dataset.origVal = metricElem.textContent;
+            }
+
+            metricElem.style.transition = 'transform 0.15s ease, opacity 0.15s ease';
+            metricElem.style.opacity = '0.4';
+            metricElem.style.transform = 'scale(0.95)';
+
+            setTimeout(() => {
+                const kpiPeriods = (typeof chartData !== 'undefined' && chartData.kpiPeriods) ? chartData.kpiPeriods : null;
+
+                if (kpiPeriods && kpiPeriods[val]) {
+                    const stats = kpiPeriods[val];
+                    if (type === 'orders') {
+                        const num = Number(stats.orders) || 0;
+                        metricElem.textContent = num.toLocaleString('en-IN') + (num === 1 ? " Order" : " Orders");
+                    } else if (type === 'revenue') {
+                        const amount = Number(stats.revenue) || 0;
+                        metricElem.textContent = "₹" + Math.round(amount).toLocaleString('en-IN');
+                    }
+                } else {
+                    metricElem.textContent = card.dataset.origVal;
+                }
+
+                metricElem.style.opacity = '1';
+                metricElem.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // Dynamic Trend Chart timeframe filtering
+        function filterTrendChart(selectElem) {
+            const trendCard = selectElem.closest('.dash-panel-card');
+            if (trendCard) {
+                const svg = trendCard.querySelector('.trend-svg-container svg');
+                if (svg) {
+                    svg.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                    svg.style.opacity = '0.3';
+                    svg.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        svg.style.opacity = '1';
+                        svg.style.transform = 'scale(1)';
+                    }, 200);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

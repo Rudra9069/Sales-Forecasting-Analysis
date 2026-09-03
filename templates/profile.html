@@ -88,7 +88,7 @@
                         <div class="history-card">
                             <div class="history-header">
                                 <div>
-                                    <span class="order-id">Order #{{ order.transaction_id }}</span>
+                                    <span class="order-id">Order #{{ order.order_id }}</span>
                                     <span class="order-date">{{ order.order_date.strftime('%b %d, %Y') }}</span>
                                 </div>
                                 <span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span>
@@ -143,7 +143,7 @@
                                 {% for payment in payments %}
                                 <tr>
                                     <td>{{ payment.payment_date.strftime('%b %d, %Y') }}</td>
-                                    <td>#{{ payment.transaction_id }}</td>
+                                    <td>#{{ payment.order_id }}</td>
                                     <td>{{ payment.payment_method|upper }}</td>
                                     <td>₹{{ "%.2f"|format(payment.amount) }}</td>
                                     <td><span class="status-badge status-{{ payment.payment_status }}">{{
@@ -187,11 +187,11 @@
                     <p class="help-text">Have an issue with an order? Send us a complaint and we'll get back to you.</p>
                     <form action="{{ url_for('submit_help') }}" method="POST" class="profile-form">
                         <div class="form-group">
-                            <label for="transaction_id">Select Order *</label>
-                            <select id="transaction_id" name="transaction_id" required>
+                            <label for="order_id">Select Order *</label>
+                            <select id="order_id" name="order_id" required>
                                 <option value="" disabled selected>Choose an order...</option>
                                 {% for order in orders %}
-                                <option value="{{ order.transaction_id }}">Order #{{ order.transaction_id }} - {{
+                                <option value="{{ order.order_id }}">Order #{{ order.order_id }} - {{
                                     order.order_date.strftime('%b %d, %Y') }}</option>
                                 {% endfor %}
                             </select>
@@ -218,7 +218,7 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo">
+                <a href="{{ url_for('admin_login') }}" target="_blank" title="Admin Portal"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="footer-logo"></a>
                 <p>Empowering businesses with AI-driven sales forecasting and deep market analysis.</p>
             </div>
             <div class="footer-links">

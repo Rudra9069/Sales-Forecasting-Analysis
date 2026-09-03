@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecastify | Manage Orders</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Dedicated Admin Dashboard CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_dashboard.css') }}">
+</head>
+
+<body class="admin-dashboard-body">
+
+    <div class="dash-app-container">
+
+        <!-- Top Header Navigation Bar -->
+        <header class="dash-header-nav">
+            <div class="dash-brand-title">
+                <span>Forecastify</span>
+            </div>
+
+            <nav class="dash-nav-pills">
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-pill-link">Dashboard</a>
+                <a href="{{ url_for('admin_products') }}" class="dash-pill-link">Products ({{ product_count }})</a>
+                <a href="{{ url_for('admin_orders') }}" class="dash-pill-link active">Orders ({{ order_count }})</a>
+                <a href="{{ url_for('admin_customers') }}" class="dash-pill-link">Customers ({{ customer_count }})</a>
+            </nav>
+
+            <div class="dash-header-actions">
+                <a href="{{ url_for('admin_settings') }}" class="icon-btn" title="Settings" style="text-decoration: none;"><i class="fas fa-cog"></i></a>
+                <a href="{{ url_for('admin_logout') }}" class="icon-btn" title="Logout" style="margin-left: 6px; color: #ef4444; text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-alert flash-{{ category }}">
+                        <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}" style="margin-right: 8px;"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Section Title -->
+        <div class="dash-section-header">
+            <h1>Order Management</h1>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="search-filter-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="orderSearch" class="search-input" placeholder="Search orders by ID, customer name, address..." onkeyup="filterOrders()">
+            </div>
+        </div>
+
+        <!-- Orders Table Card -->
+        <div class="dash-table-card">
+            <table class="dash-table" id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Total Amount</th>
+                        <th>Shipping Address</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.order_id }}</strong></td>
+                        <td>
+                            <strong style="display: block; color: var(--text-dark); font-size: 0.875rem;">{{ order.customer_name or 'User #' ~ order.user_id }}</strong>
+                            <span style="font-size: 0.775rem; color: var(--text-muted);">{{ order.customer_email or '' }}</span>
+                        </td>
+                        <td>{{ order.order_date.strftime('%b %d, %Y') if order.order_date else 'N/A' }}</td>
+                        <td><strong>₹{{ "{:,.2f}".format(order.total_amount) }}</strong></td>
+                        <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <i class="fas fa-map-marker-alt" style="color: var(--text-muted); margin-right: 4px;"></i> {{ order.shipping_address }}
+                        </td>
+                        <td>
+                            <span class="badge-status {{ order.status }}">
+                                <i class="fas fa-circle" style="font-size: 0.4rem;"></i> {{ order.status|title }}
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <div class="action-btn-group" style="justify-content: flex-end;">
+                                <button class="btn-act btn-act-edit" title="Update Status" data-order-id="{{ order.order_id }}" data-status="{{ order.status }}" onclick="openStatusModal(this.dataset.orderId, this.dataset.status)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="{{ url_for('admin_delete_order', order_id=order.order_id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete Order #{{ order.order_id }}?');">
+                                    <button type="submit" class="btn-act btn-act-delete" title="Delete Order">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No orders found in the database.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- UPDATE ORDER STATUS MODAL -->
+    <div class="modal-overlay" id="statusModal">
+        <div class="modal-card" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3>Update Order Status</h3>
+                <button class="modal-close-btn" onclick="closeModal('statusModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="statusForm" method="POST">
+                <div class="modal-form-group">
+                    <label for="status_select">Order Status</label>
+                    <select id="status_select" name="status" required>
+                        <option value="pending">Pending</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('statusModal')">Cancel</button>
+                    <button type="submit" class="btn-submit">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openStatusModal(orderId, currentStatus) {
+            document.getElementById('statusForm').action = "/admin/orders/update-status/" + orderId;
+            document.getElementById('status_select').value = currentStatus;
+            openModal('statusModal');
+        }
+        function filterOrders() {
+            const query = document.getElementById('orderSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#ordersTable tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

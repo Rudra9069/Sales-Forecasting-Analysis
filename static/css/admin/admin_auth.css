@@ -1,0 +1,277 @@
+/* ======================================================
+   FORECASTIFY ADMIN PORTAL - WHITE & BLACK THEME
+   ====================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-main: #0b0f19;
+    --bg-card: #ffffff;
+    --bg-input: #f8fafc;
+    --border-color: #e2e8f0;
+    --border-focus: #2563eb;
+    --primary-blue: #2563eb;
+    --primary-blue-hover: #1d4ed8;
+    --text-heading: #0f172a;
+    --text-body: #475569;
+    --text-muted: #64748b;
+    --danger-bg: #fef2f2;
+    --danger-border: #fecaca;
+    --danger-text: #991b1b;
+    --success-bg: #ecfdf5;
+    --success-border: #a7f3d0;
+    --success-text: #065f46;
+    --font-heading: 'Plus Jakarta Sans', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.admin-body {
+    font-family: var(--font-body);
+    background-color: var(--bg-main);
+    background-image: 
+        radial-gradient(circle at 50% 0%, #1a233a 0%, transparent 75%),
+        linear-gradient(to bottom, rgba(11, 15, 25, 0.9), #0b0f19);
+    color: var(--text-heading);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Admin Login Wrapper */
+.admin-login-wrapper {
+    width: 100%;
+    max-width: 420px;
+}
+
+.admin-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 42px 38px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45),
+                0 10px 20px -5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-card:hover {
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Header Section */
+.admin-card-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.admin-logo-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+}
+
+.admin-logo-wrapper img {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    font-family: var(--font-heading);
+    font-size: 0.725rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+}
+
+.admin-badge i {
+    font-size: 0.75rem;
+    color: var(--primary-blue);
+}
+
+.admin-card-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.4px;
+    margin-bottom: 8px;
+}
+
+.admin-card-header p {
+    color: var(--text-body);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Alert Notifications */
+.admin-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+.admin-alert.error {
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    color: var(--danger-text);
+}
+
+.admin-alert.success {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+}
+
+/* Form Controls */
+.admin-form-group {
+    margin-bottom: 20px;
+}
+
+.admin-form-group label {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.admin-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.admin-input-icon {
+    position: absolute;
+    left: 14px;
+    color: #64748b;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+    pointer-events: none;
+}
+
+.admin-input-wrapper input {
+    width: 100%;
+    padding: 13px 14px 13px 44px;
+    background: var(--bg-input);
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    color: #0f172a;
+    font-family: var(--font-body);
+    font-size: 0.925rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.admin-input-wrapper input::placeholder {
+    color: #94a3b8;
+}
+
+.admin-input-wrapper input:focus {
+    background: #ffffff;
+    border-color: var(--border-focus);
+}
+
+.admin-input-wrapper input:focus ~ .admin-input-icon {
+    color: var(--primary-blue);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.toggle-password:hover {
+    color: #0f172a;
+}
+
+/* Submit Button (KEPT SAME AS IT IS) */
+.admin-submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-blue);
+    border: 1px solid #3b82f6;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    margin-top: 26px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.admin-submit-btn:hover {
+    background: var(--primary-blue-hover);
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.admin-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Footer Link */
+.admin-card-footer {
+    margin-top: 28px;
+    text-align: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+}
+
+.admin-back-link {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+}
+
+.admin-back-link:hover {
+    color: #0f172a;
+}

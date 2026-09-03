@@ -1,19 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Forecastify</title>
+    <title>Contact Us - Forecastify</title>
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
+
+    <style>
+        .contact-page-wrapper {
+            padding-top: 110px;
+            padding-bottom: 80px;
+            background: var(--bg-offwhite);
+            color: var(--text-dark);
+        }
+
+        .contact-hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+            padding: 0 20px;
+        }
+
+        .contact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #059669;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #0f172a 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .contact-hero p {
+            font-size: 1.05rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* 2-Column Main Layout */
+        .contact-container {
+            max-width: 1150px;
+            margin: 0 auto 70px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Side Cards */
+        .info-cards-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            border-color: #2563eb;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.1);
+        }
+
+        .info-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .icon-bg-blue {
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+        }
+
+        .icon-bg-green {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .icon-bg-violet {
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+        }
+
+        .icon-bg-amber {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .info-body {
+            flex-grow: 1;
+        }
+
+        .info-body h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .info-body p {
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .copy-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+
+        /* Right Side Form Card */
+        .contact-form-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            padding: 36px;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+        }
+
+        .contact-form-card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .contact-form-card p {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            background: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .btn-submit-gradient {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+        }
+
+        /* Quick Support Pillars */
+        .quick-support-grid {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .support-pill-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .support-pill-box:hover {
+            border-color: #2563eb;
+            transform: translateY(-4px);
+        }
+
+        .support-pill-box i {
+            font-size: 1.75rem;
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+
+        .support-pill-box h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .support-pill-box p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+    </style>
 </head>
+
 <body>
 
     <!-- ====== Navbar ====== -->
@@ -28,7 +324,8 @@
             <li><a href="{{ url_for('contact') }}" class="active">Contact</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
-            <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i class="fas fa-shopping-bag"></i></a></li>
+            <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i
+                        class="fas fa-shopping-bag"></i></a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
@@ -41,18 +338,132 @@
 
     <!-- ====== Flash Messages ====== -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-banner">
-          {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
+    {% if messages %}
+    <div class="flash-banner">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endwith %}
 
-    <div class="container" style="padding-top: 100px; text-align: center; min-height: 70vh;">
-        <h1>Contact Us</h1>
-        <p>This is a blank page for Contact.</p>
+    <div class="contact-page-wrapper">
+
+        <!-- Hero Header -->
+        <div class="contact-hero">
+            <h1>We'd Love to Hear From You</h1>
+            <p>Have questions about sales forecasting models, inventory API integration, or account support? Our
+                specialized engineering and sales team is here to assist.</p>
+        </div>
+
+        <!-- Main 2-Column Section -->
+        <div class="contact-container">
+
+            <!-- Left Column: Info Stack -->
+            <div class="info-cards-stack">
+
+                <div class="info-card">
+                    <div class="info-icon icon-bg-green">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="info-body">
+                        <h3>Email Support</h3>
+                        <p>forecastify0001@gmail.com</p>
+                        <button class="copy-btn" onclick="copyText('forecastify0001@gmail.com', this)">
+                            <i class="fas fa-copy" style="margin-right: 4px;"></i> Copy Email
+                        </button>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon icon-bg-violet">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-body">
+                        <h3>Toll-Free Phone</h3>
+                        <p>+91 8200214000 <br>(Mon-Sat, 9 AM - 7 PM IST)</p>
+                        <a href="tel:+9118004567890" class="copy-btn"
+                            style="text-decoration: none; display: inline-block;">
+                            <i class="fas fa-phone-flip" style="margin-right: 4px;"></i> Call Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon icon-bg-amber">
+                        <i class="fas fa-signal"></i>
+                    </div>
+                    <div class="info-body">
+                        <h3>Live System Status</h3>
+                        <p><span style="color: #10b981; font-weight: 700;">● All Systems Operational</span> (DB Sync:
+                            12ms)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Interactive Contact Form -->
+            <div class="contact-form-card">
+                <h2>Send Us a Message</h2>
+                <p>Fill out the form below and our team will get back to you within 24 hours.</p>
+
+                <form action="{{ url_for('contact') }}" method="POST" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Your Full Name <span style="color: #ef4444;">*</span></label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Rahul Sharma"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span style="color: #ef4444;">*</span></label>
+                        <input type="email" id="email" name="email" class="form-control"
+                            placeholder="e.g. rahul@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Inquiry Subject <span style="color: #ef4444;">*</span></label>
+                        <select id="subject" name="subject" class="form-control">
+                            <option value="General Query">General Query</option>
+                            <option value="Sales & Pricing">Sales & Enterprise Pricing</option>
+                            <option value="Technical Support">Technical & API Support</option>
+                            <option value="Order Issue">Order or Payment Issue</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Your Message <span style="color: #ef4444;">*</span></label>
+                        <textarea id="message" name="message" class="form-control"
+                            placeholder="Describe your question or feedback..." required
+                            oninput="updateCharCount(this)"></textarea>
+                        <div class="char-counter"><span id="charNum">0</span> / 500 characters</div>
+                    </div>
+
+                    <button type="submit" class="btn-submit-gradient" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Quick Support Cards -->
+        <div class="quick-support-grid">
+            <div class="support-pill-box">
+                <i class="fas fa-briefcase"></i>
+                <h4>Enterprise Sales</h4>
+                <p>Custom sales forecasting models and dedicated enterprise infrastructure.</p>
+            </div>
+            <div class="support-pill-box">
+                <i class="fas fa-code"></i>
+                <h4>Developer API</h4>
+                <p>Integrate Forecastify sales metrics directly into your custom ERP or store.</p>
+            </div>
+            <div class="support-pill-box">
+                <i class="fas fa-shield-halved"></i>
+                <h4>Privacy & Security</h4>
+                <p>256-bit encryption for all transactional database records.</p>
+            </div>
+        </div>
+
     </div>
 
     <!-- ====== Footer ====== -->
@@ -63,14 +474,46 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
         const navbarNav = document.querySelector('.navbar-nav');
-        if(menuToggle) {
+        if (menuToggle) {
             menuToggle.addEventListener('click', () => {
                 navbarNav.classList.toggle('active');
             });
         }
+
+        // Copy text to clipboard
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check" style="margin-right: 4px;"></i> Copied!';
+                btn.style.background = '#10b981';
+                btn.style.color = '#ffffff';
+                btn.style.borderColor = '#10b981';
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            });
+        }
+
+        // Live Character Counter
+        function updateCharCount(textarea) {
+            const charNum = document.getElementById('charNum');
+            if (charNum) {
+                charNum.textContent = textarea.value.length;
+                if (textarea.value.length > 500) {
+                    charNum.style.color = '#ef4444';
+                } else {
+                    charNum.style.color = '#94a3b8';
+                }
+            }
+        }
     </script>
     <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
 </body>
+
 </html>
