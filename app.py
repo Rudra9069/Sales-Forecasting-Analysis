@@ -418,11 +418,11 @@ def admin_dashboard():
 
         # 7. Daily / Recent Orders graph data
         cursor.execute("""
-            SELECT DATE_FORMAT(order_date, '%%a') AS day_name, 
+            SELECT DATE_FORMAT(order_date, '%a') AS day_name, 
                    COUNT(*) as tx_cnt, 
                    COALESCE(SUM(total_amount), 0) as day_revenue
             FROM orders
-            GROUP BY DATE(order_date), DATE_FORMAT(order_date, '%%a')
+            GROUP BY DATE(order_date), DATE_FORMAT(order_date, '%a')
             ORDER BY DATE(order_date) DESC
             LIMIT 5
         """)
@@ -512,11 +512,11 @@ def admin_dashboard():
 
         # 12. Full Sales Timeline & Category Analytics for Dynamic Charts
         cursor.execute("""
-            SELECT DATE_FORMAT(order_date, '%%b %%d') AS date_label, 
+            SELECT DATE_FORMAT(order_date, '%b %d') AS date_label, 
                    COUNT(*) as tx_cnt, 
                    COALESCE(SUM(total_amount), 0) as day_revenue
             FROM orders
-            GROUP BY DATE(order_date), DATE_FORMAT(order_date, '%%b %%d')
+            GROUP BY DATE(order_date), DATE_FORMAT(order_date, '%b %d')
             ORDER BY DATE(order_date) ASC
             LIMIT 14
         """)
@@ -616,10 +616,10 @@ def export_master_report():
         cursor.execute("""
             SELECT 
                 o.order_id AS `Order ID`,
-                DATE_FORMAT(o.order_date, '%%Y-%%m-%%d %%H:%%i:%%s') AS `Order Date`,
-                DATE_FORMAT(o.order_date, '%%Y') AS `Order Year`,
-                DATE_FORMAT(o.order_date, '%%M') AS `Order Month`,
-                DATE_FORMAT(o.order_date, '%%W') AS `Day of Week`,
+                DATE_FORMAT(o.order_date, '%Y-%m-%d %H:%i:%s') AS `Order Date`,
+                DATE_FORMAT(o.order_date, '%Y') AS `Order Year`,
+                DATE_FORMAT(o.order_date, '%M') AS `Order Month`,
+                DATE_FORMAT(o.order_date, '%W') AS `Day of Week`,
                 o.status AS `Order Status`,
                 u.user_id AS `Customer ID`,
                 COALESCE(u.name, CONCAT('User #', o.user_id)) AS `Customer Name`,
@@ -639,7 +639,7 @@ def export_master_report():
             JOIN products p ON oi.product_id = p.product_id
             LEFT JOIN users u ON o.user_id = u.user_id
             LEFT JOIN payments pay ON o.order_id = pay.order_id
-            ORDER BY o.order_id DESC, oi.order_item_id ASC
+            ORDER BY o.order_id DESC, oi.id ASC
         """)
         rows = cursor.fetchall()
 
@@ -655,9 +655,9 @@ def export_master_report():
         return Response(
             output,
             mimetype="text/csv",
-            headers={"Content-disposition": "attachment; filename=Forecastify_Master_System_Report.csv"}
+            headers={"Content-Disposition": "attachment; filename=Forecastify_Master_System_Report.csv"}
         )
-    except mysql.connector.Error as err:
+    except Exception as err:
         flash(f'Error generating export report: {err}', 'error')
         return redirect(url_for('admin_dashboard'))
     finally:
@@ -1314,6 +1314,12 @@ def get_cart_details():
 
 @app.route('/add_to_cart/<product_id>', methods=['POST'])
 def add_to_cart(product_id):
+    if 'user_id' not in session:
+        flash('Please register or log in to add items to your cart.', 'info')
+        if request.is_json:
+            return jsonify({'status': 'redirect', 'url': url_for('login')})
+        return redirect(url_for('login'))
+
     product_id = str(product_id)
     if 'cart' not in session:
         session['cart'] = {}
@@ -1352,6 +1358,10 @@ def remove_from_cart(product_id):
 
 @app.route('/buy_now/<product_id>')
 def buy_now(product_id):
+    if 'user_id' not in session:
+        flash('Please register or log in to proceed to checkout.', 'info')
+        return redirect(url_for('login'))
+
     product_id = str(product_id)
     if 'cart' not in session:
         session['cart'] = {}
@@ -1364,6 +1374,10 @@ def buy_now(product_id):
 
 @app.route('/cart')
 def cart():
+    if 'user_id' not in session:
+        flash('Please register or log in to view your cart.', 'info')
+        return redirect(url_for('login'))
+
     cart_items, subtotal, total_discount = get_cart_details()
     tax = (subtotal - total_discount) * 0.08
     shipping = 15.00 if subtotal > 0 else 0

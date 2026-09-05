@@ -67,3 +67,8 @@ venv.bak/
 # Web App specific
 instance/
 .webassets-cache
+
+# Excluded local docs and PowerBI files
+docs/
+*.pbix
+

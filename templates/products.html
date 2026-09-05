@@ -412,6 +412,10 @@
                     .then(res => res.json())
                     .then(data => {
                         this.disabled = false;
+                        if (data.status === 'redirect') {
+                            window.location.href = data.url;
+                            return;
+                        }
                         if (data.status === 'success') {
                             this.classList.add('added');
                             this.innerHTML = '<i class="fas fa-check"></i> Added!';
