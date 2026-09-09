@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forecastify | Sales Prediction</title>
+    <meta name="description" content="AI-powered sales revenue forecasting for Forecastify admin — predict total monthly revenue.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin_dashboard.css') }}">
+
+    <style>
+        /* =====================================================
+           PREDICTIONS PAGE — scoped styles only
+           ===================================================== */
+        .pred-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 960px) {
+            .pred-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Card shell reusing dash-panel-card */
+        .pred-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 28px 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.015);
+        }
+
+        .pred-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 14px;
+        }
+
+        .pred-card-header .icon-wrap {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+        }
+        .icon-wrap-purple  { background: #ede9fe; color: #7c3aed; }
+        .icon-wrap-blue    { background: var(--accent-blue-bg); color: var(--accent-blue); }
+        .icon-wrap-green   { background: var(--accent-green-bg); color: var(--accent-green); }
+
+        .pred-card-header h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+        .pred-card-header p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 11px 16px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+        }
+        .form-group select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        /* Predict button */
+        #predict-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px 20px;
+            background: #18181b;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: var(--font-primary);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: all 0.2s ease;
+        }
+        #predict-btn:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37,99,235,0.25);
+        }
+        #predict-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #predict-btn .spinner {
+            display: none;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Result panel */
+        #result-panel {
+            display: none;
+            margin-top: 24px;
+        }
+        .result-main {
+            text-align: center;
+            padding: 28px 20px 20px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e8f0fe 100%);
+            border: 1px solid #bfdbfe;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .result-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+        .result-value {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #1e40af;
+            letter-spacing: -1.5px;
+        }
+        .result-meta-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+        }
+        .result-meta-card .meta-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+        .result-meta-card .meta-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Error banner */
+        #error-banner {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        /* Historical Data Table */
+        .historical-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .historical-table th, .historical-table td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.85rem;
+        }
+        .historical-table th {
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .historical-table td {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* How it works section */
+        .how-it-works {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .how-it-works h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+        .how-steps { display: flex; flex-direction: column; gap: 10px; }
+        .how-step {
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .how-step .step-num {
+            min-width: 22px; height: 22px;
+            background: #18181b; color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .how-step p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body class="admin-dashboard-body">
+
+    <div class="dash-app-container">
+
+        <!-- ── Top Header Nav ── -->
+        <header class="dash-header-nav">
+            <div class="dash-brand-title">
+                <span>Forecastify</span>
+            </div>
+
+            <nav class="dash-nav-pills">
+                <a href="{{ url_for('admin_dashboard') }}" class="dash-pill-link">Dashboard</a>
+                <a href="{{ url_for('admin_products') }}" class="dash-pill-link">Products ({{ product_count }})</a>
+                <a href="{{ url_for('admin_orders') }}" class="dash-pill-link">Orders ({{ order_count }})</a>
+                <a href="{{ url_for('admin_customers') }}" class="dash-pill-link">Customers ({{ customer_count }})</a>
+                <a href="{{ url_for('admin_predictions') }}" class="dash-pill-link active">Predictions</a>
+            </nav>
+
+            <div class="dash-header-actions">
+                <a href="{{ url_for('admin_settings') }}" class="icon-btn" title="Settings" style="text-decoration:none;"><i class="fas fa-cog"></i></a>
+                <a href="{{ url_for('admin_logout') }}"  class="icon-btn" title="Logout" style="margin-left:6px;color:#ef4444;text-decoration:none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- ── Section Title ── -->
+        <div class="dash-section-header">
+            <div>
+                <h1>Monthly Sales Forecasting</h1>
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;">
+                    Time-series projection based on aggregate historical revenue.
+                </p>
+            </div>
+            <span class="badge-status delivered" style="padding:6px 14px;">
+                <i class="fas fa-brain"></i> Linear Trend Model Active
+            </span>
+        </div>
+
+        <!-- ── Two-column layout ── -->
+        <div class="pred-layout">
+
+            <!-- ════════════════════════════════════════
+                 LEFT: Prediction Form
+                 ════════════════════════════════════════ -->
+            <div>
+                <div class="pred-card">
+                    <div class="pred-card-header">
+                        <div class="icon-wrap icon-wrap-purple">
+                            <i class="fas fa-magic-wand-sparkles"></i>
+                        </div>
+                        <div>
+                            <h2>Configure Forecast</h2>
+                            <p>Select a future month to estimate revenue.</p>
+                        </div>
+                    </div>
+
+                    <form id="predict-form" novalidate>
+
+                        <!-- Month -->
+                        <div class="form-group">
+                            <label for="pred-month">Forecast Month</label>
+                            <select id="pred-month" name="forecast_month" required>
+                                <option value="">— Select Month —</option>
+                                <option value="2026-10">October 2026</option>
+                                <option value="2026-11">November 2026</option>
+                                <option value="2026-12">December 2026</option>
+                                <option value="2027-01">January 2027</option>
+                                <option value="2027-02">February 2027</option>
+                                <option value="2027-03">March 2027</option>
+                            </select>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" id="predict-btn">
+                            <span class="spinner" id="btn-spinner"></span>
+                            <i class="fas fa-bolt" id="btn-icon"></i>
+                            <span id="btn-text">Run Forecast</span>
+                        </button>
+                    </form>
+
+                    <!-- Error Banner -->
+                    <div id="error-banner">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <span id="error-text">An error occurred.</span>
+                    </div>
+
+                    <!-- ── Result Panel ── -->
+                    <div id="result-panel">
+                        <div class="result-main">
+                            <div class="result-label">
+                                <i class="fas fa-chart-line" style="margin-right:5px;"></i>
+                                Estimated Sales Revenue
+                            </div>
+                            <div class="result-value" id="res-value">—</div>
+                            <p style="font-size:0.75rem; color:#ef4444; margin-top:8px; font-weight: 600;">
+                                Note: Forecast uncertainty is high because the available historical dataset is limited.
+                            </p>
+                        </div>
+
+                        <div class="result-meta-card">
+                            <div class="meta-val" id="res-month">—</div>
+                            <div class="meta-label">Forecast Month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════════════════════════════════════════
+                 RIGHT: Historical Data & Model Info
+                 ════════════════════════════════════════ -->
+            <div>
+                <!-- Historical Data -->
+                <div class="pred-card" style="margin-bottom:24px;">
+                    <div class="pred-card-header">
+                        <div class="icon-wrap icon-wrap-blue">
+                            <i class="fas fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h2>Historical Sales Data</h2>
+                            <p>Monthly aggregate revenue used for trend analysis.</p>
+                        </div>
+                    </div>
+
+                    <table class="historical-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th style="text-align:right;">Total Revenue</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in historical_data %}
+                            <tr>
+                                <td>{{ row.month }}</td>
+                                <td style="text-align:right;">₹{{ "{:,.0f}".format(row.revenue) }}</td>
+                                <td>
+                                    {% if row.status == 'Complete' %}
+                                    <span style="color:#10b981;"><i class="fas fa-circle-check" style="font-size:0.8em; margin-right:4px;"></i>Complete</span>
+                                    {% else %}
+                                    <span style="color:#f59e0b;"><i class="fas fa-circle-exclamation" style="font-size:0.8em; margin-right:4px;"></i>{{ row.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="3">No historical data available.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- How it works -->
+                <div class="pred-card">
+                    <div class="pred-card-header">
+                        <div class="icon-wrap icon-wrap-green">
+                            <i class="fas fa-circle-info"></i>
+                        </div>
+                        <div>
+                            <h2>How It Works</h2>
+                            <p>Understanding the forecasting approach</p>
+                        </div>
+                    </div>
+
+                    <div class="how-steps">
+                        <div class="how-step">
+                            <div class="step-num">1</div>
+                            <p><strong>Aggregation</strong> — Historical transaction data is aggregated to calculate total revenue per month.</p>
+                        </div>
+                        <div class="how-step">
+                            <div class="step-num">2</div>
+                            <p><strong>Model Choice</strong> — A Linear Regression model analyzes the month-over-month trend across the dataset.</p>
+                        </div>
+                        <div class="how-step">
+                            <div class="step-num">3</div>
+                            <p><strong>Projection</strong> — The requested future month is projected using the calculated historical trend slope.</p>
+                        </div>
+                        <div class="how-step">
+                            <div class="step-num">4</div>
+                            <p><strong>Limitation</strong> — Currently, only 4 months of data exist, making the forecast highly sensitive to recent anomalies.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /pred-layout -->
+
+    </div>
+    <!-- /dash-app-container -->
+
+    <!-- ── Prediction Logic ── -->
+    <script>
+    (function () {
+        const form      = document.getElementById('predict-form');
+        const btn       = document.getElementById('predict-btn');
+        const spinner   = document.getElementById('btn-spinner');
+        const btnIcon   = document.getElementById('btn-icon');
+        const btnText   = document.getElementById('btn-text');
+        const errBanner = document.getElementById('error-banner');
+        const errText   = document.getElementById('error-text');
+        const resPanel  = document.getElementById('result-panel');
+
+        function fmt(num) {
+            return '₹' + Number(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+        }
+
+        function showError(msg) {
+            errBanner.style.display = 'block';
+            errText.textContent = msg;
+            resPanel.style.display = 'none';
+        }
+
+        function hideError() {
+            errBanner.style.display = 'none';
+        }
+
+        function setLoading(yes) {
+            btn.disabled = yes;
+            spinner.style.display = yes ? 'block' : 'none';
+            btnIcon.style.display  = yes ? 'none' : 'inline-block';
+            btnText.textContent    = yes ? 'Running Forecast…' : 'Run Forecast';
+        }
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            hideError();
+
+            const forecast_month = document.getElementById('pred-month').value.trim();
+
+            if (!forecast_month) { 
+                showError('Please select a forecast month.'); 
+                return; 
+            }
+
+            setLoading(true);
+
+            try {
+                const resp = await fetch('/admin/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ forecast_month })
+                });
+                const data = await resp.json();
+
+                if (!data.success) {
+                    showError(data.error || 'Forecast failed. Please try again.');
+                    return;
+                }
+
+                // Populate result panel
+                document.getElementById('res-value').textContent = fmt(data.predicted_revenue);
+                
+                // Format the month nicely (e.g. 2026-10 -> October 2026)
+                const [year, monthStr] = data.inputs.forecast_month.split('-');
+                const monthNames = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const monthName = monthNames[parseInt(monthStr, 10)];
+                document.getElementById('res-month').textContent = `${monthName} ${year}`;
+
+                resPanel.style.display = 'block';
+                resPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch (err) {
+                showError('Network error: ' + err.message);
+            } finally {
+                setLoading(false);
+            }
+        });
+    })();
+    </script>
+
+</body>
+</html>

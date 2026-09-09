@@ -8,10 +8,28 @@ import threading
 import os
 import csv
 import io
+import math
+import pickle
 from dotenv import load_dotenv
 import random
 
 load_dotenv()
+
+# -----------------------------------------------------------------------
+# Sales Prediction Model — Lazy Loader
+# -----------------------------------------------------------------------
+_PREDICTION_BUNDLE = None
+_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model', 'sales_model.pkl')
+
+def load_sales_model():
+    """Load (and cache) the trained sales prediction model bundle."""
+    global _PREDICTION_BUNDLE
+    if _PREDICTION_BUNDLE is None:
+        if not os.path.exists(_MODEL_PATH):
+            return None
+        with open(_MODEL_PATH, 'rb') as f:
+            _PREDICTION_BUNDLE = pickle.load(f)
+    return _PREDICTION_BUNDLE
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_super_secret_key')  # Needed for flash messages and sessions
@@ -1666,5 +1684,108 @@ def submit_help():
             
     return redirect(url_for('profile'))
 
+
+# ==========================================
+# ADMIN SALES PREDICTION / FORECASTING
+# ==========================================
+
+@app.route('/admin/predictions')
+def admin_predictions():
+    """Render the Sales Prediction page for the admin."""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        product_count, order_count, customer_count = get_admin_counts(cursor)
+    except Exception:
+        product_count = order_count = customer_count = 0
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+    # Load model and historical data to display on the page
+    bundle = load_sales_model()
+    model_metrics = bundle['metrics'] if bundle else {}
+    historical_data = bundle.get('historical_data', []) if bundle else []
+
+    return render_template(
+        'admin/predictions.html',
+        product_count=product_count,
+        order_count=order_count,
+        customer_count=customer_count,
+        model_metrics=model_metrics,
+        historical_data=historical_data
+    )
+
+
+@app.route('/admin/predict', methods=['POST'])
+def admin_predict():
+    """
+    Prediction API endpoint for Monthly Sales Forecasting.
+    Expects JSON: { forecast_month: '2026-10' }
+    Returns JSON: { success, predicted_revenue, inputs, model_metrics }
+    """
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    bundle = load_sales_model()
+    if bundle is None:
+        return jsonify({'success': False, 'error': 'Prediction model not found. Please train the model first.'}), 500
+
+    data = request.get_json(force=True) or {}
+    forecast_month = str(data.get('forecast_month', '')).strip()
+
+    if not forecast_month:
+        return jsonify({'success': False, 'error': 'Forecast month is required.'})
+
+    # Basic format validation YYYY-MM
+    import re
+    if not re.match(r'^\d{4}-\d{2}$', forecast_month):
+        return jsonify({'success': False, 'error': 'Invalid month format. Expected YYYY-MM.'})
+
+    # The historical data starts at index 1 for 2026-06
+    # Let's compute the month_index
+    try:
+        from datetime import datetime
+        target_dt = datetime.strptime(forecast_month, '%Y-%m')
+        start_dt = datetime.strptime('2026-06', '%Y-%m')
+        
+        # Calculate month difference
+        months_diff = (target_dt.year - start_dt.year) * 12 + target_dt.month - start_dt.month
+        month_index = months_diff + 1  # 2026-06 is index 1
+        
+        if month_index < 1:
+            return jsonify({'success': False, 'error': 'Forecast month must be June 2026 or later.'})
+            
+    except ValueError:
+        return jsonify({'success': False, 'error': 'Invalid month value.'})
+
+    # ---- Predict ----
+    try:
+        model = bundle['model']
+        # LinearRegression expects 2D array
+        features = [[month_index]]
+        predicted = float(model.predict(features)[0])
+        
+        # Ensure we don't predict negative revenue
+        predicted = max(0.0, predicted)
+
+        return jsonify({
+            'success': True,
+            'predicted_revenue': round(predicted, 2),
+            'inputs': {
+                'forecast_month': forecast_month,
+                'month_index': month_index
+            },
+            'model_metrics': bundle['metrics'],
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Prediction failed: {str(e)}'})
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
