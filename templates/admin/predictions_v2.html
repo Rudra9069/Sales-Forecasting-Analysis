@@ -867,24 +867,51 @@
     <!-- /dash-app-container -->
 
 
+    <!-- ── Analytics Data Container (JSON) ── -->
+    <script id="v2-analytics-data" type="application/json">
+    {
+        "descriptiveMonths": {{ (descriptive.months | default([])) | tojson | safe }},
+        "descriptiveRevs": {{ (descriptive.net_revenues | default([])) | tojson | safe }},
+        "descriptiveOrders": {{ (descriptive.order_counts | default([])) | tojson | safe }},
+        "catLabels": {{ ((diagnostic.categories | map(attribute='category') | list) if diagnostic.categories else []) | tojson | safe }},
+        "catRevs": {{ ((diagnostic.categories | map(attribute='revenue') | list) if diagnostic.categories else []) | tojson | safe }},
+        "topProdLabels": {{ ((diagnostic.top_products | map(attribute='name') | list) if diagnostic.top_products else []) | tojson | safe }},
+        "topProdRevs": {{ ((diagnostic.top_products | map(attribute='revenue') | list) if diagnostic.top_products else []) | tojson | safe }},
+        "futureDisplay": {{ (predictive.future_display | default([])) | tojson | safe }},
+        "baselineCurve": {{ (predictive.baseline_curve | default([])) | tojson | safe }},
+        "optCurve": {{ (predictive.optimistic_curve | default([])) | tojson | safe }},
+        "consCurve": {{ (predictive.conservative_curve | default([])) | tojson | safe }}
+    }
+    </script>
+
     <!-- ── Interactive Analytics & Chart.js Visualizations ── -->
     <script>
     (function () {
-        // Data injected from Flask Backend
-        const descriptiveMonths = {{ descriptive.months | tojson }};
-        const descriptiveRevs   = {{ descriptive.net_revenues | tojson }};
-        const descriptiveOrders = {{ descriptive.order_counts | tojson }};
+        // Parse data injected from Flask Backend
+        let v2Data = {};
+        try {
+            const dataElem = document.getElementById('v2-analytics-data');
+            if (dataElem) {
+                v2Data = JSON.parse(dataElem.textContent);
+            }
+        } catch (e) {
+            console.error("Error parsing v2 analytics data:", e);
+        }
 
-        const catLabels = {{ diagnostic.categories | map(attribute='category') | list | tojson }};
-        const catRevs   = {{ diagnostic.categories | map(attribute='revenue') | list | tojson }};
+        const descriptiveMonths = v2Data.descriptiveMonths || [];
+        const descriptiveRevs   = v2Data.descriptiveRevs || [];
+        const descriptiveOrders = v2Data.descriptiveOrders || [];
 
-        const topProdLabels = {{ diagnostic.top_products | map(attribute='name') | list | tojson }};
-        const topProdRevs   = {{ diagnostic.top_products | map(attribute='revenue') | list | tojson }};
+        const catLabels = v2Data.catLabels || [];
+        const catRevs   = v2Data.catRevs || [];
 
-        const futureDisplay = {{ predictive.future_display | tojson }};
-        const baselineCurve = {{ predictive.baseline_curve | tojson }};
-        const optCurve      = {{ predictive.optimistic_curve | tojson }};
-        const consCurve     = {{ predictive.conservative_curve | tojson }};
+        const topProdLabels = v2Data.topProdLabels || [];
+        const topProdRevs   = v2Data.topProdRevs || [];
+
+        const futureDisplay = v2Data.futureDisplay || [];
+        const baselineCurve = v2Data.baselineCurve || [];
+        const optCurve      = v2Data.optCurve || [];
+        const consCurve     = v2Data.consCurve || [];
 
         // Number formatter in Indian Rupees
         function fmtINR(num) {
