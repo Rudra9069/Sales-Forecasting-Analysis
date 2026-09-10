@@ -1,6 +1,7 @@
 import sys, os, json
-sys.path.insert(0, 'd:/Sales_Forcasting')
-os.chdir('d:/Sales_Forcasting')
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
+os.chdir(project_root)
 
 from app import app
 
