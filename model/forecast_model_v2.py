@@ -285,7 +285,7 @@ def compute_model2_horizon_forecast(historical_months, historical_revenues, hori
         'category_projections': category_projections,
         'prescriptive_actions': prescriptive_actions,
         'model_metadata': {
-            'model_name': 'Model 2 (Multi-Scenario Holt-Trend Engine)',
+            'model_name': 'Prediction Model (Multi-Scenario Holt-Trend Engine)',
             'confidence_score': '87.4%',
             'seasonality_enabled': True,
             'forecast_horizon': '6 Months (Oct 2026 - Mar 2027)',
@@ -342,5 +342,5 @@ def predict_specific_month_model2(target_month, scenario='baseline', growth_adj=
             'optimistic': round(opt_val, 2)
         },
         'confidence_score': '87.4%',
-        'model_name': 'Model 2 (Multi-Scenario Holt-Trend Engine)'
+        'model_name': 'Prediction Model (Multi-Scenario Holt-Trend Engine)'
     }

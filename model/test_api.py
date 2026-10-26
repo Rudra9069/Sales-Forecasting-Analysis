@@ -11,8 +11,8 @@ with app.test_client() as client:
         sess['admin_logged_in'] = True
         sess['admin_id'] = 8
 
-    # Test 1: Page with auth
-    r = client.get('/admin/predictions')
+    # Test 1: Page with auth (redirects to active Prediction Model)
+    r = client.get('/admin/predictions', follow_redirects=True)
     print('GET /admin/predictions (auth):', r.status_code, '(should be 200)')
 
     # Test 2: Valid prediction

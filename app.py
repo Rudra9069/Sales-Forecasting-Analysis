@@ -1695,35 +1695,10 @@ def submit_help():
 
 @app.route('/admin/predictions')
 def admin_predictions():
-    """Render the Sales Prediction page for the admin."""
+    """Redirect to the active Prediction Model."""
     if not session.get('admin_logged_in'):
         return redirect(url_for('admin_login'))
-
-    conn = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        product_count, order_count, customer_count = get_admin_counts(cursor)
-    except Exception:
-        product_count = order_count = customer_count = 0
-    finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
-
-    # Load model and historical data to display on the page
-    bundle = load_sales_model()
-    model_metrics = bundle['metrics'] if bundle else {}
-    historical_data = bundle.get('historical_data', []) if bundle else []
-
-    return render_template(
-        'admin/predictions.html',
-        product_count=product_count,
-        order_count=order_count,
-        customer_count=customer_count,
-        model_metrics=model_metrics,
-        historical_data=historical_data
-    )
+    return redirect(url_for('admin_predictions_v2'))
 
 
 @app.route('/admin/predict', methods=['POST'])
@@ -1792,7 +1767,7 @@ def admin_predict():
 
 
 # ==========================================
-# ADMIN SALES PREDICTION MODEL 2 & INTELLIGENCE REPORT
+# ADMIN SALES PREDICTION MODEL & INTELLIGENCE REPORT
 # ==========================================
 from model.forecast_model_v2 import (
     calculate_descriptive_metrics,
@@ -1804,7 +1779,7 @@ from model.forecast_model_v2 import (
 @app.route('/admin/predictions-v2')
 def admin_predictions_v2():
     """
-    Render Prediction Model 2 & Executive Sales Intelligence Report.
+    Render Prediction Model & Executive Sales Intelligence Report.
     Sections:
       1. What Has Happened (Descriptive Intelligence)
       2. Why It Happened (Diagnostic Root-Cause Analysis)

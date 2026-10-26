@@ -17,7 +17,7 @@ with app.test_client() as client:
     print('Status code:', r.status_code, '(expected 200)')
     assert r.status_code == 200, f"Expected 200, got {r.status_code}"
     html = r.get_data(as_text=True)
-    assert 'Prediction Model 2' in html, "Missing 'Prediction Model 2' in HTML"
+    assert 'Prediction Model' in html, "Missing 'Prediction Model' in HTML"
     assert 'What Has Happened' in html, "Missing 'What Has Happened' in HTML"
     assert 'Why It Happened' in html, "Missing 'Why It Happened' in HTML"
     assert 'What Will Happen' in html, "Missing 'What Will Happen' in HTML"
