@@ -6,6 +6,12 @@ body.splash-active {
     overflow: hidden;
 }
 
+/* Suppress splash screen completely if already viewed in this session */
+html.no-splash #splash-screen,
+body.no-splash #splash-screen {
+    display: none !important;
+}
+
 #splash-screen {
     position: fixed;
     top: 0;

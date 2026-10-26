@@ -57,10 +57,10 @@
     --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Transitions & Smooth Physics */
-    --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-slow: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+    --transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    --transition-fast: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    --transition-slow: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+    --transition-bounce: transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.4s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.4s ease;
     --ease-butter: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -77,7 +77,6 @@
 }
 
 html {
-    scroll-behavior: smooth;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -115,11 +114,23 @@ body {
 
 body.home-body {
     background-color: var(--bg-light);
+    position: relative;
+}
+
+body.home-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-image:
         radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.04) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(79, 70, 229, 0.04) 0px, transparent 50%),
         radial-gradient(at 50% 50%, rgba(248, 250, 252, 0.5) 0px, transparent 100%);
-    background-attachment: fixed;
+    pointer-events: none;
+    z-index: -1;
+    transform: translateZ(0);
 }
 
 a {
@@ -165,8 +176,6 @@ button {
     border-bottom-left-radius: 28px;
     border-bottom-right-radius: 28px;
     box-shadow: 0 16px 40px rgba(11, 19, 43, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: none;
     transform: translateZ(0);
@@ -441,13 +450,14 @@ button {
     position: absolute;
     top: -100px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
     width: 800px;
     height: 500px;
     background: radial-gradient(ellipse at center, rgba(2, 132, 199, 0.08) 0%, rgba(79, 70, 229, 0.04) 50%, transparent 75%);
     filter: blur(60px);
     pointer-events: none;
     z-index: 0;
+    will-change: transform;
 }
 
 .hero-content {
@@ -574,6 +584,7 @@ button {
     filter: drop-shadow(0 16px 24px rgba(15, 23, 42, 0.15));
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     animation: floatProduct 5s ease-in-out infinite;
+    will-change: transform;
 }
 
 .showcase-card:hover .showcase-img-container img {
@@ -653,6 +664,7 @@ button {
     box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
     z-index: 2;
     animation: floatChip 4s ease-in-out infinite;
+    will-change: transform;
 }
 
 .chip-icon {
@@ -745,6 +757,7 @@ button {
     gap: 70px;
     flex-shrink: 0;
     animation: marqueeGroupScroll 30s linear infinite;
+    will-change: transform;
 }
 
 .brand-marquee-section:hover .marquee-group {
@@ -824,13 +837,14 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate3d(-50%, -50%, 0);
     width: 100%;
     height: 100%;
     background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 80%);
     filter: blur(50px);
     z-index: 0;
     pointer-events: none;
+    will-change: transform;
 }
 
 .video-frame {
@@ -1497,19 +1511,16 @@ button {
 /* Buttery Smooth Reveal on Scroll */
 .reveal-init {
     opacity: 0;
-    transform: translateY(28px) scale(0.985);
-    filter: blur(4px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-        filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform, filter;
+    transform: translateY(20px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
     backface-visibility: hidden;
 }
 
 .reveal-active {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0px);
+    transform: translateY(0);
 }
 
 .delay-1 {

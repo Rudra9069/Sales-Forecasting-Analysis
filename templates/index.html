@@ -28,6 +28,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/splash.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
+
+    <!-- Suppress Splash Screen on Refresh / Subsequent Visits in Session -->
+    <script>
+        if (sessionStorage.getItem('splash_shown')) {
+            document.documentElement.classList.add('no-splash');
+        }
+    </script>
 </head>
 
 <body class="home-body">
@@ -200,7 +207,7 @@
         <div class="video-container reveal-init">
             <div class="video-glow"></div>
             <div class="video-frame">
-                <video id="showcaseVideo" autoplay muted loop playsinline
+                <video id="showcaseVideo" autoplay muted loop playsinline preload="metadata"
                     src="{{ url_for('static', filename='video/sphere_2K.webm') }}">
                 </video>
             </div>
@@ -605,6 +612,35 @@
             });
 
             revealElements.forEach(el => revealObserver.observe(el));
+
+            // 5. Intelligent Video Lifecycle (Pause 2K video when off-screen to save 100% GPU cycles)
+            const showcaseVideo = document.getElementById('showcaseVideo');
+            if (showcaseVideo) {
+                const videoObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            showcaseVideo.play().catch(() => {});
+                        } else {
+                            showcaseVideo.pause();
+                        }
+                    });
+                }, { threshold: 0.05 });
+                videoObserver.observe(showcaseVideo);
+            }
+
+            // 6. Smooth Navigation for In-Page Anchor Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId && targetId !== '#') {
+                        const targetEl = document.querySelector(targetId);
+                        if (targetEl) {
+                            e.preventDefault();
+                            targetEl.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
         });
     </script>
     <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>

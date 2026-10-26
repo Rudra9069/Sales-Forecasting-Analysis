@@ -1,5 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     const splashScreen = document.getElementById('splash-screen');
+
+    // If already shown in this session, remove immediately and restore scroll
+    if (sessionStorage.getItem('splash_shown')) {
+        if (splashScreen) {
+            splashScreen.remove();
+        }
+        document.body.classList.remove('splash-active');
+        return;
+    }
+
+    // Mark as shown for the current session
+    sessionStorage.setItem('splash_shown', 'true');
+
     const splashLogoWrapper = document.querySelector('.splash-logo-wrapper');
     const splashLogoImg = document.querySelector('.splash-logo');
     const navbarLogoImg = document.querySelector('.navbar-logo');
