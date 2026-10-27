@@ -350,30 +350,126 @@
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-/* Responsive */
+/* ========== Responsive (All Devices & Screen Ratios) ========== */
 @media (max-width: 992px) {
     .profile-container {
         grid-template-columns: 1fr;
+        gap: 24px;
     }
     
     .profile-sidebar {
         position: static;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 }
 
 @media (max-width: 768px) {
+    .profile-section {
+        padding: 24px 14px 60px 14px;
+    }
+
+    .profile-sidebar {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .user-info {
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+    }
+
+    .user-info .avatar i {
+        font-size: 46px;
+        margin-bottom: 10px;
+    }
+
+    /* Horizontal scrollable navigation tabs on mobile */
+    .profile-nav {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .profile-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .profile-nav li {
+        margin-bottom: 0;
+        white-space: nowrap;
+        padding: 9px 16px;
+        font-size: 13.5px;
+        border-radius: 20px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
     .profile-content {
-        padding: 20px;
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .tab-pane h2 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
     }
     
     .history-header, .history-footer {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+        padding: 12px 14px;
     }
     
     .status-badge {
         align-self: flex-start;
+    }
+
+    .order-items {
+        padding: 14px;
+    }
+
+    .order-item {
+        gap: 12px;
+    }
+
+    .order-item img {
+        width: 52px;
+        height: 52px;
+    }
+}
+
+/* Ultra-compact Phones (Galaxy Fold cover 320px, iPhone SE 375px) */
+@media (max-width: 360px) {
+    .profile-section {
+        padding: 16px 8px 40px 8px;
+    }
+
+    .profile-sidebar,
+    .profile-content {
+        padding: 16px 12px;
+        border-radius: 12px;
+    }
+
+    .tab-pane h2 {
+        font-size: 1.25rem;
+    }
+
+    .order-item img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .item-details h4 {
+        font-size: 0.88rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

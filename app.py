@@ -12,6 +12,9 @@ import math
 import pickle
 from dotenv import load_dotenv
 import random
+import json
+import urllib.request
+import urllib.error
 
 load_dotenv()
 
@@ -55,57 +58,97 @@ def get_db_connection():
     """Create and return a new MySQL database connection."""
     return mysql.connector.connect(**db_config)
 
-def send_welcome_email(user_email, user_name):
-    """Sends a welcome email to the newly registered user."""
+def send_app_email(to_email, subject, body_text):
+    """
+    Universal Email Dispatcher:
+    1. If RESEND_API_KEY is configured (Render.com), sends via Resend REST API over HTTPS (Port 443).
+       This is 100% immune to Render's outbound SMTP port blocking.
+    2. Otherwise, falls back to standard Gmail SMTP (Port 587) with a safe 10-second timeout.
+    """
+    # --- 1. Resend HTTP API (Works seamlessly on Render Free & Paid tiers) ---
+    resend_api_key = os.environ.get('RESEND_API_KEY')
+    if resend_api_key:
+        try:
+            url = "https://api.resend.com/emails"
+            sender = os.environ.get('RESEND_FROM', 'Forecastify <onboarding@resend.dev>')
+            payload = json.dumps({
+                "from": sender,
+                "to": [to_email],
+                "subject": subject,
+                "text": body_text
+            }).encode('utf-8')
+
+            req = urllib.request.Request(
+                url,
+                data=payload,
+                headers={
+                    "Authorization": f"Bearer {resend_api_key}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "Forecastify-App/1.0"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                if response.status in (200, 201):
+                    print(f"[EMAIL] Sent successfully via Resend API to {to_email}")
+                    return True
+                else:
+                    print(f"[EMAIL WARNING] Resend API responded with status {response.status}")
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode('utf-8', errors='ignore')
+            print(f"[EMAIL ERROR] Resend HTTP {he.code}: {err_body}")
+        except Exception as e:
+            print(f"[EMAIL ERROR] Resend API request failed: {e}")
+
+    # --- 2. Fallback to SMTP (Localhost or unblocked hosts) ---
+    sender_email = os.environ.get('MAIL_USERNAME')
+    sender_password = os.environ.get('MAIL_PASSWORD')
+
+    if not sender_email or not sender_password:
+        print(f"[EMAIL ERROR] Cannot send to {to_email}. Set RESEND_API_KEY or MAIL_USERNAME/MAIL_PASSWORD.")
+        return False
+
     try:
-        sender_email = os.environ.get('MAIL_USERNAME')
-        sender_password = os.environ.get('MAIL_PASSWORD')
-        
         msg = MIMEMultipart()
         msg['From'] = f"Forecastify <{sender_email}>"
-        msg['To'] = user_email
-        msg['Subject'] = "Welcome to Forecastify!"
-        
-        body = f"Hello {user_name},\n\nThank you for registering at Forecastify! We are excited to have you on board.\n\nBest regards,\nThe Forecastify Team"
-        msg.attach(MIMEText(body, 'plain'))
-        
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body_text, 'plain'))
+
+        # Set a 10s timeout to prevent thread hangs if port 587 is blocked
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
         server.starttls()
         server.login(sender_email, sender_password)
         text = msg.as_string()
-        server.sendmail(sender_email, user_email, text)
+        server.sendmail(sender_email, to_email, text)
         server.quit()
-        print(f"Email sent successfully to {user_email}")
+        print(f"[EMAIL] Sent successfully via SMTP to {to_email}")
         return True
     except Exception as e:
-        print(f"Failed to send email to {user_email}. Error: {e}")
+        print(f"[EMAIL ERROR] SMTP failed to send to {to_email}. Error: {e}")
         return False
+
+def send_welcome_email(user_email, user_name):
+    """Sends a welcome email to the newly registered user."""
+    subject = "Welcome to Forecastify!"
+    body = (
+        f"Hello {user_name},\n\n"
+        f"Thank you for registering at Forecastify! We are excited to have you on board.\n\n"
+        f"Best regards,\nThe Forecastify Team"
+    )
+    return send_app_email(user_email, subject, body)
 
 def send_reset_email(user_email, code):
     """Sends a password reset code email to the user."""
-    try:
-        sender_email = os.environ.get('MAIL_USERNAME')
-        sender_password = os.environ.get('MAIL_PASSWORD')
-        
-        msg = MIMEMultipart()
-        msg['From'] = f"Forecastify <{sender_email}>"
-        msg['To'] = user_email
-        msg['Subject'] = "Your Password Reset Code"
-        
-        body = f"Hello,\n\nYou requested a password reset. Your 6-digit verification code is:\n\n{code}\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe Forecastify Team"
-        msg.attach(MIMEText(body, 'plain'))
-        
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        text = msg.as_string()
-        server.sendmail(sender_email, user_email, text)
-        server.quit()
-        print(f"Reset email sent successfully to {user_email}")
-        return True
-    except Exception as e:
-        print(f"Failed to send reset email to {user_email}. Error: {e}")
-        return False
+    subject = "Your Password Reset Code"
+    body = (
+        f"Hello,\n\n"
+        f"You requested a password reset. Your 6-digit verification code is:\n\n"
+        f"{code}\n\n"
+        f"If you did not request this, please ignore this email.\n\n"
+        f"Best regards,\nThe Forecastify Team"
+    )
+    return send_app_email(user_email, subject, body)
 
 @app.route('/')
 def home():
@@ -1660,24 +1703,11 @@ def submit_help():
         cursor.execute("SELECT name, email FROM users WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
         
-        sender_email = os.environ.get('MAIL_USERNAME')
-        sender_password = os.environ.get('MAIL_PASSWORD')
-        admin_email = "forecasting0001@gmail.com"
-        
-        if sender_email and sender_password:
-            msg = MIMEMultipart()
-            msg['From'] = f"Forecastify <{sender_email}>"
-            msg['To'] = admin_email
-            msg['Subject'] = f"Help Request: {subject}"
-            
-            body = f"New help request from {user['name']} ({user['email']})\n\nOrder ID: {order_id}\n\nDescription:\n{description}"
-            msg.attach(MIMEText(body, 'plain'))
-            
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, admin_email, msg.as_string())
-            server.quit()
+        # Send Email notification asynchronously
+        admin_email = os.environ.get('ADMIN_EMAIL', 'forecasting0001@gmail.com')
+        help_subject = f"Help Request: {subject}"
+        help_body = f"New help request from {user['name']} ({user['email']})\n\nOrder ID: {order_id}\n\nDescription:\n{description}"
+        threading.Thread(target=send_app_email, args=(admin_email, help_subject, help_body)).start()
         
         flash('Your complaint has been submitted.', 'success')
     except Exception as err:

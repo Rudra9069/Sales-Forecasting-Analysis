@@ -275,3 +275,77 @@ body.admin-body {
 .admin-back-link:hover {
     color: #0f172a;
 }
+
+/* ========== Responsive (All Devices & Screen Ratios) ========== */
+@media (max-width: 480px) {
+    body.admin-body {
+        padding: 16px 12px;
+    }
+
+    .admin-card {
+        padding: 28px 20px;
+        border-radius: 16px;
+    }
+
+    .admin-card-header {
+        margin-bottom: 24px;
+    }
+
+    .admin-logo-wrapper {
+        padding: 10px 18px;
+        margin-bottom: 16px;
+    }
+
+    .admin-card-header h2 {
+        font-size: 1.35rem;
+    }
+
+    .admin-card-header p {
+        font-size: 0.85rem;
+    }
+
+    .admin-submit-btn {
+        padding: 13px 20px;
+        font-size: 0.95rem;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    body.admin-body {
+        padding: 10px 8px;
+    }
+
+    .admin-card {
+        padding: 22px 14px;
+    }
+
+    .admin-card-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .admin-input {
+        padding: 11px 12px 11px 38px;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+    body.admin-body {
+        padding: 12px;
+        min-height: auto;
+    }
+
+    .admin-card {
+        padding: 20px 24px;
+    }
+
+    .admin-card-header {
+        margin-bottom: 18px;
+    }
+
+    .admin-logo-wrapper {
+        margin-bottom: 12px;
+        padding: 8px 16px;
+    }
+}

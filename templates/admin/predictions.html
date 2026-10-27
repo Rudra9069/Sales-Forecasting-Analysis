@@ -245,6 +245,30 @@
             color: var(--text-muted);
             line-height: 1.5;
         }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .pred-card {
+                padding: 20px 16px;
+                border-radius: 18px;
+            }
+
+            .pred-layout {
+                gap: 16px;
+                margin-top: 18px;
+            }
+
+            .btn-predict {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .pred-card {
+                padding: 16px 12px;
+            }
+        }
     </style>
 </head>
 

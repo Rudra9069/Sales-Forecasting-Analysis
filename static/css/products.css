@@ -812,39 +812,31 @@
 
 
 
-/* ========== Responsive ========== */
+/* ========== Responsive (All Devices & Screen Ratios) ========== */
+@media (max-width: 1200px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+}
+
 @media (max-width: 1024px) {
     .products-hero {
-        padding: 120px 30px 50px 30px;
+        padding: 90px 24px 44px 24px;
     }
 
     .toolbar {
-        padding: 16px 30px;
+        padding: 16px 24px;
     }
 
     .toolbar-inner {
         gap: 12px;
     }
 
-    .toolbar-search {
-        min-width: 200px;
-    }
-
-    .toolbar-select {
-        min-width: 160px;
-    }
-
     .products-section {
-        padding: 40px 24px 80px 24px;
+        padding: 36px 20px 70px 20px;
     }
 
-    .products-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-}
-
-@media (max-width: 992px) {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
@@ -854,22 +846,38 @@
 @media (max-width: 768px) {
     .products-hero {
         margin-top: 0;
-        padding: 50px 20px 40px 20px;
+        padding: 44px 16px 36px 16px;
     }
 
     .products-hero h1 {
-        font-size: 34px;
+        font-size: clamp(26px, 6vw, 36px);
+        letter-spacing: -0.5px;
+    }
+
+    .products-hero p {
+        font-size: 14.5px;
+        margin-bottom: 22px;
+    }
+
+    .hero-stats-bar {
+        gap: 8px;
+    }
+
+    .hero-stat-pill {
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+
+    .toolbar {
+        padding: 14px 16px;
     }
 
     .toolbar-inner {
         flex-direction: column;
+        gap: 10px;
     }
 
     .toolbar-search {
-        min-width: 100%;
-    }
-
-    .toolbar-select {
         min-width: 100%;
         width: 100%;
     }
@@ -877,12 +885,90 @@
     .toolbar-select-wrapper {
         width: 100%;
     }
+
+    .toolbar-select {
+        min-width: 100%;
+        width: 100%;
+    }
+
+    .products-section {
+        padding: 28px 16px 60px 16px;
+    }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 540px) {
     .products-grid {
         grid-template-columns: 1fr;
-        max-width: 480px;
+        max-width: 440px;
         margin: 0 auto;
+    }
+
+    .product-image-wrapper {
+        height: 220px;
+        padding: 18px;
+    }
+
+    .product-info {
+        padding: 18px 16px;
+    }
+
+    .price-amount {
+        font-size: 23px;
+    }
+}
+
+/* Ultra-compact Phones (320px - 360px, Galaxy Fold outer, iPhone SE) */
+@media (max-width: 360px) {
+    .products-hero {
+        padding: 36px 12px 28px 12px;
+    }
+
+    .products-hero h1 {
+        font-size: 23px;
+    }
+
+    .products-hero p {
+        font-size: 13.5px;
+    }
+
+    .toolbar {
+        padding: 12px 12px;
+    }
+
+    .products-section {
+        padding: 20px 10px 50px 10px;
+    }
+
+    .product-image-wrapper {
+        height: 190px;
+        padding: 14px;
+    }
+
+    .product-info {
+        padding: 14px 12px;
+    }
+
+    .price-amount {
+        font-size: 21px;
+    }
+
+    .add-to-cart-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Mobile Landscape */
+@media (max-height: 500px) and (orientation: landscape) {
+    .products-hero {
+        padding: 30px 20px 24px 20px;
+    }
+
+    .products-hero h1 {
+        font-size: 28px;
+    }
+
+    .products-hero p {
+        margin-bottom: 16px;
     }
 }

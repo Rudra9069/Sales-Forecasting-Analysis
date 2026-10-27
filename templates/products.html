@@ -28,7 +28,7 @@
         <a href="{{ url_for('home') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
         </a>
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" id="navbarLinks">
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('products') }}" class="active">Products</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
@@ -485,6 +485,16 @@
                 toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        }
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navbarLinks = document.getElementById('navbarLinks');
+        if (menuToggle && navbarLinks) {
+            menuToggle.addEventListener('click', () => {
+                navbarLinks.classList.toggle('show');
+                navbarLinks.classList.toggle('active');
+            });
         }
     </script>
 

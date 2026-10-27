@@ -308,6 +308,93 @@
             font-size: 0.85rem;
             color: #64748b;
         }
+
+        /* Responsive (All Devices & Screen Ratios) */
+        @media (max-width: 768px) {
+            .contact-page-wrapper {
+                padding-top: 70px;
+                padding-bottom: 48px;
+            }
+
+            .contact-hero {
+                margin-bottom: 32px;
+                padding: 0 16px;
+            }
+
+            .contact-hero h1 {
+                font-size: clamp(24px, 6vw, 36px);
+                line-height: 1.2;
+            }
+
+            .contact-hero p {
+                font-size: 14.5px;
+            }
+
+            .contact-container {
+                padding: 0 16px;
+                gap: 24px;
+                margin-bottom: 44px;
+            }
+
+            .contact-form-card {
+                padding: 24px 18px;
+                border-radius: 18px;
+            }
+
+            .info-card {
+                padding: 18px 16px;
+                gap: 14px;
+            }
+
+            .quick-support-grid {
+                padding: 0 16px;
+                gap: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contact-form-card {
+                padding: 20px 14px;
+            }
+
+            .contact-form-card h2 {
+                font-size: 1.35rem;
+            }
+
+            .info-card {
+                padding: 16px 12px;
+                gap: 12px;
+            }
+
+            .info-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .quick-support-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .contact-page-wrapper {
+                padding-top: 60px;
+            }
+
+            .contact-hero h1 {
+                font-size: 22px;
+            }
+
+            .contact-form-card {
+                padding: 16px 12px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -480,6 +567,7 @@
         const navbarNav = document.querySelector('.navbar-nav');
         if (menuToggle) {
             menuToggle.addEventListener('click', () => {
+                navbarNav.classList.toggle('show');
                 navbarNav.classList.toggle('active');
             });
         }

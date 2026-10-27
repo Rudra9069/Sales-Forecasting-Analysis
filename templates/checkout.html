@@ -26,9 +26,11 @@
         <a href="{{ url_for('home') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Forecastify" class="navbar-logo">
         </a>
-        <ul class="navbar-nav">
+        <ul class="navbar-nav" id="navbarLinks">
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('products') }}">Products</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
             {% if session.get('user_id') %}
             <li><a href="{{ url_for('profile') }}" class="nav-btn">Profile</a></li>
             <li><a href="{{ url_for('cart') }}" style="font-size: 1.15rem; margin-left: 6px;"><i
@@ -38,6 +40,9 @@
             <li><a href="{{ url_for('register') }}" class="nav-btn">Register Now</a></li>
             {% endif %}
         </ul>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
 
     <!-- ====== Checkout Section ====== -->
@@ -412,6 +417,16 @@
         </div>
     </section>
 
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navbarLinks = document.getElementById('navbarLinks');
+        if (menuToggle && navbarLinks) {
+            menuToggle.addEventListener('click', () => {
+                navbarLinks.classList.toggle('show');
+                navbarLinks.classList.toggle('active');
+            });
+        }
+    </script>
     <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
 </body>

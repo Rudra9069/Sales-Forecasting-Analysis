@@ -165,13 +165,13 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 12px 28px;
-    gap: 40px;
+    gap: 32px;
     position: sticky;
     top: 0;
     z-index: 1000;
     width: max-content;
-    max-width: 1200px;
-    min-width: 600px;
+    max-width: 95%;
+    min-width: 0;
     margin: 0 auto;
     border-bottom-left-radius: 28px;
     border-bottom-right-radius: 28px;
@@ -273,14 +273,140 @@ button {
     box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
-/* Mobile Menu Toggle */
+/* =========================================================
+   CLEAN MINIMAL HAMBURGER TOGGLE (NO GLOW)
+   ========================================================= */
 .menu-toggle {
     display: none;
-    background: none;
-    border: none;
-    color: var(--white);
-    font-size: 22px;
+    position: relative;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: none;
     cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    z-index: 1002;
+}
+
+.menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: none;
+}
+
+.menu-toggle:active,
+.menu-toggle.active,
+.menu-toggle[aria-expanded="true"],
+.navbar:has(.navbar-nav.show) .menu-toggle,
+.navbar:has(.navbar-nav.active) .menu-toggle {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+}
+
+/* Crisp White Hamburger Bars (No Glow) */
+.liquid-hamburger-box {
+    width: 20px;
+    height: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    pointer-events: none;
+}
+
+.liquid-line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: #ffffff;
+    box-shadow: none;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.2s ease;
+}
+
+.liquid-line.line-top {
+    transform-origin: center;
+}
+
+.liquid-line.line-mid {
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.liquid-line.line-bot {
+    transform-origin: center;
+}
+
+/* Morph to Clean Crisp White 'X' */
+.menu-toggle.active .liquid-line.line-top,
+.menu-toggle[aria-expanded="true"] .liquid-line.line-top,
+.navbar:has(.navbar-nav.show) .menu-toggle .liquid-line.line-top,
+.navbar:has(.navbar-nav.active) .menu-toggle .liquid-line.line-top {
+    transform: translateY(6.5px) rotate(45deg);
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.menu-toggle.active .liquid-line.line-mid,
+.menu-toggle[aria-expanded="true"] .liquid-line.line-mid,
+.navbar:has(.navbar-nav.show) .menu-toggle .liquid-line.line-mid,
+.navbar:has(.navbar-nav.active) .menu-toggle .liquid-line.line-mid {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.menu-toggle.active .liquid-line.line-bot,
+.menu-toggle[aria-expanded="true"] .liquid-line.line-bot,
+.navbar:has(.navbar-nav.show) .menu-toggle .liquid-line.line-bot,
+.navbar:has(.navbar-nav.active) .menu-toggle .liquid-line.line-bot {
+    transform: translateY(-6.5px) rotate(-45deg);
+    background: #ffffff;
+    box-shadow: none;
+}
+
+/* Icon fallback if custom lines are not yet injected */
+.menu-toggle i {
+    font-size: 18px;
+    color: #ffffff;
+    transition: transform 0.25s ease;
+}
+
+.menu-toggle.active i,
+.menu-toggle[aria-expanded="true"] i,
+.navbar:has(.navbar-nav.show) .menu-toggle i,
+.navbar:has(.navbar-nav.active) .menu-toggle i {
+    transform: rotate(90deg);
+    color: #ffffff;
+    text-shadow: none;
+}
+
+/* Liquid Dimmer Backdrop Overlay */
+.liquid-navbar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 12, 28, 0.6);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.35s ease;
+}
+
+.liquid-navbar-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 /* =========================================================
@@ -436,6 +562,7 @@ button {
    ========================================================= */
 .hero {
     position: relative;
+    overflow: hidden;
     padding: 90px 40px 100px 40px;
     max-width: 1440px;
     margin: 0 auto;
@@ -814,6 +941,7 @@ button {
 .video-showcase-section {
     padding: 120px 40px;
     position: relative;
+    overflow: hidden;
     background: #0B132B;
     color: var(--white);
 }
@@ -1540,8 +1668,9 @@ button {
 }
 
 /* =========================================================
-   RESPONSIVE DESIGN
+   RESPONSIVE DESIGN (ALL DEVICES & SCREEN RATIOS)
    ========================================================= */
+
 @media (max-width: 1200px) {
     .hero {
         grid-template-columns: 1fr;
@@ -1568,21 +1697,23 @@ button {
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
     .section-title {
-        font-size: 34px;
+        font-size: clamp(28px, 4vw, 36px);
     }
 
     .hero-content h1 {
-        font-size: 42px;
+        font-size: clamp(34px, 5vw, 44px);
     }
 
     .features-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
 
     .steps-timeline {
         grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
     }
 
     .steps-timeline::before {
@@ -1596,70 +1727,544 @@ button {
     .video-highlights {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 768px) {
+    /* Universal Responsive Navbar */
     .navbar {
-        width: 100%;
-        min-width: 0;
-        border-radius: 0;
-        padding: 16px 24px;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        border-radius: 0 !important;
+        padding: 14px 20px !important;
+        left: 0;
+        right: 0;
     }
 
     .navbar::before,
     .navbar::after {
-        display: none;
-    }
-
-    .navbar-nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #0B132B;
-        flex-direction: column;
-        padding: 24px;
-        gap: 16px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .navbar-nav.show {
-        display: flex;
+        display: none !important;
     }
 
     .menu-toggle {
-        display: block;
+        display: inline-flex !important;
+    }
+
+    /* Floating Liquid Glass Dropdown Menu Capsule */
+    .navbar-nav {
+        display: none !important;
+        position: absolute;
+        top: calc(100% + 10px);
+        left: 12px;
+        right: 12px;
+        width: auto !important;
+        background: linear-gradient(165deg, rgba(15, 23, 42, 0.88) 0%, rgba(11, 19, 43, 0.96) 100%) !important;
+        backdrop-filter: blur(28px) saturate(210%) brightness(108%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(108%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        border-radius: 24px !important;
+        box-shadow: 
+            0 30px 65px -12px rgba(0, 0, 0, 0.75),
+            0 0 35px rgba(56, 189, 248, 0.2),
+            inset 0 1px 1.5px rgba(255, 255, 255, 0.45),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.5) !important;
+        flex-direction: column;
+        padding: 20px 16px 22px 16px !important;
+        gap: 8px !important;
+        max-height: calc(100dvh - 85px);
+        max-height: calc(100vh - 85px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        z-index: 1001 !important;
+    }
+
+    /* Prismatic Sheen Accent on Drawer Top Edge */
+    .navbar-nav::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 20px;
+        right: 20px;
+        height: 1.5px;
+        background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.8) 30%, rgba(168, 85, 247, 0.7) 70%, transparent 100%);
+        pointer-events: none;
+    }
+
+    .navbar-nav.show,
+    .navbar-nav.active {
+        display: flex !important;
+        animation: liquidMenuSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes liquidMenuSlide {
+        from {
+            opacity: 0;
+            transform: translateY(-12px) scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .navbar-nav li {
+        width: 100%;
+        animation: liquidItemEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    .navbar-nav li:nth-child(1) { animation-delay: 0.03s; }
+    .navbar-nav li:nth-child(2) { animation-delay: 0.06s; }
+    .navbar-nav li:nth-child(3) { animation-delay: 0.09s; }
+    .navbar-nav li:nth-child(4) { animation-delay: 0.12s; }
+    .navbar-nav li:nth-child(5) { animation-delay: 0.15s; }
+    .navbar-nav li:nth-child(6) { animation-delay: 0.18s; }
+    .navbar-nav li:nth-child(7) { animation-delay: 0.21s; }
+
+    @keyframes liquidItemEnter {
+        from {
+            opacity: 0;
+            transform: translateY(-8px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Liquid Glass Menu Links */
+    .navbar-nav li a {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 18px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        color: rgba(255, 255, 255, 0.85) !important;
+        background: rgba(255, 255, 255, 0.035) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 14px !important;
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    /* Subtle Glass Arrow Indicator */
+    .navbar-nav li a::after {
+        content: '→';
+        font-size: 14px;
+        color: #38bdf8;
+        opacity: 0.4;
+        transform: translateX(0);
+        transition: all 0.25s ease;
+    }
+
+    .navbar-nav li a:hover {
+        background: linear-gradient(90deg, rgba(56, 189, 248, 0.16) 0%, rgba(99, 102, 241, 0.12) 100%) !important;
+        border-color: rgba(56, 189, 248, 0.45) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 18px rgba(56, 189, 248, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+        transform: translateX(4px);
+    }
+
+    .navbar-nav li a:hover::after {
+        opacity: 1;
+        transform: translateX(3px);
+    }
+
+    .navbar-nav li a.active {
+        background: linear-gradient(90deg, rgba(56, 189, 248, 0.22) 0%, rgba(99, 102, 241, 0.16) 100%) !important;
+        border-color: rgba(56, 189, 248, 0.6) !important;
+        color: #ffffff !important;
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+        box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25), inset 0 1px 1.5px rgba(255, 255, 255, 0.35) !important;
+    }
+
+    .navbar-nav li a.active::after {
+        opacity: 1;
+        color: #38bdf8;
+        text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    }
+
+    /* Liquid Crystal CTA Button ("Register Now" / "Profile") */
+    .navbar-nav li a.nav-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100% !important;
+        margin-top: 6px !important;
+        padding: 13px 20px !important;
+        border-radius: 16px !important;
+        background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%) !important;
+        color: #0b132b !important;
+        font-weight: 700 !important;
+        border: 1px solid rgba(255, 255, 255, 0.9) !important;
+        box-shadow: 0 6px 24px rgba(56, 189, 248, 0.32), inset 0 1px 2px #ffffff !important;
+        transform: none;
+    }
+
+    .navbar-nav li a.nav-btn::after {
+        display: none !important;
+    }
+
+    .navbar-nav li a.nav-btn:hover {
+        background: linear-gradient(135deg, #ffffff 0%, #bae6fd 100%) !important;
+        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.45), inset 0 1px 2px #ffffff !important;
+        transform: translateY(-1px) scale(1.01) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 44px 20px 60px 20px;
+        gap: 36px;
+        min-height: auto;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(28px, 6.5vw, 38px);
+        letter-spacing: -0.8px;
+        margin-bottom: 16px;
+    }
+
+    .hero-content p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 28px;
+    }
+
+    .btn-group {
+        gap: 12px;
+    }
+
+    .hero-stats-strip {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 36px;
+        padding-top: 24px;
+    }
+
+    .stat-box .stat-num {
+        font-size: clamp(20px, 5vw, 26px);
+    }
+
+    .stat-box .stat-lbl {
+        font-size: 11.5px;
+    }
+
+    .showcase-card {
+        padding: 24px 20px;
+        max-width: 440px;
+        border-radius: 22px;
+    }
+
+    .showcase-img-container {
+        height: 250px;
+    }
+
+    .showcase-img-container img {
+        max-height: 230px;
+    }
+
+    .why-us-section,
+    .how-it-works-section,
+    .testimonials-section,
+    .faq-section {
+        padding: 60px 20px;
+    }
+
+    .section-header {
+        margin-bottom: 36px;
     }
 
     .features-grid {
         grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .feature-card {
+        padding: 28px 22px;
+        border-radius: 20px;
     }
 
     .steps-timeline {
         grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .step-card {
+        padding: 28px 20px;
+        border-radius: 20px;
+    }
+
+    .video-showcase-section {
+        padding: 60px 20px;
+    }
+
+    .video-frame video {
+        max-height: 340px;
+        border-radius: 18px;
     }
 
     .cta-banner {
-        padding: 48px 24px;
+        padding: 44px 24px;
+        border-radius: 22px;
     }
 
     .cta-inner h2 {
-        font-size: 32px;
+        font-size: clamp(24px, 5.5vw, 32px);
+    }
+
+    .cta-inner p {
+        font-size: 15px;
+        margin-bottom: 24px;
     }
 
     .footer-grid {
         grid-template-columns: 1fr;
+        gap: 32px;
     }
 
     .footer-bottom {
         flex-direction: column;
-        gap: 18px;
+        gap: 16px;
         text-align: center;
     }
 
     .floating-chip-1,
     .floating-chip-2 {
-        display: none;
+        display: none !important;
+    }
+}
+
+@media (max-width: 540px) {
+    .navbar {
+        padding: 12px 16px !important;
+    }
+
+    .navbar-nav {
+        left: 8px !important;
+        right: 8px !important;
+        padding: 16px 14px 18px 14px !important;
+        border-radius: 20px !important;
+    }
+
+    .navbar-logo {
+        height: 32px;
+    }
+
+    .hero {
+        padding: 32px 14px 44px 14px;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(25px, 6.5vw, 32px);
+    }
+
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-gradient,
+    .btn-glass {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        padding: 13px 20px;
+        font-size: 14.5px;
+    }
+
+    .showcase-card {
+        padding: 20px 16px;
+        border-radius: 18px;
+    }
+
+    .showcase-img-container {
+        height: 210px;
+        margin: 20px 0 10px 0;
+    }
+
+    .showcase-img-container img {
+        max-height: 190px;
+    }
+
+    .showcase-badge {
+        top: 18px;
+        left: 18px;
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .why-us-section,
+    .how-it-works-section,
+    .testimonials-section,
+    .faq-section {
+        padding: 48px 14px;
+    }
+
+    .section-badge {
+        font-size: 11.5px;
+        padding: 4px 12px;
+    }
+
+    .video-showcase-section {
+        padding: 44px 14px;
+    }
+
+    .video-frame video {
+        max-height: 240px;
+        border-radius: 14px;
+    }
+
+    .video-hl-card {
+        padding: 14px 16px;
+    }
+
+    .step-badge-num {
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+
+    .review-card {
+        padding: 24px 18px;
+        border-radius: 18px;
+    }
+
+    .faq-question {
+        padding: 16px 18px;
+        font-size: 15px;
+    }
+
+    .faq-answer p {
+        padding: 0 18px 16px 18px;
+        font-size: 13.5px;
+    }
+
+    .cta-banner {
+        padding: 36px 16px;
+        border-radius: 18px;
+    }
+}
+
+/* Ultra-compact Mobile Screens (Galaxy Fold outer, iPhone SE, <= 360px) */
+@media (max-width: 360px) {
+    .navbar {
+        padding: 10px 12px !important;
+    }
+
+    .menu-toggle {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 11px !important;
+    }
+
+    .liquid-hamburger-box {
+        width: 18px !important;
+        height: 15px !important;
+    }
+
+    .liquid-line.line-top,
+    .liquid-line.line-mid,
+    .liquid-line.line-bot {
+        width: 18px !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+    }
+
+    .menu-toggle.active .liquid-line.line-top,
+    .menu-toggle[aria-expanded="true"] .liquid-line.line-top,
+    .navbar:has(.navbar-nav.show) .menu-toggle .liquid-line.line-top,
+    .navbar:has(.navbar-nav.active) .menu-toggle .liquid-line.line-top {
+        transform: translateY(6.5px) rotate(45deg) !important;
+    }
+
+    .menu-toggle.active .liquid-line.line-bot,
+    .menu-toggle[aria-expanded="true"] .liquid-line.line-bot,
+    .navbar:has(.navbar-nav.show) .menu-toggle .liquid-line.line-bot,
+    .navbar:has(.navbar-nav.active) .menu-toggle .liquid-line.line-bot {
+        transform: translateY(-6.5px) rotate(-45deg) !important;
+    }
+
+    .navbar-nav {
+        left: 6px !important;
+        right: 6px !important;
+        padding: 14px 10px 16px 10px !important;
+        border-radius: 18px !important;
+    }
+
+    .navbar-nav li a {
+        padding: 11px 14px !important;
+        font-size: 13.5px !important;
+    }
+
+    .navbar-logo {
+        height: 28px;
+    }
+
+    .hero-content h1 {
+        font-size: 23px;
+        letter-spacing: -0.4px;
+    }
+
+    .hero-content p {
+        font-size: 13.5px;
+    }
+
+    .hero-stats-strip {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        text-align: center;
+    }
+
+    .stat-box {
+        align-items: center;
+    }
+
+    .showcase-card {
+        padding: 16px 12px;
+    }
+
+    .showcase-img-container {
+        height: 170px;
+    }
+
+    .showcase-img-container img {
+        max-height: 150px;
+    }
+
+    .showcase-title {
+        font-size: 18px;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .feature-card,
+    .step-card,
+    .review-card {
+        padding: 20px 14px;
+    }
+}
+
+/* Mobile Landscape (Short Viewport Height) */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding: 30px 20px 40px 20px;
+        gap: 24px;
+    }
+
+    .showcase-img-container {
+        height: 160px;
+    }
+
+    .showcase-img-container img {
+        max-height: 145px;
+    }
+
+    .navbar-nav {
+        max-height: calc(100vh - 55px);
+        overflow-y: auto;
     }
 }

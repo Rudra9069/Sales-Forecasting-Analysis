@@ -134,6 +134,31 @@
             font-weight: 700;
             color: var(--text-dark);
         }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-row-2 {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .settings-card {
+                padding: 20px 16px;
+                border-radius: 18px;
+            }
+
+            .btn-save-setting {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 

@@ -462,6 +462,69 @@
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
         }
 
+        /* Mobile & Tablet Responsive */
+        @media (max-width: 768px) {
+            .report-section {
+                padding: 20px 16px;
+                border-radius: 20px;
+                margin-bottom: 20px;
+            }
+
+            .section-header-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .simulator-panel {
+                padding: 20px 16px;
+                border-radius: 18px;
+            }
+
+            .playbook-grid {
+                grid-template-columns: 1fr !important;
+                gap: 14px !important;
+            }
+
+            .chart-box {
+                min-height: 240px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .report-section {
+                padding: 16px 12px;
+                border-radius: 16px;
+            }
+
+            .section-title-group h2 {
+                font-size: 1.1rem;
+            }
+
+            .exec-kpi-card {
+                padding: 16px 14px;
+            }
+
+            .exec-kpi-info .kpi-value {
+                font-size: 1.4rem;
+            }
+
+            .simulator-panel {
+                padding: 16px 12px;
+            }
+
+            .scenario-buttons {
+                flex-direction: column;
+            }
+
+            .scenario-btn {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
         /* Print formatting */
         @media print {
             body.admin-dashboard-body {

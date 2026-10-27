@@ -240,6 +240,7 @@
         const navbarNav = document.querySelector('.navbar-nav');
         if (menuToggle) {
             menuToggle.addEventListener('click', () => {
+                navbarNav.classList.toggle('show');
                 navbarNav.classList.toggle('active');
             });
         }

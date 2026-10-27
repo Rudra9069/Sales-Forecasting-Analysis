@@ -31,3 +31,13 @@
 ::-webkit-scrollbar-corner {
     background-color: #F8F7F4;
 }
+
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+        border-width: 1px;
+    }
+}
