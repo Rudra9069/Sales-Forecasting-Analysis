@@ -240,49 +240,51 @@ body {
     position: relative;
 }
 
-/* Skeuomorphic Top Right Action Switcher */
+/* Top Right Action Switcher (Pill Style as per user design) */
 .top-right-actions {
     position: absolute;
     top: 24px;
     right: 40px;
     display: flex;
+    align-items: center;
     gap: 4px;
     z-index: 10;
-    background: #f4f4f5;
-    padding: 6px;
-    border-radius: 50px;
-    border: 1px solid rgba(144, 144, 144, 0.123);
-    box-shadow: 5px 5px 10px #d0d2d6e0;
+    background: #f1f3f7;
+    padding: 4px 6px;
+    border-radius: 9999px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
 .skeuo-btn {
     text-decoration: none;
     font-family: var(--font-heading);
-    font-weight: 500;
+    font-weight: 700;
     text-transform: uppercase;
-    font-size: 13.5px;
-    letter-spacing: 0.5px;
-    padding: 8px 16px;
-    color: rgb(38, 111, 255);
+    font-size: 13px;
+    letter-spacing: 0.6px;
+    padding: 8px 18px;
+    color: #2563eb;
     background: transparent;
-    border-radius: 40px;
+    border-radius: 9999px;
     border: none;
     cursor: pointer;
     box-shadow: none;
     transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .skeuo-btn:hover {
-    color: rgb(30, 85, 195);
+    color: #1d4ed8;
 }
 
-.skeuo-btn:active,
 .skeuo-btn.active {
-    background: white;
-    color: var(--text-muted);
-    box-shadow:
-        inset 4px 4px 8px #cbd5e1,
-        inset -4px -4px 8px #ffffff;
+    background: #ffffff;
+    color: #475569;
+    box-shadow: inset 1.5px 2.5px 5px rgba(0, 0, 0, 0.12), inset -1px -1px 3px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .form-header {
@@ -927,8 +929,17 @@ body {
 
     .top-right-actions {
         position: static;
-        margin-bottom: 16px;
+        width: 100%;
+        margin-bottom: 22px;
+        display: flex;
+        align-items: center;
         justify-content: flex-end;
+        background: #f1f3f7;
+        padding: 4px 6px 4px 20px;
+        border-radius: 9999px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+        box-sizing: border-box;
     }
 }
 
