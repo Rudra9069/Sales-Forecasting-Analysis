@@ -71,4 +71,5 @@ instance/
 # Excluded local docs and PowerBI files
 docs/
 *.pbix
+sql_pwd.txt
 

@@ -45,6 +45,7 @@ def favicon():
 # --- MySQL Database Configuration ---
 db_config = {
     'host': os.environ.get('DB_HOST', 'localhost'),
+    'port': int(os.environ.get('DB_PORT', 3306)),
     'user': os.environ.get('DB_USER', 'root'),
     'password': os.environ.get('DB_PASSWORD', 'Rudra@1001'),
     'database': os.environ.get('DB_NAME', 'sales_forecasting_db')
@@ -192,6 +193,7 @@ def register():
         finally:
             if conn and conn.is_connected():
                 cursor.close()
+
                 conn.close()
 
     panel = request.args.get('panel', 'register')
