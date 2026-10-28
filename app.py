@@ -65,6 +65,34 @@ RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TtExqsKdC4be2s')
 RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', 'hlLwQS2oZY1DIHxiquO7qOYU')
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
+def run_db_migrations():
+    """Ensure all required DB columns exist (idempotent). Runs once at startup."""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        # Add transaction_id to payments if it doesn't already exist
+        cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME   = 'payments'
+              AND COLUMN_NAME  = 'transaction_id'
+        """)
+        (exists,) = cursor.fetchone()
+        if not exists:
+            cursor.execute("""
+                ALTER TABLE payments
+                ADD COLUMN transaction_id VARCHAR(255) DEFAULT NULL
+            """)
+            conn.commit()
+            print('[MIGRATION] Added transaction_id column to payments table.')
+        else:
+            print('[MIGRATION] payments.transaction_id already exists — skipping.')
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print(f'[MIGRATION ERROR] {e}')
+
+
 def send_app_email(to_email, subject, body_text):
     """
     Universal Email Dispatcher:
@@ -1648,8 +1676,14 @@ def verify_razorpay_payment():
     except mysql.connector.Error as err:
         if conn:
             conn.rollback()
-        print(f"Database error during order creation: {err}")
-        return jsonify({'success': False, 'message': 'Database error while saving your order.'}), 500
+        print(f"[DB ERROR] verify_razorpay_payment failed: {err}")
+        print(f"[DB ERROR] errno={err.errno}, sqlstate={err.sqlstate}, msg={err.msg}")
+        return jsonify({'success': False, 'message': f'Database error while saving your order: {err.msg}'}), 500
+    except Exception as err:
+        if conn:
+            conn.rollback()
+        print(f"[UNEXPECTED ERROR] verify_razorpay_payment: {err}")
+        return jsonify({'success': False, 'message': f'Unexpected error: {str(err)}'}), 500
     finally:
         if conn and conn.is_connected():
             cursor.close()
@@ -2142,5 +2176,9 @@ def admin_predict_v2():
 
 
 if __name__ == '__main__':
+    run_db_migrations()
     app.run(debug=True, use_reloader=False)
+else:
+    # Runs when hosted on Render / gunicorn (which doesn't use __main__)
+    run_db_migrations()
 
