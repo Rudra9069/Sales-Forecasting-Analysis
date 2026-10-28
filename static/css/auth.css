@@ -1025,3 +1025,10 @@ body {
         padding: 18px 20px;
     }
 }
+
+/* Explicitly hide any bottom tab bar or navigation links on Auth/Login/Register pages */
+.bottom-liquid-tab-bar,
+.navbar,
+.navbar-nav {
+    display: none !important;
+}
