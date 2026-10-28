@@ -5,22 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     paymentCards.forEach(card => {
         card.addEventListener('click', () => {
-            // Remove active classes
             paymentCards.forEach(c => c.classList.remove('active'));
             paymentDetails.forEach(d => d.classList.remove('active'));
             
-            // Check radio
             const radio = card.querySelector('input[type="radio"]');
-            radio.checked = true;
-            
-            // Add active classes
-            card.classList.add('active');
-            const targetId = radio.value + '-details';
-            const targetDetail = document.getElementById(targetId);
-            if (targetDetail) {
-                targetDetail.classList.add('active');
+            if (radio) {
+                radio.checked = true;
+                const targetId = radio.value + '-details';
+                const targetDetail = document.getElementById(targetId);
+                if (targetDetail) {
+                    targetDetail.classList.add('active');
+                }
             }
-            
+            card.classList.add('active');
             validateForm();
         });
     });
@@ -52,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Form Validation Logic
-    const formInputs = document.querySelectorAll('input[required], select[required]');
+    const formInputs = document.querySelectorAll('#customer-info input[required], #delivery-address input[required], #delivery-address select[required]');
     const placeOrderBtn = document.getElementById('place-order-btn');
 
     formInputs.forEach(input => {
@@ -69,27 +66,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateInput(input) {
         let isValid = true;
         
-        if (input.value.trim() === '') {
+        if (!input.value || input.value.trim() === '') {
             isValid = false;
         } else if (input.type === 'email') {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            isValid = re.test(input.value);
-        } else if (input.id === 'card-number') {
-            isValid = input.value.replace(/\s/g, '').length === 16;
-        } else if (input.id === 'card-expiry') {
-            const re = /^(0[1-9]|1[0-2])\/\d{2}$/;
-            isValid = re.test(input.value);
-        } else if (input.id === 'card-cvv') {
-            isValid = input.value.length === 3 || input.value.length === 4;
+            isValid = re.test(input.value.trim());
         }
 
         const group = input.closest('.form-group');
-        if (isValid) {
-            group.classList.remove('has-error');
-            input.classList.remove('error');
-        } else {
-            group.classList.add('has-error');
-            input.classList.add('error');
+        if (group) {
+            if (isValid) {
+                group.classList.remove('has-error');
+                input.classList.remove('error');
+            } else {
+                group.classList.add('has-error');
+                input.classList.add('error');
+            }
         }
         
         return isValid;
@@ -106,35 +98,151 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Validate active payment method details
-        const activeMethod = document.querySelector('input[name="payment_method"]:checked').value;
-        const activeDetails = document.getElementById(activeMethod + '-details');
-        
-        if (activeDetails) {
-            const paymentInputs = activeDetails.querySelectorAll('input[required], select[required]');
-            paymentInputs.forEach(input => {
-                if (!validateInput(input)) {
-                    isFormValid = false;
-                }
-            });
+        if (placeOrderBtn) {
+            placeOrderBtn.disabled = !isFormValid;
         }
-
-        placeOrderBtn.disabled = !isFormValid;
+        return isFormValid;
     }
     
     // Initial Validation Check
     validateForm();
-    
-    // Handle Place Order Click
-    placeOrderBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Simple loading state
-        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        placeOrderBtn.disabled = true;
-        
-        // Submit the form to backend
-        const form = document.getElementById('checkout-form');
-        form.submit();
-    });
+
+    function resetButton() {
+        if (!placeOrderBtn) return;
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Place Order & Pay';
+    }
+
+    // Handle Place Order Click (Razorpay Test Mode / COD)
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                const firstError = document.querySelector('.form-group.has-error input, .form-group.has-error select');
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
+            const checkoutForm = document.getElementById('checkout-form');
+            const activeRadio = document.querySelector('input[name="payment_method"]:checked');
+            const paymentMethod = activeRadio ? activeRadio.value : 'card';
+
+            // 1. CASH ON DELIVERY (COD)
+            if (paymentMethod === 'cod') {
+                placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+                placeOrderBtn.disabled = true;
+                checkoutForm.submit();
+                return;
+            }
+
+            // 2. ONLINE PAYMENT VIA RAZORPAY TEST MODE
+            const promoCode = promoInput ? promoInput.value.trim().toUpperCase() : '';
+            placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting to Razorpay...';
+            placeOrderBtn.disabled = true;
+
+            try {
+                // Call backend to create Razorpay Order
+                const res = await fetch('/create_razorpay_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ promo_code: promoCode })
+                });
+
+                const data = await res.json();
+                if (!data.success) {
+                    alert(data.message || 'Unable to initiate Razorpay checkout. Please try again.');
+                    resetButton();
+                    return;
+                }
+
+                // Check if Razorpay script is loaded
+                if (typeof Razorpay === 'undefined') {
+                    alert('Razorpay Checkout SDK is still loading. Please check your internet connection and try again.');
+                    resetButton();
+                    return;
+                }
+
+                const customerName = document.getElementById('full-name')?.value || '';
+                const customerEmail = document.getElementById('email')?.value || '';
+                const customerPhone = document.getElementById('phone')?.value || '';
+
+                const options = {
+                    key: data.key_id,
+                    amount: data.amount,
+                    currency: data.currency || 'INR',
+                    name: 'Forecastify',
+                    description: 'Order Checkout (Test Mode)',
+                    image: window.location.origin + '/static/images/logo.png',
+                    order_id: data.order_id,
+                    handler: async function (response) {
+                        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Payment...';
+                        
+                        try {
+                            const verifyRes = await fetch('/verify_razorpay_payment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    full_name: customerName,
+                                    email: customerEmail,
+                                    phone: customerPhone,
+                                    address: document.getElementById('address')?.value || '',
+                                    city: document.getElementById('city')?.value || '',
+                                    state: document.getElementById('state')?.value || '',
+                                    pincode: document.getElementById('pincode')?.value || '',
+                                    payment_method: paymentMethod,
+                                    promo_code: promoCode
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+                            if (verifyData.success && verifyData.redirect_url) {
+                                window.location.href = verifyData.redirect_url;
+                            } else {
+                                alert(verifyData.message || 'Payment verification failed. Please contact support.');
+                                resetButton();
+                            }
+                        } catch (err) {
+                            console.error('Verification error:', err);
+                            alert('Network error while verifying payment. Please refresh or contact support.');
+                            resetButton();
+                        }
+                    },
+                    prefill: {
+                        name: customerName,
+                        email: customerEmail,
+                        contact: customerPhone
+                    },
+                    theme: {
+                        color: '#2563EB'
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            resetButton();
+                        }
+                    }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (resp) {
+                    const desc = resp.error ? resp.error.description : 'Payment was not successful.';
+                    alert('Payment Failed: ' + desc);
+                    resetButton();
+                });
+
+                rzp.open();
+
+            } catch (err) {
+                console.error('Error during checkout initiation:', err);
+                alert('Something went wrong connecting to payment gateway. Please try again.');
+                resetButton();
+            }
+        });
+    }
 });

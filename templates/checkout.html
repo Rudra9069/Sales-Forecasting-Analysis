@@ -17,6 +17,52 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollbar.css') }}">
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        .razorpay-notice-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(2, 132, 199, 0.03) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-top: 10px;
+        }
+        .razorpay-notice-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .razorpay-logo-badge {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #1e3a8a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .razorpay-logo-badge i {
+            color: #2563eb;
+            font-size: 16px;
+        }
+        .razorpay-mode-tag {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .razorpay-notice-box p {
+            font-size: 13.5px;
+            color: #475569;
+            line-height: 1.55;
+            margin: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -81,7 +127,7 @@
         <div class="checkout-container">
             <!-- Forms Area -->
             <div class="checkout-forms">
-                <form id="checkout-form" action="{{ url_for('place_order') }}" method="POST">
+                <form id="checkout-form" action="{{ url_for('place_order') }}" method="POST" data-razorpay-key="{{ razorpay_key_id }}">
 
                     <!-- Customer Information -->
                     <div class="checkout-form-section" id="customer-info">
@@ -247,72 +293,34 @@
 
                         <!-- Card Details -->
                         <div class="payment-details active" id="card-details">
-                            <div class="form-grid full" style="margin-bottom: 20px;">
-                                <div class="form-group">
-                                    <label for="card-number">Card Number *</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-credit-card input-icon"></i>
-                                        <input type="text" id="card-number" required placeholder="0000 0000 0000 0000">
-                                    </div>
-                                    <span class="error-message">Valid 16-digit card number is required</span>
+                            <div class="razorpay-notice-box">
+                                <div class="razorpay-notice-header">
+                                    <span class="razorpay-logo-badge"><i class="fas fa-shield-alt"></i> Razorpay Secure Card Payment</span>
+                                    <span class="razorpay-mode-tag">Test Mode</span>
                                 </div>
-                                <div class="form-group">
-                                    <label for="card-name">Card Holder Name *</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-user input-icon"></i>
-                                        <input type="text" id="card-name" required placeholder="John Doe">
-                                    </div>
-                                    <span class="error-message">Name on card is required</span>
-                                </div>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="card-expiry">Expiry Date *</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-calendar-alt input-icon"></i>
-                                        <input type="text" id="card-expiry" required placeholder="MM/YY">
-                                    </div>
-                                    <span class="error-message">Enter valid expiry (MM/YY)</span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="card-cvv">CVV *</label>
-                                    <div class="input-wrapper">
-                                        <i class="fas fa-lock input-icon"></i>
-                                        <input type="password" id="card-cvv" required placeholder="123" maxlength="4">
-                                    </div>
-                                    <span class="error-message">3 or 4 digit CVV required</span>
-                                </div>
+                                <p>Supports Visa, Mastercard, RuPay, and Maestro. When you click <strong>Place Order & Pay</strong>, Razorpay's secure test checkout popup will launch.</p>
                             </div>
                         </div>
 
                         <!-- UPI Details -->
                         <div class="payment-details" id="upi-details">
-                            <div class="form-group">
-                                <label for="upi-id">UPI ID *</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-at input-icon"></i>
-                                    <input type="text" id="upi-id" placeholder="username@bank">
+                            <div class="razorpay-notice-box">
+                                <div class="razorpay-notice-header">
+                                    <span class="razorpay-logo-badge"><i class="fas fa-mobile-alt"></i> Razorpay Instant UPI</span>
+                                    <span class="razorpay-mode-tag">Test Mode</span>
                                 </div>
-                                <span class="error-message">Valid UPI ID is required</span>
+                                <p>Supports Google Pay, PhonePe, Paytm, BHIM, and QR Code. When you click <strong>Place Order & Pay</strong>, test UPI simulation is available in the popup.</p>
                             </div>
                         </div>
 
                         <!-- Net Banking Details -->
                         <div class="payment-details" id="netbanking-details">
-                            <div class="form-group">
-                                <label for="bank-select">Select Bank *</label>
-                                <div class="input-wrapper select-wrapper">
-                                    <i class="fas fa-university input-icon"></i>
-                                    <select id="bank-select">
-                                        <option value="" disabled selected>Choose your bank...</option>
-                                        <option value="chase">JPMorgan Chase</option>
-                                        <option value="boa">Bank of America</option>
-                                        <option value="hdfc">HDFC Bank</option>
-                                        <option value="icici">ICICI Bank</option>
-                                        <option value="sbi">State Bank of India</option>
-                                    </select>
+                            <div class="razorpay-notice-box">
+                                <div class="razorpay-notice-header">
+                                    <span class="razorpay-logo-badge"><i class="fas fa-university"></i> Razorpay Net Banking</span>
+                                    <span class="razorpay-mode-tag">Test Mode</span>
                                 </div>
-                                <span class="error-message">Please select a bank</span>
+                                <p>Supports 50+ major Indian banks (SBI, HDFC, ICICI, Axis, Kotak). Complete your payment via bank simulation in the Razorpay popup.</p>
                             </div>
                         </div>
 

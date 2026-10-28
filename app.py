@@ -15,6 +15,8 @@ import random
 import json
 import urllib.request
 import urllib.error
+import time
+import razorpay
 
 load_dotenv()
 
@@ -57,6 +59,11 @@ db_config = {
 def get_db_connection():
     """Create and return a new MySQL database connection."""
     return mysql.connector.connect(**db_config)
+
+# --- Razorpay Payment Gateway Configuration ---
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_TtExqsKdC4be2s')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', 'hlLwQS2oZY1DIHxiquO7qOYU')
+razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 def send_app_email(to_email, subject, body_text):
     """
@@ -1498,7 +1505,155 @@ def checkout():
                            tax=tax,
                            shipping=shipping,
                            total=total,
-                           user=user_data)
+                           user=user_data,
+                           razorpay_key_id=RAZORPAY_KEY_ID)
+
+@app.route('/create_razorpay_order', methods=['POST'])
+def create_razorpay_order():
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Please login to proceed.'}), 401
+
+    cart_items, subtotal, total_discount = get_cart_details()
+    if not cart_items:
+        return jsonify({'success': False, 'message': 'Your cart is empty.'}), 400
+
+    data = request.get_json(silent=True) or {}
+    promo_code = (data.get('promo_code') or '').strip().upper()
+
+    tax = (subtotal - total_discount) * 0.08
+    shipping = 15.00 if subtotal > 0 else 0
+    total = subtotal - total_discount + tax + shipping
+
+    if promo_code == 'SAVE20':
+        discount = total * 0.20
+        total = total - discount
+
+    # Amount in paise (1 INR = 100 paise)
+    amount_in_paise = int(round(total * 100))
+
+    try:
+        receipt_id = f"rcpt_{session['user_id']}_{int(time.time())}"
+        order_data = {
+            'amount': amount_in_paise,
+            'currency': 'INR',
+            'receipt': receipt_id,
+            'payment_capture': 1,
+            'notes': {
+                'user_id': str(session['user_id']),
+                'promo_code': promo_code
+            }
+        }
+        razorpay_order = razorpay_client.order.create(data=order_data)
+
+        return jsonify({
+            'success': True,
+            'order_id': razorpay_order['id'],
+            'amount': razorpay_order['amount'],
+            'currency': razorpay_order['currency'],
+            'key_id': RAZORPAY_KEY_ID
+        })
+    except Exception as e:
+        print(f"Razorpay Order Creation Error: {e}")
+        return jsonify({'success': False, 'message': f'Failed to create payment order: {str(e)}'}), 500
+
+@app.route('/verify_razorpay_payment', methods=['POST'])
+def verify_razorpay_payment():
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'Session expired. Please log in.'}), 401
+
+    data = request.get_json(silent=True) or {}
+    razorpay_order_id = data.get('razorpay_order_id')
+    razorpay_payment_id = data.get('razorpay_payment_id')
+    razorpay_signature = data.get('razorpay_signature')
+
+    if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
+        return jsonify({'success': False, 'message': 'Missing payment verification credentials.'}), 400
+
+    # 1. Verify Razorpay Signature
+    params_dict = {
+        'razorpay_order_id': razorpay_order_id,
+        'razorpay_payment_id': razorpay_payment_id,
+        'razorpay_signature': razorpay_signature
+    }
+    try:
+        razorpay_client.utility.verify_payment_signature(params_dict)
+    except razorpay.errors.SignatureVerificationError as err:
+        print(f"Razorpay Signature Verification Error: {err}")
+        return jsonify({'success': False, 'message': 'Payment signature verification failed. Untrusted payment.'}), 400
+    except Exception as err:
+        print(f"Error during signature verification: {err}")
+        return jsonify({'success': False, 'message': f'Payment verification error: {str(err)}'}), 500
+
+    # 2. Signature verified! Calculate total and store order in DB
+    cart_items, subtotal, total_discount = get_cart_details()
+    if not cart_items:
+        return jsonify({'success': False, 'message': 'Your cart is empty.'}), 400
+
+    promo_code = (data.get('promo_code') or '').strip().upper()
+    tax = (subtotal - total_discount) * 0.08
+    shipping = 15.00 if subtotal > 0 else 0
+    total = subtotal - total_discount + tax + shipping
+
+    if promo_code == 'SAVE20':
+        discount = total * 0.20
+        total = total - discount
+
+    full_name = data.get('full_name', '')
+    address = data.get('address', '')
+    city = data.get('city', '')
+    state = data.get('state', '')
+    pincode = data.get('pincode', '')
+    payment_method = data.get('payment_method', 'card')
+
+    shipping_address = f"{full_name}, {address}, {city}, {state} {pincode}"
+    db_payment_method = 'UPI' if payment_method == 'upi' else 'card'
+
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Insert order
+        cursor.execute(
+            "INSERT INTO orders (user_id, total_amount, status, shipping_address) VALUES (%s, %s, %s, %s)",
+            (session['user_id'], total, 'pending', shipping_address)
+        )
+        order_id = cursor.lastrowid
+
+        # Insert order items
+        for item in cart_items:
+            cursor.execute(
+                "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (%s, %s, %s, %s)",
+                (order_id, item['product_id'], item['quantity'], item['price'])
+            )
+
+        # Insert payment record with transaction_id
+        cursor.execute(
+            "INSERT INTO payments (order_id, payment_method, payment_status, amount, transaction_id) VALUES (%s, %s, %s, %s, %s)",
+            (order_id, db_payment_method, 'success', total, razorpay_payment_id)
+        )
+
+        conn.commit()
+
+        # Clear cart
+        session.pop('cart', None)
+        session.modified = True
+
+        order_ref = f"ORD-{order_id}-{random.randint(1000, 9999)}"
+        return jsonify({
+            'success': True,
+            'redirect_url': url_for('order_success', ref=order_ref)
+        })
+
+    except mysql.connector.Error as err:
+        if conn:
+            conn.rollback()
+        print(f"Database error during order creation: {err}")
+        return jsonify({'success': False, 'message': 'Database error while saving your order.'}), 500
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
 
 @app.route('/place_order', methods=['POST'])
 def place_order():
@@ -1523,7 +1678,7 @@ def place_order():
     city = request.form.get('city', '')
     state = request.form.get('state', '')
     pincode = request.form.get('pincode', '')
-    payment_method = request.form.get('payment_method', 'card')
+    payment_method = request.form.get('payment_method', 'cod')
     
     shipping_address = f"{full_name}, {address}, {city}, {state} {pincode}"
     
@@ -1531,10 +1686,10 @@ def place_order():
     payment_map = {
         'card': 'card',
         'upi': 'UPI',
-        'netbanking': 'card',  # Treat netbanking as card in DB
+        'netbanking': 'card',
         'cod': 'COD'
     }
-    db_payment_method = payment_map.get(payment_method, 'card')
+    db_payment_method = payment_map.get(payment_method, 'COD')
     
     conn = None
     try:
@@ -1558,8 +1713,8 @@ def place_order():
         # 3. Insert into payments table
         payment_status = 'pending' if db_payment_method == 'COD' else 'success'
         cursor.execute(
-            "INSERT INTO payments (order_id, payment_method, payment_status, amount) VALUES (%s, %s, %s, %s)",
-            (order_id, db_payment_method, payment_status, total)
+            "INSERT INTO payments (order_id, payment_method, payment_status, amount, transaction_id) VALUES (%s, %s, %s, %s, %s)",
+            (order_id, db_payment_method, payment_status, total, None)
         )
         
         conn.commit()

@@ -7,3 +7,4 @@ seaborn
 python-dotenv
 mysql-connector-python
 gunicorn
+razorpay
