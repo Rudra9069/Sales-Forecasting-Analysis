@@ -27,7 +27,6 @@
         }
 
         // 2. Synchronize active state based on current location pathname
-        const path = window.location.pathname.toLowerCase();
         const tabItems = tabBar.querySelectorAll('.liquid-tab-item');
 
         tabItems.forEach(item => {
