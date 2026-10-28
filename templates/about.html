@@ -753,6 +753,46 @@
             });
         });
     </script>
+
+    <!-- ====== Bottom Liquid Tab Bar Menu (Mobile) ====== -->
+    <nav class="bottom-liquid-tab-bar" aria-label="Mobile Navigation">
+        <div class="liquid-tab-pill">
+            <a href="{{ url_for('home') }}" class="liquid-tab-item" data-route="home">
+                <i class="fas fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('products') }}" class="liquid-tab-item" data-route="products">
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Products</span>
+            </a>
+            <a href="{{ url_for('cart') }}" class="liquid-tab-item" data-route="cart">
+                <div class="liquid-tab-icon-wrap">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <span>Cart</span>
+            </a>
+            <a href="{{ url_for('about') }}" class="liquid-tab-item active" data-route="about">
+                <i class="fas fa-circle-info"></i>
+                <span>About</span>
+            </a>
+            <a href="{{ url_for('contact') }}" class="liquid-tab-item" data-route="contact">
+                <i class="fas fa-headset"></i>
+                <span>Contact</span>
+            </a>
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('profile') }}" class="liquid-tab-item" data-route="profile">
+                <i class="fas fa-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="liquid-tab-item" data-route="login">
+                <i class="fas fa-user"></i>
+                <span>Login</span>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
     <script src="{{ url_for('static', filename='js/scrollbar.js') }}"></script>
 </body>
 </html>

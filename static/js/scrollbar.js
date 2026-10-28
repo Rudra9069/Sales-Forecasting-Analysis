@@ -1,119 +1,109 @@
 /**
  * Forecastify - Liquid Glass Navigation Controller
- * Provides liquid glass morphing hamburger animation, floating capsule drawer state,
- * and ambient backdrop blur across all storefront pages.
+ * Manages the floating bottom liquid glass tab bar for mobile,
+ * active route synchronization, and tactile micro-interactions.
  */
 (function () {
-    function initLiquidGlassMenu() {
-        let menuToggle = document.getElementById('menuToggle') || document.querySelector('.menu-toggle');
-        const navbarNav = document.getElementById('navbarLinks') || document.querySelector('.navbar-nav');
+    function initMobileLiquidTabBar() {
+        let tabBar = document.querySelector('.bottom-liquid-tab-bar');
 
-        if (!menuToggle || !navbarNav) return;
-        if (menuToggle.dataset.liquidInit === 'true') return;
+        // Check if user is logged in
+        const isUserLoggedIn = document.body.dataset.userLoggedIn === 'true' || 
+                               !!document.querySelector('a[href*="/profile"]') ||
+                               !!document.querySelector('a[href*="/logout"]');
 
-        // 1. Inject Liquid Glass Morphing Lines if not already present
-        if (!menuToggle.querySelector('.liquid-hamburger-box')) {
-            const existingIcon = menuToggle.querySelector('i');
-            if (existingIcon) {
-                existingIcon.style.display = 'none';
-            }
+        // Check if there is an existing cart badge count on desktop navbar
+        const existingCartBadge = document.querySelector('.navbar .cart-badge') || 
+                                  document.querySelector('.navbar [data-cart-count]');
+        const cartCount = existingCartBadge ? (existingCartBadge.textContent.trim() || '0') : '';
 
-            const liquidBox = document.createElement('span');
-            liquidBox.className = 'liquid-hamburger-box';
-            liquidBox.setAttribute('aria-hidden', 'true');
-            liquidBox.innerHTML = `
-                <span class="liquid-line line-top"></span>
-                <span class="liquid-line line-mid"></span>
-                <span class="liquid-line line-bot"></span>
+        // 1. If tab bar is not in the DOM, inject it dynamically as a resilient fallback
+        if (!tabBar) {
+            tabBar = document.createElement('nav');
+            tabBar.className = 'bottom-liquid-tab-bar';
+            tabBar.setAttribute('aria-label', 'Mobile Bottom Navigation');
+            
+            tabBar.innerHTML = `
+                <div class="liquid-tab-pill">
+                    <a href="/" class="liquid-tab-item" data-route="home">
+                        <i class="fas fa-house"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/products" class="liquid-tab-item" data-route="products">
+                        <i class="fas fa-boxes-stacked"></i>
+                        <span>Products</span>
+                    </a>
+                    <a href="/cart" class="liquid-tab-item" data-route="cart">
+                        <div class="liquid-tab-icon-wrap">
+                            <i class="fas fa-shopping-bag"></i>
+                            ${(cartCount && cartCount !== '0') ? `<span class="liquid-tab-badge">${cartCount}</span>` : ''}
+                        </div>
+                        <span>Cart</span>
+                    </a>
+                    <a href="/about" class="liquid-tab-item" data-route="about">
+                        <i class="fas fa-circle-info"></i>
+                        <span>About</span>
+                    </a>
+                    <a href="/contact" class="liquid-tab-item" data-route="contact">
+                        <i class="fas fa-headset"></i>
+                        <span>Contact</span>
+                    </a>
+                    <a href="${isUserLoggedIn ? '/profile' : '/login'}" class="liquid-tab-item" data-route="${isUserLoggedIn ? 'profile' : 'login'}">
+                        <i class="fas ${isUserLoggedIn ? 'fa-user-circle' : 'fa-user'}"></i>
+                        <span>${isUserLoggedIn ? 'Profile' : 'Login'}</span>
+                    </a>
+                </div>
             `;
-            menuToggle.appendChild(liquidBox);
+            document.body.appendChild(tabBar);
         }
 
-        // 2. Clone the button to remove conflicting legacy listeners attached by individual templates
-        const cleanToggle = menuToggle.cloneNode(true);
-        if (menuToggle.parentNode) {
-            menuToggle.parentNode.replaceChild(cleanToggle, menuToggle);
-            menuToggle = cleanToggle;
-        }
-        menuToggle.dataset.liquidInit = 'true';
+        // 2. Synchronize active state based on current location pathname
+        const path = window.location.pathname.toLowerCase();
+        const tabItems = tabBar.querySelectorAll('.liquid-tab-item');
+        
+        tabItems.forEach(item => {
+            const route = item.dataset.route || '';
+            let isActive = false;
 
-        // 3. Ensure ambient liquid glass backdrop overlay exists in the DOM
-        let backdrop = document.querySelector('.liquid-navbar-backdrop');
-        if (!backdrop) {
-            backdrop = document.createElement('div');
-            backdrop.className = 'liquid-navbar-backdrop';
-            backdrop.setAttribute('aria-hidden', 'true');
-            document.body.appendChild(backdrop);
-        }
-
-        // 4. State Management Functions
-        function openLiquidMenu() {
-            navbarNav.classList.add('show', 'active');
-            menuToggle.classList.add('active');
-            menuToggle.setAttribute('aria-expanded', 'true');
-            backdrop.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Lock background scroll
-        }
-
-        function closeLiquidMenu() {
-            navbarNav.classList.remove('show', 'active');
-            menuToggle.classList.remove('active');
-            menuToggle.setAttribute('aria-expanded', 'false');
-            backdrop.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function toggleLiquidMenu(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
+            if (route === 'home' && (path === '/' || path === '/home' || path.endsWith('index.html'))) {
+                isActive = true;
+            } else if (route === 'products' && path.includes('product')) {
+                isActive = true;
+            } else if (route === 'cart' && path.includes('cart')) {
+                isActive = true;
+            } else if (route === 'about' && path.includes('about')) {
+                isActive = true;
+            } else if (route === 'contact' && path.includes('contact')) {
+                isActive = true;
+            } else if (route === 'profile' && path.includes('profile')) {
+                isActive = true;
+            } else if (route === 'login' && (path.includes('login') || path.includes('register') || path.includes('auth'))) {
+                isActive = true;
             }
-            const isOpen = navbarNav.classList.contains('show') || navbarNav.classList.contains('active');
-            if (isOpen) {
-                closeLiquidMenu();
-            } else {
-                openLiquidMenu();
-            }
-        }
 
-        // 5. Bind Clean Events
-        menuToggle.addEventListener('click', toggleLiquidMenu);
-
-        // Click outside (Backdrop) closes menu
-        backdrop.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeLiquidMenu();
-        });
-
-        // Escape key closes menu
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && (navbarNav.classList.contains('show') || navbarNav.classList.contains('active'))) {
-                closeLiquidMenu();
+            if (isActive) {
+                tabItems.forEach(t => t.classList.remove('active'));
+                item.classList.add('active');
             }
         });
 
-        // Clicking any menu link closes menu gracefully
-        navbarNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                closeLiquidMenu();
-            });
+        // 3. Tactile touch micro-interactions
+        tabItems.forEach(item => {
+            item.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.92)';
+            }, { passive: true });
+            item.addEventListener('touchend', function() {
+                this.style.transform = '';
+            }, { passive: true });
+            item.addEventListener('touchcancel', function() {
+                this.style.transform = '';
+            }, { passive: true });
         });
-
-        // Auto close if viewport resized back to desktop
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                if (window.innerWidth > 960 && (navbarNav.classList.contains('show') || navbarNav.classList.contains('active'))) {
-                    closeLiquidMenu();
-                }
-            }, 100);
-        }, { passive: true });
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initLiquidGlassMenu);
+        document.addEventListener('DOMContentLoaded', initMobileLiquidTabBar);
     } else {
-        initLiquidGlassMenu();
+        initMobileLiquidTabBar();
     }
 })();

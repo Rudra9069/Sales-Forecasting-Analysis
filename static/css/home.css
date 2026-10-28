@@ -88,16 +88,14 @@ section[id] {
     scroll-margin-top: 100px;
 }
 
-/* Gentle Page Entrance Animation */
+/* Gentle Page Entrance Animation (Opacity only to keep position: fixed intact) */
 @keyframes pageFadeIn {
     from {
         opacity: 0;
-        transform: translateY(6px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -1748,170 +1746,206 @@ button {
         display: none !important;
     }
 
+    /* Hide Hamburger Menu on Mobile - Replaced by Bottom Liquid Tab Bar */
     .menu-toggle {
-        display: inline-flex !important;
+        display: none !important;
     }
 
-    /* Floating Liquid Glass Dropdown Menu Capsule */
+    .liquid-navbar-backdrop {
+        display: none !important;
+    }
+
+    /* Hide Desktop/Old Header Navbar Links on Mobile */
     .navbar-nav {
         display: none !important;
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 12px;
-        right: 12px;
-        width: auto !important;
-        background: linear-gradient(165deg, rgba(15, 23, 42, 0.88) 0%, rgba(11, 19, 43, 0.96) 100%) !important;
-        backdrop-filter: blur(28px) saturate(210%) brightness(108%) !important;
-        -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(108%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.16) !important;
-        border-radius: 24px !important;
-        box-shadow: 
-            0 30px 65px -12px rgba(0, 0, 0, 0.75),
-            0 0 35px rgba(56, 189, 248, 0.2),
-            inset 0 1px 1.5px rgba(255, 255, 255, 0.45),
-            inset 0 -1px 2px rgba(0, 0, 0, 0.5) !important;
-        flex-direction: column;
-        padding: 20px 16px 22px 16px !important;
-        gap: 8px !important;
-        max-height: calc(100dvh - 85px);
-        max-height: calc(100vh - 85px);
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        z-index: 1001 !important;
     }
 
-    /* Prismatic Sheen Accent on Drawer Top Edge */
-    .navbar-nav::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 20px;
-        right: 20px;
-        height: 1.5px;
-        background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.8) 30%, rgba(168, 85, 247, 0.7) 70%, transparent 100%);
+    body {
+        padding-bottom: 96px !important;
+    }
+
+    /* =========================================================
+       BOTTOM LIQUID GLASS TAB BAR MENU (MOBILE ONLY)
+       Floating pill capsule with liquid specular sheen
+       ========================================================= */
+    .bottom-liquid-tab-bar {
+        display: block !important;
+        position: fixed;
+        bottom: max(16px, env(safe-area-inset-bottom, 16px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 24px);
+        max-width: 480px;
+        z-index: 10000;
         pointer-events: none;
     }
 
-    .navbar-nav.show,
-    .navbar-nav.active {
-        display: flex !important;
-        animation: liquidMenuSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes liquidMenuSlide {
-        from {
-            opacity: 0;
-            transform: translateY(-12px) scale(0.97);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    .navbar-nav li {
-        width: 100%;
-        animation: liquidItemEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    }
-
-    .navbar-nav li:nth-child(1) { animation-delay: 0.03s; }
-    .navbar-nav li:nth-child(2) { animation-delay: 0.06s; }
-    .navbar-nav li:nth-child(3) { animation-delay: 0.09s; }
-    .navbar-nav li:nth-child(4) { animation-delay: 0.12s; }
-    .navbar-nav li:nth-child(5) { animation-delay: 0.15s; }
-    .navbar-nav li:nth-child(6) { animation-delay: 0.18s; }
-    .navbar-nav li:nth-child(7) { animation-delay: 0.21s; }
-
-    @keyframes liquidItemEnter {
-        from {
-            opacity: 0;
-            transform: translateY(-8px) scale(0.98);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    /* Liquid Glass Menu Links */
-    .navbar-nav li a {
-        display: flex !important;
+    .liquid-tab-pill {
+        pointer-events: auto;
+        display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 13px 18px !important;
-        font-size: 15px !important;
-        font-weight: 600 !important;
-        color: rgba(255, 255, 255, 0.85) !important;
-        background: rgba(255, 255, 255, 0.035) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 14px !important;
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        justify-content: space-around;
+        position: relative;
+        width: 100%;
+        background: linear-gradient(165deg, rgba(15, 23, 42, 0.88) 0%, rgba(11, 19, 43, 0.96) 100%);
+        backdrop-filter: blur(28px) saturate(210%) brightness(108%);
+        -webkit-backdrop-filter: blur(28px) saturate(210%) brightness(108%);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 9999px;
+        padding: 8px 6px;
+        box-shadow:
+            0 24px 55px -10px rgba(0, 0, 0, 0.75),
+            0 0 35px rgba(56, 189, 248, 0.18),
+            inset 0 1px 1.5px rgba(255, 255, 255, 0.45),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
     }
 
-    /* Subtle Glass Arrow Indicator */
-    .navbar-nav li a::after {
-        content: '→';
-        font-size: 14px;
-        color: #38bdf8;
-        opacity: 0.4;
-        transform: translateX(0);
-        transition: all 0.25s ease;
+    /* Prismatic Specular Sheen across the top rim */
+    .liquid-tab-pill::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 12%;
+        right: 12%;
+        height: 1.5px;
+        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 25%, rgba(56, 189, 248, 0.85) 50%, rgba(168, 85, 247, 0.65) 75%, transparent 100%);
+        pointer-events: none;
+        border-radius: 9999px;
     }
 
-    .navbar-nav li a:hover {
-        background: linear-gradient(90deg, rgba(56, 189, 248, 0.16) 0%, rgba(99, 102, 241, 0.12) 100%) !important;
-        border-color: rgba(56, 189, 248, 0.45) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 18px rgba(56, 189, 248, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
-        transform: translateX(4px);
-    }
-
-    .navbar-nav li a:hover::after {
-        opacity: 1;
-        transform: translateX(3px);
-    }
-
-    .navbar-nav li a.active {
-        background: linear-gradient(90deg, rgba(56, 189, 248, 0.22) 0%, rgba(99, 102, 241, 0.16) 100%) !important;
-        border-color: rgba(56, 189, 248, 0.6) !important;
-        color: #ffffff !important;
-        text-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-        box-shadow: 0 4px 16px rgba(56, 189, 248, 0.25), inset 0 1px 1.5px rgba(255, 255, 255, 0.35) !important;
-    }
-
-    .navbar-nav li a.active::after {
-        opacity: 1;
-        color: #38bdf8;
-        text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
-    }
-
-    /* Liquid Crystal CTA Button ("Register Now" / "Profile") */
-    .navbar-nav li a.nav-btn {
-        display: flex !important;
+    .liquid-tab-item {
+        display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
-        width: 100% !important;
-        margin-top: 6px !important;
-        padding: 13px 20px !important;
-        border-radius: 16px !important;
-        background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%) !important;
-        color: #0b132b !important;
-        font-weight: 700 !important;
-        border: 1px solid rgba(255, 255, 255, 0.9) !important;
-        box-shadow: 0 6px 24px rgba(56, 189, 248, 0.32), inset 0 1px 2px #ffffff !important;
-        transform: none;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+        padding: 7px 4px 6px 4px;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.65);
+        border-radius: 999px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
     }
 
-    .navbar-nav li a.nav-btn::after {
+    .liquid-tab-item i {
+        font-size: 19px;
+        line-height: 1;
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease, filter 0.25s ease;
+    }
+
+    .liquid-tab-item span {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: -0.15px;
+        line-height: 1;
+        white-space: nowrap;
+        transition: color 0.25s ease, font-weight 0.25s ease;
+        font-family: var(--font-heading);
+    }
+
+    .liquid-tab-item:hover {
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .liquid-tab-item:hover i {
+        transform: translateY(-2px);
+        color: #ffffff;
+    }
+
+    .liquid-tab-item:active {
+        transform: scale(0.92);
+    }
+
+    .liquid-tab-item.active {
+        color: #ffffff;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.22);
+        box-shadow: 0 0 16px rgba(56, 189, 248, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .liquid-tab-item.active i {
+        color: #38BDF8;
+        filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8));
+        transform: translateY(-1px);
+    }
+
+    .liquid-tab-item.active span {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    /* Badge for Cart Icon */
+    .liquid-tab-icon-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .liquid-tab-badge {
+        position: absolute;
+        top: -5px;
+        right: -9px;
+        background: #EF4444;
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 800;
+        min-width: 15px;
+        height: 15px;
+        border-radius: 999px;
+        padding: 0 3px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
+        line-height: 1;
+    }
+
+    /* Compact Screens adjustments */
+    @media (max-width: 400px) {
+        .bottom-liquid-tab-bar {
+            width: calc(100% - 16px);
+            bottom: max(10px, env(safe-area-inset-bottom, 10px));
+        }
+
+        .liquid-tab-pill {
+            padding: 6px 3px;
+        }
+
+        .liquid-tab-item {
+            padding: 5px 2px;
+            gap: 3px;
+        }
+
+        .liquid-tab-item i {
+            font-size: 17px;
+        }
+
+        .liquid-tab-item span {
+            font-size: 9.5px;
+        }
+    }
+
+    @media (max-width: 330px) {
+        .liquid-tab-item span {
+            font-size: 8.5px;
+        }
+
+        .liquid-tab-item i {
+            font-size: 15px;
+        }
+    }
+}
+
+/* Desktop View: Keep Bottom Liquid Tab Bar Hidden */
+@media (min-width: 961px) {
+    .bottom-liquid-tab-bar {
         display: none !important;
-    }
-
-    .navbar-nav li a.nav-btn:hover {
-        background: linear-gradient(135deg, #ffffff 0%, #bae6fd 100%) !important;
-        box-shadow: 0 8px 30px rgba(56, 189, 248, 0.45), inset 0 1px 2px #ffffff !important;
-        transform: translateY(-1px) scale(1.01) !important;
     }
 }
 
