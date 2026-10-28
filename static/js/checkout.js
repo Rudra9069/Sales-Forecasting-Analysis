@@ -1,26 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Payment Method Toggle
-    const paymentCards = document.querySelectorAll('.payment-method-card');
-    const paymentDetails = document.querySelectorAll('.payment-details');
-
-    paymentCards.forEach(card => {
-        card.addEventListener('click', () => {
-            paymentCards.forEach(c => c.classList.remove('active'));
-            paymentDetails.forEach(d => d.classList.remove('active'));
-            
-            const radio = card.querySelector('input[type="radio"]');
-            if (radio) {
-                radio.checked = true;
-                const targetId = radio.value + '-details';
-                const targetDetail = document.getElementById(targetId);
-                if (targetDetail) {
-                    targetDetail.classList.add('active');
-                }
-            }
-            card.classList.add('active');
-            validateForm();
-        });
-    });
 
     // Promo Code Logic
     const promoBtn = document.getElementById('apply-promo');
@@ -33,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (code === 'SAVE20') {
                 promoMessage.textContent = 'Coupon applied successfully! 20% off.';
                 promoMessage.className = 'promo-message success';
-                
+
                 const totalElem = document.getElementById('summary-total');
                 const originalTotal = parseFloat(totalElem.getAttribute('data-original-total') || 0);
                 const discount = originalTotal * 0.20;
                 const newTotal = originalTotal - discount;
-                
+
                 document.getElementById('summary-discount').textContent = `-₹${discount.toFixed(2)}`;
                 totalElem.textContent = `₹${newTotal.toFixed(2)}`;
             } else if (code !== '') {
@@ -65,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function validateInput(input) {
         let isValid = true;
-        
+
         if (!input.value || input.value.trim() === '') {
             isValid = false;
         } else if (input.type === 'email') {
@@ -83,14 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.classList.add('error');
             }
         }
-        
+
         return isValid;
     }
 
     function validateForm() {
         let isFormValid = true;
-        
-        // Validate basic info and address
+
         const basicInputs = document.querySelectorAll('#customer-info input[required], #delivery-address input[required], #delivery-address select[required]');
         basicInputs.forEach(input => {
             if (!validateInput(input)) {
@@ -103,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return isFormValid;
     }
-    
+
     // Initial Validation Check
     validateForm();
 
@@ -113,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
         placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Place Order & Pay';
     }
 
-    // Handle Place Order Click (Razorpay Test Mode / COD)
+    // Handle Place Order Click — always launches Razorpay
     if (placeOrderBtn) {
         placeOrderBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
+
             if (!validateForm()) {
                 const firstError = document.querySelector('.form-group.has-error input, .form-group.has-error select');
                 if (firstError) {
@@ -127,19 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const checkoutForm = document.getElementById('checkout-form');
-            const activeRadio = document.querySelector('input[name="payment_method"]:checked');
-            const paymentMethod = activeRadio ? activeRadio.value : 'card';
-
-            // 1. CASH ON DELIVERY (COD)
-            if (paymentMethod === 'cod') {
-                placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
-                placeOrderBtn.disabled = true;
-                checkoutForm.submit();
-                return;
-            }
-
-            // 2. ONLINE PAYMENT VIA RAZORPAY TEST MODE
             const promoCode = promoInput ? promoInput.value.trim().toUpperCase() : '';
             placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting to Razorpay...';
             placeOrderBtn.disabled = true;
@@ -159,14 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Check if Razorpay script is loaded
                 if (typeof Razorpay === 'undefined') {
                     alert('Razorpay Checkout SDK is still loading. Please check your internet connection and try again.');
                     resetButton();
                     return;
                 }
 
-                const customerName = document.getElementById('full-name')?.value || '';
+                const customerName  = document.getElementById('full-name')?.value || '';
                 const customerEmail = document.getElementById('email')?.value || '';
                 const customerPhone = document.getElementById('phone')?.value || '';
 
@@ -180,23 +143,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     order_id: data.order_id,
                     handler: async function (response) {
                         placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying Payment...';
-                        
+
                         try {
                             const verifyRes = await fetch('/verify_razorpay_payment', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_order_id:  response.razorpay_order_id,
                                     razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
+                                    razorpay_signature:  response.razorpay_signature,
                                     full_name: customerName,
-                                    email: customerEmail,
-                                    phone: customerPhone,
-                                    address: document.getElementById('address')?.value || '',
-                                    city: document.getElementById('city')?.value || '',
-                                    state: document.getElementById('state')?.value || '',
-                                    pincode: document.getElementById('pincode')?.value || '',
-                                    payment_method: paymentMethod,
+                                    email:     customerEmail,
+                                    phone:     customerPhone,
+                                    address:  document.getElementById('address')?.value  || '',
+                                    city:     document.getElementById('city')?.value     || '',
+                                    state:    document.getElementById('state')?.value    || '',
+                                    pincode:  document.getElementById('pincode')?.value  || '',
+                                    payment_method: 'razorpay',
                                     promo_code: promoCode
                                 })
                             });
@@ -215,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     },
                     prefill: {
-                        name: customerName,
-                        email: customerEmail,
+                        name:    customerName,
+                        email:   customerEmail,
                         contact: customerPhone
                     },
                     theme: {
