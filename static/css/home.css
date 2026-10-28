@@ -1732,11 +1732,15 @@ button {
     .navbar {
         width: 100% !important;
         max-width: 100% !important;
-        min-width: 0 !important;
+        min-width: 100% !important;
         border-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        margin: 0 !important;
         padding: 14px 20px !important;
-        left: 0;
-        right: 0;
+        left: 0 !important;
+        right: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .navbar::before,
