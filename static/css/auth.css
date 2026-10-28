@@ -928,7 +928,9 @@ body {
     .top-right-actions {
         position: static;
         margin-bottom: 16px;
-        justify-content: flex-end;
+        align-self: flex-end;
+        width: fit-content;
+        margin-left: auto;
     }
 }
 
