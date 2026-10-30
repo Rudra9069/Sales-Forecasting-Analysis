@@ -93,7 +93,7 @@ def run_db_migrations():
         print(f'[MIGRATION ERROR] {e}')
 
 
-def send_app_email(to_email, subject, body_text):
+def send_app_email(to_email, subject, body_text, reply_to=None, from_display_name=None):
     """
     Universal Email Dispatcher:
     1. Brevo REST API (HTTPS Port 443) - Recommended for Render (No domain required, sends to ANY recipient).
@@ -106,13 +106,16 @@ def send_app_email(to_email, subject, body_text):
         try:
             url = "https://api.brevo.com/v3/smtp/email"
             sender_email = os.environ.get('BREVO_SENDER', os.environ.get('MAIL_USERNAME', 'forecastify0001@gmail.com'))
-            sender_name = os.environ.get('MAIL_SENDER_NAME', 'Forecastify')
-            payload = json.dumps({
+            sender_name = from_display_name or os.environ.get('MAIL_SENDER_NAME', 'Forecastify')
+            payload_data = {
                 "sender": {"name": sender_name, "email": sender_email},
                 "to": [{"email": to_email}],
                 "subject": subject,
                 "textContent": body_text
-            }).encode('utf-8')
+            }
+            if reply_to:
+                payload_data["replyTo"] = {"email": reply_to}
+            payload = json.dumps(payload_data).encode('utf-8')
 
             req = urllib.request.Request(
                 url,
@@ -142,13 +145,17 @@ def send_app_email(to_email, subject, body_text):
     if resend_api_key:
         try:
             url = "https://api.resend.com/emails"
-            sender = os.environ.get('RESEND_FROM', 'Forecastify <onboarding@resend.dev>')
-            payload = json.dumps({
+            sender_display = from_display_name or 'Forecastify'
+            sender = os.environ.get('RESEND_FROM', f'{sender_display} <onboarding@resend.dev>')
+            payload_data = {
                 "from": sender,
                 "to": [to_email],
                 "subject": subject,
                 "text": body_text
-            }).encode('utf-8')
+            }
+            if reply_to:
+                payload_data["reply_to"] = reply_to
+            payload = json.dumps(payload_data).encode('utf-8')
 
             req = urllib.request.Request(
                 url,
@@ -182,9 +189,12 @@ def send_app_email(to_email, subject, body_text):
 
     try:
         msg = MIMEMultipart()
-        msg['From'] = f"Forecastify <{sender_email}>"
+        sender_display = from_display_name or 'Forecastify'
+        msg['From'] = f"{sender_display} <{sender_email}>"
         msg['To'] = to_email
         msg['Subject'] = subject
+        if reply_to:
+            msg['Reply-To'] = reply_to
         msg.attach(MIMEText(body_text, 'plain'))
 
         # Set a 10s timeout to prevent thread hangs if port 587 is blocked
@@ -241,6 +251,23 @@ def contact():
         message = request.form.get('message', '').strip()
 
         if name and email and message:
+            # Send notification email to forecastify0001@gmail.com
+            receiver_email = os.environ.get('ADMIN_EMAIL', 'forecastify0001@gmail.com')
+            email_subject = f"[Contact Form] {subject} - From {name}"
+            email_body = (
+                f"You received a new inquiry from the Forecastify Contact form:\n\n"
+                f"From: {name}\n"
+                f"Email: {email}\n"
+                f"Subject: {subject}\n\n"
+                f"Message:\n{message}\n\n"
+                f"--------------------------------------------------\n"
+                f"To reply directly to {name}, simply hit 'Reply' in your email client."
+            )
+            threading.Thread(
+                target=send_app_email,
+                args=(receiver_email, email_subject, email_body, email, f"{name} via Forecastify")
+            ).start()
+
             flash(f"Thank you {name}! Your message regarding '{subject}' has been received. Our team will respond shortly.", 'success')
             return redirect(url_for('contact'))
         else:
@@ -1929,11 +1956,23 @@ def submit_help():
         cursor.execute("SELECT name, email FROM users WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
         
-        # Send Email notification asynchronously
+        # Send Email notification asynchronously to forecastify0001@gmail.com
         admin_email = os.environ.get('ADMIN_EMAIL', 'forecastify0001@gmail.com')
-        help_subject = f"Help Request: {subject}"
-        help_body = f"New help request from {user['name']} ({user['email']})\n\nOrder ID: {order_id}\n\nDescription:\n{description}"
-        threading.Thread(target=send_app_email, args=(admin_email, help_subject, help_body)).start()
+        help_subject = f"[Help Request] {subject} (Order #{order_id})"
+        help_body = (
+            f"You received a new Help & Support complaint:\n\n"
+            f"Customer Name: {user['name']}\n"
+            f"Customer Email: {user['email']}\n"
+            f"Order ID: {order_id}\n"
+            f"Subject: {subject}\n\n"
+            f"Description:\n{description}\n\n"
+            f"--------------------------------------------------\n"
+            f"To reply directly to {user['name']}, simply hit 'Reply' in your email client."
+        )
+        threading.Thread(
+            target=send_app_email,
+            args=(admin_email, help_subject, help_body, user['email'], f"{user['name']} via Support")
+        ).start()
         
         flash('Your complaint has been submitted.', 'success')
     except Exception as err:
