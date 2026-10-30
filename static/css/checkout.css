@@ -919,9 +919,17 @@
     }
 
     .form-group input,
-    .form-group select {
-        padding: 11px 12px;
+    .form-group select,
+    .input-wrapper input,
+    .input-wrapper select {
+        padding: 11px 14px 11px 44px !important;
         font-size: 14px;
+    }
+
+    .input-wrapper .input-icon {
+        left: 14px !important;
+        font-size: 14px !important;
+        z-index: 2;
     }
 
     .order-summary-body {
@@ -951,6 +959,20 @@
 
     .checkout-form-section {
         padding: 14px 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .input-wrapper input,
+    .input-wrapper select {
+        padding: 10px 12px 10px 42px !important;
+        font-size: 13.5px;
+    }
+
+    .input-wrapper .input-icon {
+        left: 13px !important;
+        font-size: 13px !important;
+        z-index: 2;
     }
 
     .form-section-header h3 {
