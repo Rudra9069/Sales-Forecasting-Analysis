@@ -4,7 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication - Forecastify</title>
+    <title>Forecastify</title>
+    <meta name="description" content="Sales forecasting and analysis platform.">
+
+    <!-- Open Graph / Link Preview (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Forecastify">
+    <meta property="og:description" content="Sales forecasting and analysis platform.">
+    <meta property="og:image" content="{{ url_for('static', filename='images/apple-touch-icon.png', _external=True) }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Forecastify">
+    <meta name="twitter:description" content="Sales forecasting and analysis platform.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/apple-touch-icon.png', _external=True) }}">
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
