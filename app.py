@@ -105,7 +105,7 @@ def send_app_email(to_email, subject, body_text):
     if brevo_api_key:
         try:
             url = "https://api.brevo.com/v3/smtp/email"
-            sender_email = os.environ.get('MAIL_USERNAME', 'forecastify0001@gmail.com')
+            sender_email = os.environ.get('BREVO_SENDER', 'rudrabhavsar04@gmail.com')
             sender_name = os.environ.get('MAIL_SENDER_NAME', 'Forecastify')
             payload = json.dumps({
                 "sender": {"name": sender_name, "email": sender_email},
