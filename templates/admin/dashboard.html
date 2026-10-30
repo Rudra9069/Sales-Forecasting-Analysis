@@ -324,7 +324,7 @@
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Comprehensive real-time
                         report covering orders, best-selling products, top customers, and financial performance.</p>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="dash-section-actions">
                     <span class="badge-status delivered" style="padding: 6px 14px;"><i class="fas fa-database"></i> Live
                         Database Sync</span>
                     <a href="{{ url_for('export_master_report') }}" class="btn-new-task"
@@ -339,7 +339,7 @@
             </div>
 
             <!-- Key Financial Performance Bar -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+            <div class="dash-kpi-quad-grid">
                 <div class="dash-panel-card" style="padding: 18px 22px;">
                     <span
                         style="font-size: 0.775rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Total
@@ -449,7 +449,7 @@
             </div>
 
             <!-- Report Grid: Recent Orders Table & Top Spenders -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+            <div class="dash-report-two-col">
 
                 <!-- Panel A: Recent Orders Audit Table -->
                 <div class="dash-table-card">
@@ -708,7 +708,10 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 11, weight: '600' } }
+                            ticks: {
+                                color: '#64748b',
+                                font: { family: 'Plus Jakarta Sans', size: window.innerWidth < 768 ? 9 : 11, weight: '600' }
+                            }
                         },
                         yRev: { display: false },
                         yOrd: { display: false }
@@ -743,8 +746,8 @@
                         tension: 0.4,
                         pointBackgroundColor: '#2563eb',
                         pointBorderColor: '#ffffff',
-                        pointRadius: 6,
-                        pointHoverRadius: 8,
+                        pointRadius: window.innerWidth < 768 ? 4 : 6,
+                        pointHoverRadius: window.innerWidth < 768 ? 6 : 8,
                         yAxisID: 'yRevenue'
                     },
                     {
@@ -755,7 +758,7 @@
                         borderColor: '#ec4899',
                         borderWidth: 1,
                         borderRadius: 6,
-                        barThickness: 24,
+                        barThickness: window.innerWidth < 768 ? 14 : 24,
                         yAxisID: 'yOrders'
                     }
                 ]
@@ -786,7 +789,13 @@
                 scales: {
                     x: {
                         grid: commonGridStyle,
-                        ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                        ticks: {
+                            color: '#475569',
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 10 : 12 },
+                            maxTicksLimit: window.innerWidth < 768 ? 5 : 10,
+                            maxRotation: 0,
+                            autoSkip: true
+                        }
                     },
                     yRevenue: {
                         type: 'linear',
@@ -794,8 +803,16 @@
                         grid: commonGridStyle,
                         ticks: {
                             color: '#2563eb',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
-                            callback: value => '₹' + value.toLocaleString('en-IN')
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 9 : 11 },
+                            callback: value => {
+                                if (window.innerWidth < 768) {
+                                    if (value >= 10000000) return '₹' + (value / 10000000).toFixed(1) + 'Cr';
+                                    if (value >= 100000) return '₹' + (value / 100000).toFixed(0) + 'L';
+                                    if (value >= 1000) return '₹' + (value / 1000).toFixed(0) + 'k';
+                                    return '₹' + value;
+                                }
+                                return '₹' + value.toLocaleString('en-IN');
+                            }
                         }
                     },
                     yOrders: {
@@ -804,7 +821,7 @@
                         grid: { display: false },
                         ticks: {
                             color: '#ec4899',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 9 : 11 },
                             stepSize: 1
                         }
                     }
@@ -871,7 +888,17 @@
                 scales: {
                     y: {
                         grid: commonGridStyle,
-                        ticks: { color: '#0f172a', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                        ticks: {
+                            color: '#0f172a',
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 9 : 11 },
+                            callback: function (val, index) {
+                                let label = this.getLabelForValue(val);
+                                if (window.innerWidth < 768 && label && label.length > 12) {
+                                    return label.substring(0, 12) + '...';
+                                }
+                                return label;
+                            }
+                        }
                     },
                     xRevenue: {
                         type: 'linear',
@@ -879,7 +906,7 @@
                         grid: commonGridStyle,
                         ticks: {
                             color: '#2563eb',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 8 : 11 },
                             callback: val => {
                                 if (val >= 10000000) return '₹' + (val / 10000000).toFixed(1) + ' Cr';
                                 if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + ' L';
@@ -894,7 +921,7 @@
                         grid: { display: false },
                         ticks: {
                             color: '#ec4899',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 8 : 11 },
                             stepSize: 10,
                             callback: val => val + ' u'
                         }
@@ -967,7 +994,10 @@
                 scales: {
                     x: {
                         grid: commonGridStyle,
-                        ticks: { color: '#0f172a', font: { family: 'Plus Jakarta Sans', weight: '700' } }
+                        ticks: {
+                            color: '#0f172a',
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 9 : 12 }
+                        }
                     },
                     yRevenue: {
                         type: 'linear',
@@ -975,7 +1005,7 @@
                         grid: commonGridStyle,
                         ticks: {
                             color: '#d97706',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 8 : 11 },
                             callback: val => {
                                 if (val >= 10000000) return '₹' + (val / 10000000).toFixed(1) + ' Cr';
                                 if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + ' L';
@@ -990,9 +1020,9 @@
                         grid: { display: false },
                         ticks: {
                             color: '#10b981',
-                            font: { family: 'Plus Jakarta Sans', weight: '700' },
+                            font: { family: 'Plus Jakarta Sans', weight: '700', size: window.innerWidth < 768 ? 8 : 11 },
                             stepSize: 20,
-                            callback: val => val + ' units'
+                            callback: val => val + (window.innerWidth < 768 ? ' u' : ' units')
                         }
                     }
                 }

@@ -36,12 +36,15 @@ body.admin-dashboard-body {
     min-height: 100vh;
     padding: 24px 32px;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 /* App Container */
 .dash-app-container {
     max-width: 1400px;
     margin: 0 auto;
+    width: 100%;
 }
 
 /* Header Navbar */
@@ -1136,6 +1139,31 @@ select.dropdown-pill option {
 }
 
 /* ======================================================
+   FULL REPORT SECTION, KPI QUAD GRID & REPORT TWO-COL
+   ====================================================== */
+
+.dash-section-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.dash-kpi-quad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dash-report-two-col {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* ======================================================
    ADMIN DASHBOARD RESPONSIVE DESIGN (ALL DEVICES & RATIOS)
    ====================================================== */
 
@@ -1154,6 +1182,16 @@ select.dropdown-pill option {
 
     .dash-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .dash-kpi-quad-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .dash-report-two-col {
+        grid-template-columns: 1fr;
         gap: 20px;
     }
 }
@@ -1234,6 +1272,22 @@ select.dropdown-pill option {
         width: 100%;
     }
 
+    /* Stack section buttons on mobile to avoid overflow */
+    .dash-section-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .dash-section-actions .btn-new-task,
+    .dash-section-actions .badge-status {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
     .btn-new-task {
         width: 100%;
         justify-content: center;
@@ -1245,6 +1299,18 @@ select.dropdown-pill option {
         gap: 14px;
     }
 
+    /* 4-KPI Report Grid collapses to single column on mobile */
+    .dash-kpi-quad-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .dash-kpi-quad-grid .dash-panel-card {
+        padding: 16px 18px !important;
+        border-radius: 18px;
+    }
+
     .kpi-card {
         padding: 22px 18px 16px 18px;
         border-radius: 20px;
@@ -1252,6 +1318,76 @@ select.dropdown-pill option {
 
     .kpi-big-number {
         font-size: clamp(2rem, 7vw, 2.5rem);
+    }
+
+    /* Responsive Graph / Chart Sizing for Mobile */
+    .chart-card-full {
+        padding: 18px 14px;
+        border-radius: 20px;
+        margin-bottom: 20px;
+    }
+
+    .chart-header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+    }
+
+    .chart-title-block h3 {
+        font-size: 1.05rem;
+        gap: 8px;
+    }
+
+    .chart-title-block p {
+        font-size: 0.775rem;
+    }
+
+    .chart-filter-pills {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 4px;
+        border-radius: 16px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .chart-filter-pills::-webkit-scrollbar {
+        display: none;
+    }
+
+    .chart-pill-btn {
+        flex: 1;
+        min-width: fit-content;
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
+    /* Optimal mobile height for graphs */
+    .chart-grid-wrapper {
+        height: 260px;
+        padding: 10px 8px;
+        background-size: 20px 20px;
+        border-radius: 14px;
+    }
+
+    .chart-grid-wrapper-sm {
+        height: 240px;
+    }
+
+    .chart-legend-row {
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .chart-legend-badge {
+        font-size: 0.725rem;
+        padding: 4px 8px;
+        border-radius: 10px;
     }
 
     .search-filter-bar {
@@ -1354,6 +1490,39 @@ select.dropdown-pill option {
     .progress-big-metric .percentage {
         font-size: 2.4rem;
     }
+
+    /* Compact Chart Sizing on Phones */
+    .chart-card-full {
+        padding: 14px 10px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+
+    .chart-title-block h3 {
+        font-size: 0.95rem;
+    }
+
+    .chart-title-block p {
+        font-size: 0.725rem;
+    }
+
+    .chart-grid-wrapper {
+        height: 230px;
+        padding: 8px 4px;
+    }
+
+    .chart-grid-wrapper-sm {
+        height: 215px;
+    }
+
+    .chart-pill-btn {
+        padding: 5px 8px;
+        font-size: 0.7rem;
+    }
+
+    .trend-svg-container {
+        height: 100px;
+    }
 }
 
 /* Ultra-compact Phones (320px - 360px, Galaxy Fold outer, iPhone SE) */
@@ -1379,6 +1548,14 @@ select.dropdown-pill option {
     .modal-card {
         padding: 18px 12px;
     }
+
+    .chart-grid-wrapper {
+        height: 210px;
+    }
+
+    .chart-grid-wrapper-sm {
+        height: 200px;
+    }
 }
 
 /* Mobile Landscape */
@@ -1395,6 +1572,10 @@ select.dropdown-pill option {
     .modal-card {
         max-height: 94vh;
         overflow-y: auto;
+    }
+
+    .chart-grid-wrapper {
+        height: 220px;
     }
 }
 
