@@ -40,13 +40,7 @@ def load_sales_model():
             return None
     return _PREDICTION_BUNDLE
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app = Flask(
-    __name__,
-    static_folder=os.path.join(BASE_DIR, 'static'),
-    template_folder=os.path.join(BASE_DIR, 'templates'),
-    static_url_path='/static'
-)
+app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your_super_secret_key')  # Needed for flash messages and sessions
 
 @app.route('/favicon.ico')
