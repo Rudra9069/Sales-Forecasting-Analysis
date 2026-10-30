@@ -96,11 +96,48 @@ def run_db_migrations():
 def send_app_email(to_email, subject, body_text):
     """
     Universal Email Dispatcher:
-    1. If RESEND_API_KEY is configured (Render.com), sends via Resend REST API over HTTPS (Port 443).
-       This is 100% immune to Render's outbound SMTP port blocking.
-    2. Otherwise, falls back to standard Gmail SMTP (Port 587) with a safe 10-second timeout.
+    1. Brevo REST API (HTTPS Port 443) - Recommended for Render (No domain required, sends to ANY recipient).
+    2. Resend REST API (HTTPS Port 443) - (Sends to owner on sandbox, or all recipients if domain verified).
+    3. Standard Gmail SMTP (Port 587) - Fallback for localhost development.
     """
-    # --- 1. Resend HTTP API (Works seamlessly on Render Free & Paid tiers) ---
+    # --- 1. Brevo HTTP API (Works on Render, sends to ANY email without custom domain) ---
+    brevo_api_key = os.environ.get('BREVO_API_KEY')
+    if brevo_api_key:
+        try:
+            url = "https://api.brevo.com/v3/smtp/email"
+            sender_email = os.environ.get('MAIL_USERNAME', 'forecastify0001@gmail.com')
+            sender_name = os.environ.get('MAIL_SENDER_NAME', 'Forecastify')
+            payload = json.dumps({
+                "sender": {"name": sender_name, "email": sender_email},
+                "to": [{"email": to_email}],
+                "subject": subject,
+                "textContent": body_text
+            }).encode('utf-8')
+
+            req = urllib.request.Request(
+                url,
+                data=payload,
+                headers={
+                    "api-key": brevo_api_key,
+                    "Content-Type": "application/json",
+                    "accept": "application/json",
+                    "User-Agent": "Forecastify-App/1.0"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as response:
+                if response.status in (200, 201):
+                    print(f"[EMAIL] Sent successfully via Brevo API to {to_email}")
+                    return True
+                else:
+                    print(f"[EMAIL WARNING] Brevo API responded with status {response.status}")
+        except urllib.error.HTTPError as he:
+            err_body = he.read().decode('utf-8', errors='ignore')
+            print(f"[EMAIL ERROR] Brevo HTTP {he.code}: {err_body}")
+        except Exception as e:
+            print(f"[EMAIL ERROR] Brevo API request failed: {e}")
+
+    # --- 2. Resend HTTP API (Render.com with custom verified domain or testing) ---
     resend_api_key = os.environ.get('RESEND_API_KEY')
     if resend_api_key:
         try:
@@ -135,12 +172,12 @@ def send_app_email(to_email, subject, body_text):
         except Exception as e:
             print(f"[EMAIL ERROR] Resend API request failed: {e}")
 
-    # --- 2. Fallback to SMTP (Localhost or unblocked hosts) ---
+    # --- 3. Fallback to SMTP (Localhost or unblocked hosts) ---
     sender_email = os.environ.get('MAIL_USERNAME')
     sender_password = os.environ.get('MAIL_PASSWORD')
 
     if not sender_email or not sender_password:
-        print(f"[EMAIL ERROR] Cannot send to {to_email}. Set RESEND_API_KEY or MAIL_USERNAME/MAIL_PASSWORD.")
+        print(f"[EMAIL ERROR] Cannot send to {to_email}. Set BREVO_API_KEY, RESEND_API_KEY, or MAIL_USERNAME/MAIL_PASSWORD.")
         return False
 
     try:
@@ -1893,7 +1930,7 @@ def submit_help():
         user = cursor.fetchone()
         
         # Send Email notification asynchronously
-        admin_email = os.environ.get('ADMIN_EMAIL', 'forecasting0001@gmail.com')
+        admin_email = os.environ.get('ADMIN_EMAIL', 'forecastify0001@gmail.com')
         help_subject = f"Help Request: {subject}"
         help_body = f"New help request from {user['name']} ({user['email']})\n\nOrder ID: {order_id}\n\nDescription:\n{description}"
         threading.Thread(target=send_app_email, args=(admin_email, help_subject, help_body)).start()
